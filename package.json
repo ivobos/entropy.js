@@ -1,5 +1,5 @@
 {
-  "name": "entropy.js",
+  "name": "entropy3d.js",
   "version": "0.0.1",
   "description": "JavaScript 3D Game Engine",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ivobos/entropy.js.git"
+    "url": "git+https://github.com/ivobos/entropy3d.js.git"
   },
   "keywords": [
     "game",
@@ -18,7 +18,7 @@
   "author": "Ivo Bosticky",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ivobos/entropy.js/issues"
+    "url": "https://github.com/ivobos/entropy3d.js/issues"
   },
-  "homepage": "https://github.com/ivobos/entropy.js#readme"
+  "homepage": "https://github.com/ivobos/entropy3d.js#readme"
 }
