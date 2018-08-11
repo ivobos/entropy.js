@@ -27,5 +27,9 @@
     "url": "https://github.com/ivobos/entropy-engine/issues",
     "email": "ivobos@gmail.com"
   },
-  "homepage": "https://github.com/ivobos/entropy-engine#readme"
+  "homepage": "https://github.com/ivobos/entropy-engine#readme",
+  "devDependencies": {},
+  "dependencies": {
+    "three": "^0.95.0"
+  }
 }
