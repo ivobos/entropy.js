@@ -5,5 +5,5 @@ JavaScript 3D Game Engine
 ## How to publish
 ```
 npm login
-npm publish --access=public
+npm run release
 ```
