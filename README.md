@@ -1,2 +1,9 @@
-# entropy3d.js
+# entropy-engine
 JavaScript 3D Game Engine
+
+
+## How to publish
+```
+npm login
+npm publish --access=public
+```
