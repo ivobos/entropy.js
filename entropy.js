@@ -1,3 +1,4 @@
+import * as THREE from "three";
 
 const pjson = require('./package.json');
 
