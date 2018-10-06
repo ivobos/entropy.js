@@ -1,8 +1,8 @@
-import package_json from './../package.json';
 import * as THREE from 'three';
+// import package_json from './../package.json';
 
 export const NAME = "entropy-engine";
-export const VERSION = package_json.version;
+// export const VERSION = package_json.version;
 
 let camera : THREE.Camera;
 let scene : THREE.Scene;

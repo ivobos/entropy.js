@@ -2,9 +2,10 @@
   "name": "@ivobos/entropy-engine",
   "version": "0.1.9",
   "description": "JavaScript 3D Game Engine",
-  "main": "lib/src/entropy.js",
-  "types": "lib/src/entropy.d.ts",
+  "main": "lib/entropy.js",
+  "types": "lib/entropy.d.ts",
   "scripts": {
+    "clean": "rm -rf lib",
     "build": "tsc",
     "release": "npm version patch && npm publish --access=public",
     "test": "echo \"Error: no test specified\" && exit 1"
