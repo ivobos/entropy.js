@@ -2,8 +2,8 @@
   "name": "@ivobos/entropy-engine",
   "version": "0.1.8",
   "description": "JavaScript 3D Game Engine",
-  "main": "lib/entropy.js",
-  "types": "lib/entropy.d.ts",
+  "main": "lib/src/entropy.js",
+  "types": "lib/src/entropy.d.ts",
   "scripts": {
     "build": "tsc",
     "release": "npm version patch && npm publish --access=public",
@@ -29,6 +29,7 @@
     "typescript": "^3.1.1"
   },
   "dependencies": {
+    "@types/three": "^0.92.24",
     "three": "^0.95.0"
   }
 }
