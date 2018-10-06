@@ -1,8 +1,9 @@
 
 // const pjson = require('../package.json');
 
+import package_json from './../package.json';
 export const NAME = "entropy-engine";
-export const VERSION = "1.2.3"; //pjson.version;
+export const VERSION = package_json.version;
 
 export function demo (str: string) : string {
     console.log("entropy demo("+str+")");
