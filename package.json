@@ -1,6 +1,6 @@
 {
   "name": "@ivobos/entropy-engine",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "JavaScript 3D Game Engine",
   "main": "lib/entropy.js",
   "types": "lib/entropy.d.ts",
