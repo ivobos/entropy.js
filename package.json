@@ -2,8 +2,10 @@
   "name": "@ivobos/entropy-engine",
   "version": "0.1.6",
   "description": "JavaScript 3D Game Engine",
-  "main": "index.js",
+  "main": "lib/entropy.js",
+  "types": "lib/entropy.d.ts",
   "scripts": {
+    "build": "tsc",
     "release": "npm version patch && npm publish --access=public",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,7 +20,7 @@
   ],
   "files": [
     "package.json",
-    "entropy.js",
+    "./lib",
     "README.md"
   ],
   "author": "Ivo Bosticky",
@@ -28,7 +30,9 @@
     "email": "ivobos@gmail.com"
   },
   "homepage": "https://github.com/ivobos/entropy-engine#readme",
-  "devDependencies": {},
+  "devDependencies": {
+    "typescript": "^3.1.1"
+  },
   "dependencies": {
     "three": "^0.95.0"
   }
