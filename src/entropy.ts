@@ -23,8 +23,8 @@ function init() {
     scene = new THREE.Scene();
  
     geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
-    material = new THREE.MeshNormalMaterial();
- 
+    material = new THREE.MeshBasicMaterial( { color: 0xf08000 } );
+    
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
  
