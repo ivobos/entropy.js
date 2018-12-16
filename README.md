@@ -25,6 +25,7 @@ Then in your test app, link entropy-engine using
 npm link @ivobos/entropy-engine
 ```
 note: you will have to remove @ivobos/entropy-engine from your test app, and install all entopy-engine dependencies
+note: if you do npm insall in your test app, you will have to npm link @ivobos/entropy-engine again, it's an npm bug.
 
 Any changes in entropy-engine will be picked up by your test app and live re-loaded.
 

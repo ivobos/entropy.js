@@ -29,12 +29,14 @@
   },
   "homepage": "https://github.com/ivobos/entropy-engine#readme",
   "devDependencies": {
-    "nodemon": "^1.18.8",
+    "nodemon": "^1.18.9",
     "replace": "^1.0.0",
-    "typescript": "^3.1.1"
+    "typescript": "^3.2.2"
   },
   "dependencies": {
-    "@types/three": "^0.92.24",
-    "three": "^0.95.0"
+    "@types/random-js": "^1.0.31",
+    "@types/three": "^0.93.13",
+    "random-js": "^1.0.8",
+    "three": "^0.99.0"
   }
 }
