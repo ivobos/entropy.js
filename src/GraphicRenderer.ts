@@ -1,14 +1,11 @@
 import * as THREE from 'three';
-import { HelloWorldCube } from './HelloWorldCube';
-import * as debug from './debug';
-import { Fps } from './Fps';
+import { Monitorable } from './Monitor';
 
-export class GraphicRenderer {
+export class GraphicRenderer implements Monitorable {
 
     private camera : THREE.Camera
     private scene : THREE.Scene;
     private renderer : THREE.Renderer;
-    private fps : Fps;
 
     constructor(parentDiv: any) {
         this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
@@ -17,23 +14,18 @@ export class GraphicRenderer {
         this.renderer = new THREE.WebGLRenderer( { antialias: true } );
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         parentDiv.appendChild( this.renderer.domElement );
-        debug.registerDebugContentProvider(this.debugContentProvider.bind(this));
-        this.fps = new Fps();
     }
 
-    debugContentProvider() {
-        return "FPS: "+this.fps.getFps();       
+    getMonitorText(): string {
+        return "GraphicRenderer: scene.children="+this.scene.children.length;
     }
 
     addObject3D(object3d: THREE.Object3D) {
         this.scene.add( object3d );
     }
 
-    animate() {
-        requestAnimationFrame(this.animate.bind(this));
-        debug.render_debug(0);    
+    render() {
         this.renderer.render( this.scene, this.camera );
-        this.fps.frameRendered();
     }
 
 }
