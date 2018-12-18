@@ -5,5 +5,6 @@ export { GraphicRenderer } from './GraphicRenderer';
 export { MainLoop } from './MainLoop';
 export { Monitor } from './Monitor';
 export { WorldModel } from './WorldModel';
+export { Container } from './Container';
 export * from './random';
 export * from './time';

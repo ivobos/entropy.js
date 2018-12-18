@@ -1,4 +1,6 @@
 import * as time from "./time";
+import { BaseComponent } from "./BaseComponent";
+import { Container } from "./Container";
 
 const UPDATE_PERIOD_MSEC = 1000;
 export const DEBUG_INFO_CONTENT_DIV_ID = "debug_info_content";
@@ -7,11 +9,20 @@ export interface Monitorable {
     getMonitorText() : string;
 }
 
-export class Monitor {
+export class Monitor extends BaseComponent {
+
+    getAdditionalMonitorText(): string {
+        return "";
+    }
+    
     private monitorableComponents : Array<Monitorable> = [];
     private nextUpdateTimeMsec: number = 0;
-    
-    registerComponent(component: Monitorable) {
+
+    constructor(container: Container) {
+        super(container, Monitor);
+    }    
+
+    register(component: Monitorable) {
         this.monitorableComponents.push(component);
     }
 

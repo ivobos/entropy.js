@@ -1,23 +1,26 @@
 import * as THREE from 'three';
-import { Monitorable } from './Monitor';
+import { Container } from './Container';
+import { BaseComponent } from './BaseComponent';
 
-export class GraphicRenderer implements Monitorable {
+export class GraphicRenderer extends BaseComponent {
 
+    // BaseComponent abstract method
+    getAdditionalMonitorText(): string {
+        return "scene.children="+this.scene.children.length;
+    }
+    
     private camera : THREE.Camera
     private scene : THREE.Scene;
     private renderer : THREE.Renderer;
 
-    constructor(parentDiv: any) {
+    constructor(container: Container, parentDiv: any) {
+        super(container, GraphicRenderer);
         this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
         this.camera.position.z = 1;
         this.scene = new THREE.Scene();
         this.renderer = new THREE.WebGLRenderer( { antialias: true } );
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         parentDiv.appendChild( this.renderer.domElement );
-    }
-
-    getMonitorText(): string {
-        return "GraphicRenderer: scene.children="+this.scene.children.length;
     }
 
     addObject3D(object3d: THREE.Object3D) {

@@ -1,12 +1,19 @@
 import { Monitorable } from './Monitor'
+import { BaseComponent } from './BaseComponent';
+import { Container } from './Container';
 
 const NOOP = function() {};
 
 /**
  * Converted to ts from https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/src/mainloop.js
  */
-export class MainLoop implements Monitorable {
-    
+export class MainLoop extends BaseComponent {
+
+    // BaseComponent abstract method
+    getAdditionalMonitorText(): string {
+        return "FPS: "+this.getFPS().toFixed(1);
+    }
+        
     private simulationTimestep = 1000 / 60; // simulation time size
     private rafHandle: number = 0;
     private lastFrameTimeMs: number = 0; // time of last execution of loop
@@ -26,15 +33,11 @@ export class MainLoop implements Monitorable {
     private started: boolean = false; // has loop started
     private running: boolean = false; // once loop has drawn its considered running
     
-    getMonitorText(): string {
-        return "MainLoop("
-                +"started="+this.started
-                +",running="+this.running
-                +",panic="+this.panic
-                +"FPS: "+this.getFPS().toFixed(1)
-                +")";
-    }
 
+    constructor(container: Container) {
+        super(container, MainLoop);
+    }
+    
     // how many milliseconds to simulate by execution of update
     getSimulationTimestep() {
         return this.simulationTimestep;
