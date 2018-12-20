@@ -6,7 +6,9 @@ export class GraphicRenderer extends BaseComponent {
 
     // BaseComponent abstract method
     getAdditionalMonitorText(): string {
-        return "scene.children="+this.scene.children.length;
+        let result = this.getMonitorTextFor(THREE.Camera, this.camera);
+        result += "scene.children="+this.scene.children.length;
+        return result;
     }
     
     private camera : THREE.Camera

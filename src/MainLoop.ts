@@ -1,8 +1,22 @@
-import { Monitorable } from './Monitor'
 import { BaseComponent } from './BaseComponent';
 import { Container } from './Container';
 
 const NOOP = function() {};
+
+export interface SimulationModule {
+
+    begin(timestamp: number, frameDelta: number ): void;
+
+    // update simulation (physics and ai)
+    update(simulationTimestep: number): void;
+
+    // render visuals
+    draw(interpolationPercentage: number): void;
+
+    // end of game loop, called once
+    end(fps: number, panic: boolean): void;
+
+}
 
 /**
  * Converted to ts from https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/src/mainloop.js
@@ -25,14 +39,10 @@ export class MainLoop extends BaseComponent {
     private fpsAlpha = 0.9; // how heavily to weigh recent fps measurements
     private framesSinceLastFpsUpdate = 0; // frames since last fps update
     private numUpdateSteps = 0; // number of times simulatio needs to update
-    private begin: Function = NOOP; // 
-    private update: Function = NOOP; // update simulation (physics and ai)
-    private draw: Function = NOOP; // render visuals
-    private end: Function = NOOP; // end of game loop, called once
     private panic: boolean = false; // is simulation too far behind
     private started: boolean = false; // has loop started
     private running: boolean = false; // once loop has drawn its considered running
-    
+    private simModules: SimulationModule[] = [];
 
     constructor(container: Container) {
         super(container, MainLoop);
@@ -79,22 +89,9 @@ export class MainLoop extends BaseComponent {
         this.frameDelta = 0;
         return oldFrameDelta;
     }
-    // set begin function
-    setBegin(fun: Function) {
-        this.begin = fun || this.begin;
-        return this;
-    }
-    setUpdate(fun: Function) {
-        this.update = fun || this.update;
-        return this;
-    }
-    setDraw(fun: Function) {
-        this.draw = fun || this.draw;
-        return this;
-    }
-    setEnd(fun: Function) {
-        this.end = fun || this.end;
-        return this;
+    // add simulation module
+    add(simulationModule: SimulationModule) {
+        this.simModules.push(simulationModule);
     }
     start() {
         if (!this.started) {
@@ -105,7 +102,10 @@ export class MainLoop extends BaseComponent {
     }
     startCallback(timestamp: number) {
         // Render the initial state before any updates occur.
-        this.draw(1);
+        // this.draw(1);
+        for (const simModule of this.simModules) {
+            simModule.draw(1);
+        }
         // application starts drawing.
         this.running = true;
         // Reset variables that are used for tracking time so that we
@@ -136,7 +136,10 @@ export class MainLoop extends BaseComponent {
         this.frameDelta += timestamp - this.lastFrameTimeMs;
         this.lastFrameTimeMs = timestamp;
         // functions that don't depend on time in simulation
-        this.begin(timestamp, this.frameDelta);
+        for (const simModule of this.simModules) {
+            simModule.begin(timestamp, this.frameDelta);
+        }
+        // this.begin(timestamp, this.frameDelta);
         // update fps estimate
         if (timestamp > this.lastFpsUpdate + this.fpsUpdateInterval) {
             this.fps = this.fpsAlpha * this.framesSinceLastFpsUpdate * 1000 / (timestamp - this.lastFpsUpdate) +
@@ -150,7 +153,9 @@ export class MainLoop extends BaseComponent {
         // run simulation update
         this.numUpdateSteps = 0;
         while (this.frameDelta >= this.simulationTimestep) {
-            this.update(this.simulationTimestep);
+            for (const simModule of this.simModules) {
+                simModule.update(this.simulationTimestep);
+            }
             this.frameDelta -= this.simulationTimestep;
             if (++this.numUpdateSteps >= 240) {
                 this.panic = true;
@@ -158,12 +163,13 @@ export class MainLoop extends BaseComponent {
             }
         }
         // render screen
-        this.draw(this.frameDelta / this.simulationTimestep);
+        for (const simModule of this.simModules) {
+            simModule.draw(this.frameDelta / this.simulationTimestep);
+        }
         // end of main loop
-        this.end(this.fps, this.panic);
+        for (const simModule of this.simModules) {
+            simModule.end(this.fps, this.panic);
+        }
         this.panic = false;
-        // debug.render_debug(0);    
-        // this.renderer.render( this.scene, this.camera );
-        // this.fps.frameRendered();
     }
 }

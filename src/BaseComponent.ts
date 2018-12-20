@@ -6,14 +6,20 @@ export abstract class BaseComponent implements Containable, Monitorable {
 
     // Monitorable interface
     getMonitorText(): string {
-        let result = this.key.name+"( "+this.getAdditionalMonitorText()+" ";
-        for (const key in this) {
-            if (typeof this[key] === 'number' || typeof this[key] === 'boolean') {
-                result += " , "+key+"="+this[key];
+        let result = this.getMonitorTextFor(this.key, this);
+        result += this.getAdditionalMonitorText();
+        return result;
+    }
+
+    getMonitorTextFor(key: Function, object: any) {
+        let result = key.name+"( ";
+        for (const key in object) {
+            if (typeof object[key] === 'number' || typeof object[key] === 'boolean') {
+                result += " , "+key+"="+object[key];
             }
         }
-        result += ")";
-        return result;
+        result += ") ";
+        return result;        
     }
 
     abstract getAdditionalMonitorText(): string;
