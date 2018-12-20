@@ -1,7 +1,6 @@
 import { BaseComponent } from './BaseComponent';
 import { Container } from './Container';
-
-const NOOP = function() {};
+import { AbstractContainable } from './AbstractContainable';
 
 export interface SimulationModule {
 
@@ -16,6 +15,18 @@ export interface SimulationModule {
     // end of game loop, called once
     end(fps: number, panic: boolean): void;
 
+}
+
+export class NoopSim extends AbstractContainable implements SimulationModule {
+
+    begin(timestamp: number, frameDelta: number): void {
+    }    
+    update(simulationTimestep: number): void {
+    }
+    draw(interpolationPercentage: number): void {
+    }
+    end(fps: number, panic: boolean): void {
+    }
 }
 
 /**

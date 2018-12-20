@@ -1,23 +1,15 @@
-import { SimulationModule, MainLoop } from "./MainLoop";
+import { MainLoop, NoopSim } from "./MainLoop";
 import { Containable } from "./Containable";
 import { Container } from "./Container";
 import { HelloWorldCube } from "./HelloWorldCube";
 import { randReal } from "./random";
 import { WorldModel } from "./WorldModel";
-import { GraphicRenderer } from "./GraphicRenderer";
-import { Monitor } from "./Monitor";
 
 
-export class HelloWorldSimulation implements SimulationModule, Containable {
-
-    resolve(key: Function) {
-        return this.container.resolve(key);
-    }
-
-    private container: Container;
+export class HelloWorldSimulation extends NoopSim {
 
     constructor(container: Container) {
-        this.container = container;
+        super(container, HelloWorldSimulation);
     }
 
     begin(timestamp: number, frameDelta: number): void {
@@ -37,13 +29,13 @@ export class HelloWorldSimulation implements SimulationModule, Containable {
         }
     }
 
-    draw(interpolationPercentage: number): void {
-        this.resolve(GraphicRenderer).render();
-    }
+    // draw(interpolationPercentage: number): void {
+    //     this.resolve(GraphicRenderer).render();
+    // }
 
     end(fps: number, panic: boolean): void {
-        this.resolve(Monitor).render_debug(0);
-        if (this.resolve(WorldModel).objectCount() > 10000) {
+        // this.resolve(Monitor).render_debug(0);
+        if (this.resolve(WorldModel).objectCount() > 1000) {
             this.resolve(MainLoop).stop();
         }
     }

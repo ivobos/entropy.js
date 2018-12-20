@@ -7,6 +7,8 @@ export { Monitor } from './Monitor';
 export { WorldModel } from './WorldModel';
 export { Container } from './Container';
 export { HelloWorldSimulation } from './HelloWorldSimulation'; 
+export { RenderSim } from './RenderSim';
+export { InfinitePattern } from './InfinitePattern';
 export * from './random';
 export * from './time';
 
