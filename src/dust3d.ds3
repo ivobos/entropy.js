@@ -1,0 +1,28 @@
+DUST3D 1.0 xml 0000000132
+<?xml version="1.0" encoding="UTF-8"?>
+<ds3>
+    <model name="model.xml" offset="0" size="1908"/>
+</ds3>
+<?xml version="1.0" encoding="UTF-8"?>
+<canvas originX="0.363121" originY="0.241135" originZ="0.763475" rigType="None">
+    <nodes>
+        <node id="{14b2b1e8-d4f0-43d4-93a2-fe14bf1ab9af}" partId="{db1a5899-4653-4559-bdb3-778eab7342a5}" radius="0.0453901" x="0.514894" y="0.448227" z="1.02163"/>
+        <node id="{6a4d685f-1d42-4002-8931-955d2ca57530}" partId="{db1a5899-4653-4559-bdb3-778eab7342a5}" radius="0.0453901" x="0.363121" y="0.241135" z="0.763475"/>
+        <node id="{9131ba42-00da-43fc-afe9-856173bedc12}" partId="{db1a5899-4653-4559-bdb3-778eab7342a5}" radius="0.0453901" x="0.41844" y="0.655319" z="0.763475"/>
+        <node id="{cc3c8c9c-fecb-41e7-a798-7a9835334b64}" partId="{db1a5899-4653-4559-bdb3-778eab7342a5}" radius="0.0453901" x="0.293617" y="0.460993" z="0.671277"/>
+    </nodes>
+    <edges>
+        <edge from="{6a4d685f-1d42-4002-8931-955d2ca57530}" id="{0e7dfe5d-12db-4a77-883c-eedfb66e8e6e}" partId="{db1a5899-4653-4559-bdb3-778eab7342a5}" to="{cc3c8c9c-fecb-41e7-a798-7a9835334b64}"/>
+        <edge from="{9131ba42-00da-43fc-afe9-856173bedc12}" id="{37f97a9c-62e0-48ee-89a5-3caba521962d}" partId="{db1a5899-4653-4559-bdb3-778eab7342a5}" to="{14b2b1e8-d4f0-43d4-93a2-fe14bf1ab9af}"/>
+        <edge from="{cc3c8c9c-fecb-41e7-a798-7a9835334b64}" id="{fe8b40fb-f928-434b-b38a-25157c30722a}" partId="{db1a5899-4653-4559-bdb3-778eab7342a5}" to="{9131ba42-00da-43fc-afe9-856173bedc12}"/>
+    </edges>
+    <parts>
+        <part disabled="false" id="{db1a5899-4653-4559-bdb3-778eab7342a5}" locked="false" rounded="false" subdived="false" visible="true" wrapped="false" xMirrored="false" zMirrored="false"/>
+    </parts>
+    <components>
+        <component combineMode="Normal" expanded="false" id="{ce9c339b-a159-4509-9c72-34d2fbeb36ef}" linkData="{db1a5899-4653-4559-bdb3-778eab7342a5}" linkDataType="partId"/>
+    </components>
+    <materials/>
+    <poses/>
+    <motions/>
+</canvas>

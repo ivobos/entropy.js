@@ -29,6 +29,14 @@ export class GraphicRenderer extends BaseComponent {
         this.scene.add( object3d );
     }
 
+    getCamera() : THREE.Camera {
+        return this.camera;
+    }
+
+    getHTMLElement() : HTMLElement {
+        return this.renderer.domElement;
+    }
+    
     render() {
         this.renderer.render( this.scene, this.camera );
     }

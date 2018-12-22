@@ -6,8 +6,8 @@
   "types": "lib/entropy.d.ts",
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "tsc",
-    "start": "nodemon -w ./src -e ts --exec 'npm run build'",
+    "build": "tsc && copyfiles -u 1 src/**/*.jpg src/**/*.obj lib/",
+    "start": "nodemon -w ./src -e ts,jpg,obj --exec 'npm run build'",
     "version": "replace 'VERSION = \"\\d+\\.\\d+\\.\\d+\"' \"VERSION = \\\"$npm_package_version\\\"\" ./src/version.ts && git add ./src/version.ts && npm run build",
     "release": "npm version patch && npm publish --access=public",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -29,13 +29,16 @@
   },
   "homepage": "https://github.com/ivobos/entropy-engine#readme",
   "devDependencies": {
+    "copyfiles": "^2.1.0",
     "nodemon": "^1.18.9",
     "replace": "^1.0.0",
     "typescript": "^3.2.2"
   },
   "dependencies": {
+    "@types/bunyan": "^1.8.5",
     "@types/random-js": "^1.0.31",
     "@types/three": "^0.93.13",
+    "bunyan": "^1.8.12",
     "random-js": "^1.0.8",
     "three": "^0.99.0"
   }

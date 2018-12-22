@@ -9,10 +9,15 @@ export { Container } from './Container';
 export { HelloWorldSimulation } from './HelloWorldSimulation'; 
 export { RenderSim } from './RenderSim';
 export { InfinitePattern } from './InfinitePattern';
+export { MapControlsSim } from './MapControlsSim';
 export * from './random';
 export * from './time';
 
 import { Builder } from './Builder';
+// import * as logging from './logging';
+
+// const log = logging.createLoggerFromFilename(__filename);
+
 
 export function builder() {
     return new Builder();
