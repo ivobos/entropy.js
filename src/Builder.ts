@@ -6,6 +6,7 @@ import { GraphicRenderer } from './GraphicRenderer';
 import { WorldModel } from './WorldModel';
 import { MainLoop, SimulationModule } from './MainLoop';
 import { Monitor } from './Monitor';
+import { textureCache } from './globals';
 
 let static_init_done = false;
 
@@ -36,6 +37,7 @@ export class Builder {
         monitor.register(mainLoop);
         monitor.register(graphicRenderer);
         monitor.register(worldModel);        
+        monitor.register(textureCache);
         const engine = new Engine(this.container);
         return engine;
     }
