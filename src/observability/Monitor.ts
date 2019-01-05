@@ -1,9 +1,9 @@
 import * as time from "../utils/time";
 import { BaseComponent } from "../container/BaseComponent";
 import { Container } from "../container/Container";
+import { HtmlElements } from "../engine/HtmlElements";
 
 const UPDATE_PERIOD_MSEC = 1000;
-export const DEBUG_INFO_CONTENT_DIV_ID = "debug_info_content";
 
 export interface Monitorable {
     getMonitorText() : string;
@@ -17,9 +17,11 @@ export class Monitor extends BaseComponent {
     
     private monitorableComponents : Array<Monitorable> = [];
     private nextUpdateTimeMsec: number = 0;
+    private debugConsoleDiv: HTMLElement;
 
     constructor(container: Container) {
         super(container, Monitor);
+        this.debugConsoleDiv = this.resolve(HtmlElements).getDebugConsoleDiv();
     }    
 
     register(component: Monitorable) {
@@ -27,8 +29,7 @@ export class Monitor extends BaseComponent {
     }
 
     render_debug(tick: number) {
-        const div = document.getElementById(DEBUG_INFO_CONTENT_DIV_ID);
-        if (div) {
+        if (this.debugConsoleDiv) {
             const currentTimeMsec = time.getMsecTimestamp();
             if (this.nextUpdateTimeMsec === 0 || currentTimeMsec > this.nextUpdateTimeMsec) {
                 this.nextUpdateTimeMsec = currentTimeMsec + UPDATE_PERIOD_MSEC;
@@ -36,7 +37,7 @@ export class Monitor extends BaseComponent {
                 for (const monitorable of this.monitorableComponents) {
                     content += monitorable.getMonitorText() + "<br>";
                 }
-                div.innerHTML = content;
+                this.debugConsoleDiv.innerHTML = content;
             }
         } else {
             this.nextUpdateTimeMsec = 0;

@@ -7,6 +7,7 @@ import { WorldModel } from './WorldModel';
 import { MainLoop, SimulationModule } from './MainLoop';
 import { Monitor } from '../observability/Monitor';
 import { textureCache } from './globals';
+import { HtmlElements } from './HtmlElements';
 
 let static_init_done = false;
 
@@ -14,6 +15,7 @@ export class Builder {
 
     private container = new Container();
     private simList: SimulationModule[] = [];
+    private parentDiv: HTMLElement | null = null;
 
     addSimulation(cb: (container: Container) => SimulationModule): Builder {
         const sim = cb(this.container);
@@ -21,11 +23,20 @@ export class Builder {
         return this;
     }
 
+    setElement(parentDiv: HTMLElement | null): Builder {
+        this.parentDiv = parentDiv;
+        return this;
+    }
+
     build() : Engine {
+        if (this.parentDiv === null) {
+            throw Error("parentDiv is null");
+        }
         if (!static_init_done) {
             time.time_init();
         }
-        const graphicRenderer = new GraphicRenderer(this.container, document.getElementById("RenderLayer"));    
+        const canvas = new HtmlElements(this.container, this.parentDiv);
+        const graphicRenderer = new GraphicRenderer(this.container, canvas.getRendererDiv());    
         const worldModel = new WorldModel(this.container);
         const mainLoop = new MainLoop(this.container);
         const monitor = new Monitor(this.container);
