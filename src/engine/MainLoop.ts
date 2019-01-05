@@ -1,6 +1,6 @@
-import { BaseComponent } from './BaseComponent';
-import { Container } from './Container';
-import { AbstractContainable } from './AbstractContainable';
+import { BaseComponent } from '../container/BaseComponent';
+import { Container } from '../container/Container';
+import { AbstractContainable } from '../container/AbstractContainable';
 
 export interface SimulationModule {
 

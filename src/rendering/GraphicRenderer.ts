@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { Container } from './Container';
-import { BaseComponent } from './BaseComponent';
+import { Container } from '../container/Container';
+import { BaseComponent } from '../container/BaseComponent';
 
 export class GraphicRenderer extends BaseComponent {
 

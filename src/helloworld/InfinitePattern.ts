@@ -1,6 +1,6 @@
-import { NoopSim } from "./MainLoop";
+import { NoopSim } from "../engine/MainLoop";
 import * as THREE from 'three';
-import { WorldModel } from "./WorldModel";
+import { WorldModel } from "../engine/WorldModel";
 
 
 export class InfinitePattern extends NoopSim {

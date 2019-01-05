@@ -1,6 +1,6 @@
-import * as time from "./time";
-import { BaseComponent } from "./BaseComponent";
-import { Container } from "./Container";
+import * as time from "../utils/time";
+import { BaseComponent } from "../container/BaseComponent";
+import { Container } from "../container/Container";
 
 const UPDATE_PERIOD_MSEC = 1000;
 export const DEBUG_INFO_CONTENT_DIV_ID = "debug_info_content";

@@ -1,5 +1,5 @@
-import { BaseComponent } from "./BaseComponent";
-import { Container } from "./Container";
+import { BaseComponent } from "../container/BaseComponent";
+import { Container } from "../container/Container";
 import { MainLoop } from "./MainLoop";
 
 

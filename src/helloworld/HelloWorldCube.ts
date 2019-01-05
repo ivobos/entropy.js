@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import texture from './UV_Grid_Lrg_Texture';
+import texture from '../textures/UV_Grid_Lrg_Texture';
 
 export class HelloWorldCube extends THREE.Mesh {
 

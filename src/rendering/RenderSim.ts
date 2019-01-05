@@ -1,6 +1,6 @@
-import { NoopSim } from "./MainLoop";
-import { Container, GraphicRenderer } from "./entropy";
-import { Monitor } from "./Monitor";
+import { NoopSim } from "../engine/MainLoop";
+import { Container, GraphicRenderer } from "../entropy";
+import { Monitor } from "../observability/Monitor";
 
 
 export class RenderSim extends NoopSim {

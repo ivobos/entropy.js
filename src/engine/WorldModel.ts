@@ -1,6 +1,6 @@
-import { Container } from "./Container";
-import { GraphicRenderer } from "./GraphicRenderer";
-import { BaseComponent } from "./BaseComponent";
+import { Container } from "../container/Container";
+import { GraphicRenderer } from "../rendering/GraphicRenderer";
+import { BaseComponent } from "../container/BaseComponent";
 
 
 export class WorldModel extends BaseComponent {

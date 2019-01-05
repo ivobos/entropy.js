@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { MainLoop, NoopSim } from "./MainLoop";
-import { Container } from './Container';
-import { GraphicRenderer } from './GraphicRenderer';
+import { MainLoop, NoopSim } from "../engine/MainLoop";
+import { Container } from '../container/Container';
+import { GraphicRenderer } from '../rendering/GraphicRenderer';
 
 export class MapControlsSim extends NoopSim {
     // private mapControls: THREE.MapControls | undefined = undefined;

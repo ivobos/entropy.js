@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import { MainLoop, NoopSim } from "./MainLoop";
-import { Container } from "./Container";
+import { MainLoop, NoopSim } from "../engine/MainLoop";
+import { Container } from "../container/Container";
 import { HelloWorldCube } from "./HelloWorldCube";
-import { randReal } from "./random";
-import { WorldModel } from "./WorldModel";
+import { randReal } from "../utils/random";
+import { WorldModel } from "../engine/WorldModel";
 
 export class HelloWorldSimulation extends NoopSim {
 

@@ -1,6 +1,6 @@
 import * as THREE from "three"
-import { BaseComponent } from "./BaseComponent";
-import { Container } from "./Container";
+import { BaseComponent } from "../container/BaseComponent";
+import { Container } from "../container/Container";
 
 
 export class TextureCache extends BaseComponent {

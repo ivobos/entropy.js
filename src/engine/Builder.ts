@@ -1,11 +1,11 @@
 
 import { Engine } from './Engine';
-import * as time from './time';
-import { Container } from './Container';
-import { GraphicRenderer } from './GraphicRenderer';
+import * as time from '../utils/time';
+import { Container } from '../container/Container';
+import { GraphicRenderer } from '../rendering/GraphicRenderer';
 import { WorldModel } from './WorldModel';
 import { MainLoop, SimulationModule } from './MainLoop';
-import { Monitor } from './Monitor';
+import { Monitor } from '../observability/Monitor';
 import { textureCache } from './globals';
 
 let static_init_done = false;

@@ -1,6 +1,6 @@
 import { Container } from './Container';
 import { Containable } from './Containable';
-import { Monitorable } from './Monitor';
+import { Monitorable } from '../observability/Monitor';
 import { AbstractContainable } from './AbstractContainable';
 
 export abstract class BaseComponent extends AbstractContainable implements Monitorable {
