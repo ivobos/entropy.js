@@ -6,7 +6,7 @@ import { GraphicRenderer } from '../rendering/GraphicRenderer';
 import { WorldModel } from './WorldModel';
 import { MainLoop, SimulationModule } from './MainLoop';
 import { Monitor } from '../observability/Monitor';
-import { textureCache } from './globals';
+import { textureCache, globalKeyHandler } from './globals';
 import { HtmlElements } from './HtmlElements';
 
 let static_init_done = false;
@@ -49,6 +49,7 @@ export class Builder {
         monitor.register(graphicRenderer);
         monitor.register(worldModel);        
         monitor.register(textureCache);
+        monitor.register(globalKeyHandler);
         const engine = new Engine(this.container);
         return engine;
     }

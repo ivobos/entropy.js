@@ -18,6 +18,7 @@ export class HelloWorldSimulation extends NoopSim {
     }  
 
     update(simulationTimestep: number): void {
+        if (this.resolve(WorldModel).objectCount() > 1000) return;
         let i = 30;
         while (i > 0) {
             let object3d: HelloWorldCube; 
@@ -36,9 +37,9 @@ export class HelloWorldSimulation extends NoopSim {
 
     end(fps: number, panic: boolean): void {
         // this.resolve(Monitor).render_debug(0);
-        if (this.resolve(WorldModel).objectCount() > 1000) {
-            this.resolve(MainLoop).stop();
-        }
+        // if (this.resolve(WorldModel).objectCount() > 1000) {
+        //     this.resolve(MainLoop).stop();
+        // }
     }
 
 }
