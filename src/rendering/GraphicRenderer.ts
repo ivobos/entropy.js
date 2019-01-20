@@ -6,20 +6,24 @@ export class GraphicRenderer extends BaseComponent {
 
     // BaseComponent abstract method
     getAdditionalMonitorText(): string {
-        let result = this.getMonitorTextFor(THREE.Camera, this.camera);
-        result += "scene.children="+this.scene.children.length;
+        let result = "rendered="+this.rendered;
+        result += " "+this.getMonitorTextFor(THREE.Camera, this.camera);
+        result += " scene.children="+this.scene.children.length;
         return result;
     }
     
     private camera : THREE.Camera
     private scene : THREE.Scene;
     private renderer : THREE.Renderer;
+    private rendered: boolean = false;
 
     constructor(container: Container, parentDiv: any) {
         super(container, GraphicRenderer);
         this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
         this.camera.position.z = 1;
+        this.camera.userData.changed = true;
         this.scene = new THREE.Scene();
+        this.scene.userData.changed = true;
         this.renderer = new THREE.WebGLRenderer( { antialias: true } );
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         parentDiv.appendChild( this.renderer.domElement );
@@ -27,6 +31,7 @@ export class GraphicRenderer extends BaseComponent {
 
     addObject3D(object3d: THREE.Object3D) {
         this.scene.add( object3d );
+        this.scene.userData.changed = true;
     }
 
     getCamera() : THREE.Camera {
@@ -38,7 +43,14 @@ export class GraphicRenderer extends BaseComponent {
     }
     
     render() {
-        this.renderer.render( this.scene, this.camera );
+        if (this.scene.userData.changed || this.camera.userData.changed) {
+            this.renderer.render( this.scene, this.camera );
+            this.rendered = true;
+            this.camera.userData.changed = false;
+            this.scene.userData.changed = false;
+        } else {
+            this.rendered = false;
+        }
     }
 
 }
