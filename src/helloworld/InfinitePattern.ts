@@ -1,11 +1,17 @@
-import { NoopSim } from "../engine/MainLoop";
+import { SimStep } from "../engine/MainLoop";
 import * as THREE from 'three';
 import { WorldModel } from "../engine/WorldModel";
+import { AbstractContainable } from "../container/AbstractContainable";
+import { Container } from "../container/Container";
 
 
-export class InfinitePattern extends NoopSim {
+export class InfinitePattern extends AbstractContainable implements SimStep  {
 
     private gridHelper : THREE.GridHelper | undefined = undefined;
+
+    constructor(container: Container) {
+        super(container, InfinitePattern);
+    }
 
     calculatePatternOffset() {
         var m4a = new THREE.Matrix3();
@@ -23,7 +29,7 @@ export class InfinitePattern extends NoopSim {
         console.log("v3="+v3.toArray());
     }
 
-    update(simulationTimestep: number): void {
+    simStep(simulationTimestep: number): void {
         if (this.gridHelper === undefined) {
             this.gridHelper = new THREE.GridHelper( 20, 40, 0x0000ff, 0x808080 );
             this.gridHelper.position.y = - 1;

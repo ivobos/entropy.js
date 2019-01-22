@@ -1,16 +1,17 @@
 import * as THREE from 'three';
-import { MainLoop, NoopSim } from "../engine/MainLoop";
+import { MainLoop, LoopStartStep } from "../engine/MainLoop";
 import { Container } from '../container/Container';
 import { GraphicRenderer } from '../rendering/GraphicRenderer';
+import { AbstractContainable } from '../container/AbstractContainable';
 
-export class MapControlsSim extends NoopSim {
+export class MapControlsSim extends AbstractContainable implements LoopStartStep {
     // private mapControls: THREE.MapControls | undefined = undefined;
 
-    constructor(container: Container) {
-        super(container, MapControlsSim);
-    }
+    // constructor(container: Container) {
+    //     super(container, MapControlsSim);
+    // }
 
-    begin(timestamp: number, frameDelta: number) {
+    loopStartStep(timestamp: number, frameDelta: number) {
         // if (this.mapControls === undefined) {
         //     const graphicRenderer : GraphicRenderer = this.resolve(GraphicRenderer); 
         //     const camera = graphicRenderer.getCamera();

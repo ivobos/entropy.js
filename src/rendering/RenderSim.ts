@@ -1,19 +1,16 @@
-import { NoopSim } from "../engine/MainLoop";
+import { SimStep, DrawStep, LoopEndStep } from "../engine/MainLoop";
 import { Container, GraphicRenderer } from "../entropy";
 import { Monitor } from "../observability/Monitor";
+import { AbstractContainable } from "../container/AbstractContainable";
 
-
-export class RenderSim extends NoopSim {
+export class RenderSim extends AbstractContainable implements DrawStep {
 
     constructor(container: Container) {
         super(container, RenderSim);
     }
 
-    draw(interpolationPercentage: number): void {
+    drawStep(interpolationPercentage: number): void {
         this.resolve(GraphicRenderer).render();
     }
 
-    end(fps: number, panic: boolean): void {
-        this.resolve(Monitor).render_debug(0);
-    }
 } 

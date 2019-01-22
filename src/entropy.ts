@@ -2,9 +2,11 @@ export  { VERSION } from './version';
 export const NAME = "entropy-engine";
 export { HelloWorldCube } from './helloworld/HelloWorldCube';
 export { GraphicRenderer } from './rendering/GraphicRenderer';
-export { MainLoop, NoopSim } from './engine/MainLoop';
+export { MainLoop, SimStep } from './engine/MainLoop';
 export { Monitor } from './observability/Monitor';
+export { ShowDebug } from './observability/ShowDebug';
 export { WorldModel } from './engine/WorldModel';
+export { AbstractContainable } from './container/AbstractContainable';
 export { Container } from './container/Container';
 export { HelloWorldSimulation } from './helloworld/HelloWorldSimulation'; 
 export { RenderSim } from './rendering/RenderSim';
@@ -19,7 +21,6 @@ import { Builder } from './engine/Builder';
 // const log = logging.createLoggerFromFilename(__filename);
 
 
-export function builder() {
+export function builder(): Builder {
     return new Builder();
 }
-

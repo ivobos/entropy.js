@@ -1,11 +1,12 @@
 import * as THREE from 'three';
-import { MainLoop, NoopSim } from "../engine/MainLoop";
+import { MainLoop, SimStep } from "../engine/MainLoop";
 import { Container } from "../container/Container";
 import { HelloWorldCube } from "./HelloWorldCube";
 import { randReal } from "../utils/random";
 import { WorldModel } from "../engine/WorldModel";
+import { AbstractContainable } from '../container/AbstractContainable';
 
-export class HelloWorldSimulation extends NoopSim {
+export class HelloWorldSimulation extends AbstractContainable implements SimStep {
 
     private manager: THREE.LoadingManager | undefined = undefined;
 
@@ -13,11 +14,11 @@ export class HelloWorldSimulation extends NoopSim {
         super(container, HelloWorldSimulation);
     }
 
-    begin(timestamp: number, frameDelta: number): void {
+    // begin(timestamp: number, frameDelta: number): void {
        
-    }  
+    // }  
 
-    update(simulationTimestep: number): void {
+    simStep(simulationTimestep: number): void {
         if (this.resolve(WorldModel).objectCount() > 1000) return;
         let i = 30;
         while (i > 0) {
@@ -35,11 +36,11 @@ export class HelloWorldSimulation extends NoopSim {
     //     this.resolve(GraphicRenderer).render();
     // }
 
-    end(fps: number, panic: boolean): void {
+    // end(fps: number, panic: boolean): void {
         // this.resolve(Monitor).render_debug(0);
         // if (this.resolve(WorldModel).objectCount() > 1000) {
         //     this.resolve(MainLoop).stop();
         // }
-    }
+    // }
 
 }

@@ -2,32 +2,33 @@ import { BaseComponent } from '../container/BaseComponent';
 import { Container } from '../container/Container';
 import { AbstractContainable } from '../container/AbstractContainable';
 
-export interface SimulationModule {
+export interface LoopStartStep {
 
-    begin(timestamp: number, frameDelta: number ): void;
+    loopStartStep(timestamp: number, frameDelta: number ): void;
+
+}
+
+export interface SimStep {
 
     // update simulation (physics and ai)
-    update(simulationTimestep: number): void;
+    simStep(simulationTimestep: number): void;
+
+}
+
+export interface DrawStep {
 
     // render visuals
-    draw(interpolationPercentage: number): void;
+    drawStep(interpolationPercentage: number): void;
+
+}
+
+export interface LoopEndStep {
 
     // end of game loop, called once
-    end(fps: number, panic: boolean): void;
+    loopEndStep(fps: number, panic: boolean): void;
 
 }
 
-export class NoopSim extends AbstractContainable implements SimulationModule {
-
-    begin(timestamp: number, frameDelta: number): void {
-    }    
-    update(simulationTimestep: number): void {
-    }
-    draw(interpolationPercentage: number): void {
-    }
-    end(fps: number, panic: boolean): void {
-    }
-}
 
 /**
  * Converted to ts from https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/src/mainloop.js
@@ -53,7 +54,10 @@ export class MainLoop extends BaseComponent {
     private panic: boolean = false; // is simulation too far behind
     private started: boolean = false; // has loop started
     private running: boolean = false; // once loop has drawn its considered running
-    private simModules: SimulationModule[] = [];
+    private loopStartSteps: LoopStartStep[] = [];
+    private simSteps: SimStep[] = [];
+    private drawSteps: DrawStep[] = [];
+    private loopEndSteps: LoopEndStep[] = [];
 
     constructor(container: Container) {
         super(container, MainLoop);
@@ -101,8 +105,17 @@ export class MainLoop extends BaseComponent {
         return oldFrameDelta;
     }
     // add simulation module
-    add(simulationModule: SimulationModule) {
-        this.simModules.push(simulationModule);
+    addLoopStartStep(loopStartStep: LoopStartStep) {
+        this.loopStartSteps.push(loopStartStep);
+    }
+    addSimStep(simUpdate: SimStep) {
+        this.simSteps.push(simUpdate);
+    }
+    addDrawStep(drawStep: DrawStep) {
+        this.drawSteps.push(drawStep);
+    }
+    addLoopEndStep(loopEndStep: LoopEndStep) {
+        this.loopEndSteps.push(loopEndStep);
     }
     start() {
         if (!this.started) {
@@ -114,8 +127,8 @@ export class MainLoop extends BaseComponent {
     startCallback(timestamp: number) {
         // Render the initial state before any updates occur.
         // this.draw(1);
-        for (const simModule of this.simModules) {
-            simModule.draw(1);
+        for (const drawStep of this.drawSteps) {
+            drawStep.drawStep(1);
         }
         // application starts drawing.
         this.running = true;
@@ -147,8 +160,8 @@ export class MainLoop extends BaseComponent {
         this.frameDelta += timestamp - this.lastFrameTimeMs;
         this.lastFrameTimeMs = timestamp;
         // functions that don't depend on time in simulation
-        for (const simModule of this.simModules) {
-            simModule.begin(timestamp, this.frameDelta);
+        for (const loopStartStep of this.loopStartSteps) {
+            loopStartStep.loopStartStep(timestamp, this.frameDelta);
         }
         // this.begin(timestamp, this.frameDelta);
         // update fps estimate
@@ -164,8 +177,8 @@ export class MainLoop extends BaseComponent {
         // run simulation update
         this.numUpdateSteps = 0;
         while (this.frameDelta >= this.simulationTimestep) {
-            for (const simModule of this.simModules) {
-                simModule.update(this.simulationTimestep);
+            for (const simStep of this.simSteps) {
+                simStep.simStep(this.simulationTimestep);
             }
             this.frameDelta -= this.simulationTimestep;
             if (++this.numUpdateSteps >= 240) {
@@ -174,12 +187,12 @@ export class MainLoop extends BaseComponent {
             }
         }
         // render screen
-        for (const simModule of this.simModules) {
-            simModule.draw(this.frameDelta / this.simulationTimestep);
+        for (const simModule of this.drawSteps) {
+            simModule.drawStep(this.frameDelta / this.simulationTimestep);
         }
         // end of main loop
-        for (const simModule of this.simModules) {
-            simModule.end(this.fps, this.panic);
+        for (const loopEndStep of this.loopEndSteps) {
+            loopEndStep.loopEndStep(this.fps, this.panic);
         }
         this.panic = false;
     }

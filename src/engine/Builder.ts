@@ -4,7 +4,7 @@ import * as time from '../utils/time';
 import { Container } from '../container/Container';
 import { GraphicRenderer } from '../rendering/GraphicRenderer';
 import { WorldModel } from './WorldModel';
-import { MainLoop, SimulationModule } from './MainLoop';
+import { MainLoop, SimStep, DrawStep, LoopEndStep, LoopStartStep } from './MainLoop';
 import { Monitor } from '../observability/Monitor';
 import { textureCache, globalKeyHandler } from './globals';
 import { HtmlElements } from './HtmlElements';
@@ -14,12 +14,33 @@ let static_init_done = false;
 export class Builder {
 
     private container = new Container();
-    private simList: SimulationModule[] = [];
     private parentDiv: HTMLElement | null = null;
+    private loopStartSteps: LoopStartStep[] = [];
+    private simSteps: SimStep[] = [];
+    private drawSteps: DrawStep[] = [];
+    private loopEndSteps: LoopEndStep[] = [];
 
-    addSimulation(cb: (container: Container) => SimulationModule): Builder {
-        const sim = cb(this.container);
-        this.simList.push(sim);
+    getContainer() : Container {
+        return this.container;
+    }
+
+    addLoopStartStep(loopStartStep: LoopStartStep): Builder {
+        this.loopStartSteps.push(loopStartStep);
+        return this;
+    }
+
+    addSimStep(simUpdate: SimStep): Builder {
+        this.simSteps.push(simUpdate);
+        return this;
+    }
+
+    addDrawStep(drawStep: DrawStep): Builder {
+        this.drawSteps.push(drawStep);
+        return this;
+    }
+
+    addLoopEndStep(loopEndStep: LoopEndStep): Builder {
+        this.loopEndSteps.push(loopEndStep);
         return this;
     }
 
@@ -41,8 +62,17 @@ export class Builder {
         const mainLoop = new MainLoop(this.container);
         const monitor = new Monitor(this.container);
 
-        for (const sim of this.simList) {
-            mainLoop.add(sim);
+        for (const loopStartStep of this.loopStartSteps) {
+            mainLoop.addLoopStartStep(loopStartStep);
+        }
+        for (const simUpdate of this.simSteps) {
+            mainLoop.addSimStep(simUpdate);
+        }
+        for (const drawStep of this.drawSteps) {
+            mainLoop.addDrawStep(drawStep);
+        }
+        for (const loopEndStep of this.loopEndSteps) {
+            mainLoop.addLoopEndStep(loopEndStep);
         }
 
         monitor.register(mainLoop);
