@@ -6,7 +6,7 @@ export { MainLoop, SimStep } from './engine/MainLoop';
 export { Monitor } from './observability/Monitor';
 export { ShowDebug } from './observability/ShowDebug';
 export { WorldModel } from './engine/WorldModel';
-export { AbstractContainable } from './container/AbstractContainable';
+export { AbstractComponent } from './container/AbstractComponent';
 export { Container } from './container/Container';
 export { HelloWorldSimulation } from './helloworld/HelloWorldSimulation'; 
 export { RenderSim } from './rendering/RenderSim';

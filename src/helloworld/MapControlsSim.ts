@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import { MainLoop, LoopStartStep } from "../engine/MainLoop";
 import { Container } from '../container/Container';
 import { GraphicRenderer } from '../rendering/GraphicRenderer';
-import { AbstractContainable } from '../container/AbstractContainable';
+import { AbstractComponent } from '../container/AbstractComponent';
 
-export class MapControlsSim extends AbstractContainable implements LoopStartStep {
+export class MapControlsSim extends AbstractComponent implements LoopStartStep {
     // private mapControls: THREE.MapControls | undefined = undefined;
 
     // constructor(container: Container) {

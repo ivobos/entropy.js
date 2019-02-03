@@ -1,6 +1,5 @@
-import { BaseComponent } from '../container/BaseComponent';
-import { Container } from '../container/Container';
-import { AbstractContainable } from '../container/AbstractContainable';
+import { ComponentMixin, ComponentOptions } from "../container/Component";
+import { ObservableMixin } from "../observability/Observable";
 
 export interface LoopStartStep {
 
@@ -33,13 +32,8 @@ export interface LoopEndStep {
 /**
  * Converted to ts from https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/src/mainloop.js
  */
-export class MainLoop extends BaseComponent {
+export class MainLoop extends ObservableMixin(ComponentMixin(Object))  {
 
-    // BaseComponent abstract method
-    getAdditionalMonitorText(): string {
-        return "FPS: "+this.getFPS().toFixed(1);
-    }
-        
     private simulationTimestep = 1000 / 60; // simulation time size
     private rafHandle: number = 0;
     private lastFrameTimeMs: number = 0; // time of last execution of loop
@@ -59,10 +53,14 @@ export class MainLoop extends BaseComponent {
     private drawSteps: DrawStep[] = [];
     private loopEndSteps: LoopEndStep[] = [];
 
-    constructor(container: Container) {
-        super(container, MainLoop);
+    constructor(options: ComponentOptions) {
+        super({...options, key: MainLoop, obsDetail: () => this.getAdditionalMonitorText()});
     }
     
+    getAdditionalMonitorText(): string {
+        return "FPS: "+this.getFPS().toFixed(1);
+    }
+            
     // how many milliseconds to simulate by execution of update
     getSimulationTimestep() {
         return this.simulationTimestep;

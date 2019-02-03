@@ -1,7 +1,6 @@
-import { BaseComponent } from '../container/BaseComponent'
-import { Container } from '../container/Container';
+import { AbstractObservableComponent, ObservableComponentOptions } from '../container/AbstractObservableComponent'
 
-export class GlobalKeyboardHandler extends BaseComponent {
+export class GlobalKeyboardHandler extends AbstractObservableComponent {
     private keyMap:{ [index:string] : boolean } = {};
     private keyHandlers:{ [index:string] : any } = {};
     
@@ -12,8 +11,8 @@ export class GlobalKeyboardHandler extends BaseComponent {
         return debugString;
     }
 
-    constructor(container: Container) {
-        super(container, GlobalKeyboardHandler);
+    constructor(options: ObservableComponentOptions) {
+        super({...options, key: GlobalKeyboardHandler});
         document.addEventListener('keydown', (event: KeyboardEvent) => this.onKeyDownCb(event), false);
         document.addEventListener('keyup', (event: KeyboardEvent) => this.onKeyUpCb(event), false);
     }

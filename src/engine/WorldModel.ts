@@ -1,19 +1,19 @@
-import { Container } from "../container/Container";
 import { GraphicRenderer } from "../rendering/GraphicRenderer";
-import { BaseComponent } from "../container/BaseComponent";
+import { ComponentMixin, ComponentOptions } from "../container/Component";
+import { ObservableMixin } from "../observability/Observable";
 
 
-export class WorldModel extends BaseComponent {
+export class WorldModel extends ObservableMixin(ComponentMixin(Object)) {
+
+    private numObjects = 0;
+
+    constructor(options: ComponentOptions) {
+        super({...options, key: WorldModel, obsDetail: () => this.getAdditionalMonitorText()});
+    }
 
     // BaseComponent abstract method
     getAdditionalMonitorText(): string {
         return "";
-    }
-
-    private numObjects = 0;
-
-    constructor(container: Container) {
-        super(container, WorldModel);
     }
 
     addObject3D(object3d: THREE.Object3D) {

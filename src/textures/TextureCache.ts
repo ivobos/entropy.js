@@ -1,15 +1,15 @@
 import * as THREE from "three"
-import { BaseComponent } from "../container/BaseComponent";
+import { AbstractObservableComponent, ObservableComponentOptions } from "../container/AbstractObservableComponent";
 import { Container } from "../container/Container";
 
 
-export class TextureCache extends BaseComponent {
+export class TextureCache extends AbstractObservableComponent {
 
     private textureByUrl : Map<string, THREE.Texture>;
     private textureLoader: THREE.TextureLoader;
 
-    constructor(container: Container) {
-        super(container, TextureCache);
+    constructor(container: ObservableComponentOptions) {
+        super({...container, key: TextureCache});
         this.textureByUrl = new Map();
         this.textureLoader = new THREE.TextureLoader();
     }

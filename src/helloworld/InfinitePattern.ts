@@ -1,17 +1,13 @@
 import { SimStep } from "../engine/MainLoop";
 import * as THREE from 'three';
 import { WorldModel } from "../engine/WorldModel";
-import { AbstractContainable } from "../container/AbstractContainable";
+import { AbstractComponent } from "../container/AbstractComponent";
 import { Container } from "../container/Container";
 
 
-export class InfinitePattern extends AbstractContainable implements SimStep  {
+export class InfinitePattern extends AbstractComponent implements SimStep  {
 
     private gridHelper : THREE.GridHelper | undefined = undefined;
-
-    constructor(container: Container) {
-        super(container, InfinitePattern);
-    }
 
     calculatePatternOffset() {
         var m4a = new THREE.Matrix3();

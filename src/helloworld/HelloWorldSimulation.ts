@@ -1,17 +1,16 @@
 import * as THREE from 'three';
 import { MainLoop, SimStep } from "../engine/MainLoop";
-import { Container } from "../container/Container";
 import { HelloWorldCube } from "./HelloWorldCube";
 import { randReal } from "../utils/random";
 import { WorldModel } from "../engine/WorldModel";
-import { AbstractContainable } from '../container/AbstractContainable';
+import { ComponentMixin, ComponentOptions } from "../container/Component";
 
-export class HelloWorldSimulation extends AbstractContainable implements SimStep {
+export class HelloWorldSimulation extends ComponentMixin(Object) implements SimStep {
 
     private manager: THREE.LoadingManager | undefined = undefined;
 
-    constructor(container: Container) {
-        super(container, HelloWorldSimulation);
+    constructor(options: ComponentOptions) {
+        super({...options, key: HelloWorldSimulation});
     }
 
     // begin(timestamp: number, frameDelta: number): void {

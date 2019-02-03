@@ -1,17 +1,16 @@
-import { BaseComponent } from "../container/BaseComponent";
-import { Container } from "../container/Container";
 import { MainLoop } from "./MainLoop";
+import { ComponentMixin, ComponentOptions } from "../container/Component";
+import { ObservableMixin } from "../observability/Observable";
 
 
-export class Engine extends BaseComponent {
+export class Engine extends ObservableMixin(ComponentMixin(Object)) { 
 
-    // BaseComponent abstract method
-    getAdditionalMonitorText(): string {
-        return "";
+    constructor(options: ComponentOptions) {
+        super({...options, key: Engine, obsDetail: () => this.getAdditionalMonitorText()});
     }
 
-    constructor(container: Container) {
-        super(container, Engine);
+    getAdditionalMonitorText(): string {
+        return "test";
     }
 
     start() {

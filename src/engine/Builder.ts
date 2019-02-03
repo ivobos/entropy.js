@@ -1,4 +1,3 @@
-
 import { Engine } from './Engine';
 import * as time from '../utils/time';
 import { Container } from '../container/Container';
@@ -56,11 +55,11 @@ export class Builder {
         if (!static_init_done) {
             time.time_init();
         }
-        const canvas = new HtmlElements(this.container, this.parentDiv);
-        const graphicRenderer = new GraphicRenderer(this.container, canvas.getRendererDiv());    
-        const worldModel = new WorldModel(this.container);
-        const mainLoop = new MainLoop(this.container);
-        const monitor = new Monitor(this.container);
+        const canvas = new HtmlElements({ container: this.container, element: this.parentDiv});
+        const graphicRenderer = new GraphicRenderer({container: this.container, parentDiv: canvas.getRendererDiv()});    
+        const worldModel = new WorldModel({ container: this.container });
+        const mainLoop = new MainLoop({ container: this.container});
+        const monitor = new Monitor({container: this.container});
 
         for (const loopStartStep of this.loopStartSteps) {
             mainLoop.addLoopStartStep(loopStartStep);
@@ -75,12 +74,13 @@ export class Builder {
             mainLoop.addLoopEndStep(loopEndStep);
         }
 
+        const engine = new Engine({ container: this.container});
         monitor.register(mainLoop);
         monitor.register(graphicRenderer);
         monitor.register(worldModel);        
         monitor.register(textureCache);
         monitor.register(globalKeyHandler);
-        const engine = new Engine(this.container);
+        monitor.register(engine);
         return engine;
     }
 

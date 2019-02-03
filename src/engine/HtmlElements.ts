@@ -1,20 +1,20 @@
-import { BaseComponent } from "../container/BaseComponent";
-import { Container } from "../container/Container";
+import { ComponentMixin, ComponentOptions } from "../container/Component";
 
 
-export class HtmlElements extends BaseComponent {
+interface HtmlElementsOptions extends ComponentOptions {
+    element: HTMLElement
+}
+
+export class HtmlElements extends ComponentMixin(Object)  {
 
     private element: HTMLElement;
     private rendererDiv: HTMLElement;
     private debugConsoleDiv: HTMLElement;
 
-    getAdditionalMonitorText(): string {
-        throw new Error("Method not implemented.");
-    }
+    constructor(options: HtmlElementsOptions) {
+        super({...options, key: HtmlElements});
 
-    constructor(container: Container, element: HTMLElement) {
-        super(container, HtmlElements);
-        this.element = element;
+        this.element = options.element;
         
         this.rendererDiv = document.createElement('div');
         this.rendererDiv.id = "Canvas.rendererDiv";
