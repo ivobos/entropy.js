@@ -2,8 +2,8 @@ import { Container } from './Container';
 import { MixinConstructor } from '../utils/MixinConstructor';
 
 export interface ComponentOptions {
-    container: Container,
-    key?: Function
+    container: Container,   // container that holds everything
+    key?: Function          // constructor used to find this component
 }
 
 export function ComponentMixin<TBase extends MixinConstructor>(Base: TBase) {

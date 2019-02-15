@@ -1,12 +1,24 @@
 import * as THREE from 'three';
 import { Container } from '../container/Container';
 import { AbstractObservableComponent, ObservableComponentOptions } from '../container/AbstractObservableComponent';
+import { DrawStep } from '../engine/MainLoop';
 
 export interface GrapicRendererOptions extends ObservableComponentOptions {
     parentDiv: any
 }
 
-export class GraphicRenderer extends AbstractObservableComponent {
+export class GraphicRenderer extends AbstractObservableComponent implements DrawStep {
+
+    drawStep(interpolationPercentage: number): void {
+        if (this.scene.userData.changed || this.camera.userData.changed) {
+            this.renderer.render( this.scene, this.camera );
+            this.rendered = true;
+            this.camera.userData.changed = false;
+            this.scene.userData.changed = false;
+        } else {
+            this.rendered = false;
+        }
+    }
 
     // BaseComponent abstract method
     getAdditionalMonitorText(): string {
@@ -46,16 +58,5 @@ export class GraphicRenderer extends AbstractObservableComponent {
         return this.renderer.domElement;
     }
     
-    render() {
-        if (this.scene.userData.changed || this.camera.userData.changed) {
-            this.renderer.render( this.scene, this.camera );
-            this.rendered = true;
-            this.camera.userData.changed = false;
-            this.scene.userData.changed = false;
-        } else {
-            this.rendered = false;
-        }
-    }
-
 }
 

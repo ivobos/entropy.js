@@ -1,6 +1,8 @@
 import * as time from "../utils/time";
 import { HtmlElements } from "../engine/HtmlElements";
 import { AbstractObservableComponent, ObservableComponentOptions } from '../container/AbstractObservableComponent'
+import { LoopEndStep } from "../engine/MainLoop";
+import { AbstractComponent } from "../container/AbstractComponent";
 
 const UPDATE_PERIOD_MSEC = 1000;
 
@@ -8,12 +10,8 @@ export interface Observable {
     getMonitorText() : string;
 }
 
-export class Monitor extends AbstractObservableComponent {
+export class Monitor extends AbstractComponent implements LoopEndStep {
 
-    getAdditionalMonitorText(): string {
-        return "";
-    }
-    
     private monitorableComponents : Array<Observable> = [];
     private nextUpdateTimeMsec: number = 0;
     private debugConsoleDiv: HTMLElement;
@@ -23,11 +21,7 @@ export class Monitor extends AbstractObservableComponent {
         this.debugConsoleDiv = this.resolve(HtmlElements).getDebugConsoleDiv();
     }    
 
-    register(component: Observable) {
-        this.monitorableComponents.push(component);
-    }
-
-    render_debug(tick: number) {
+    loopEndStep(fps: number, panic: boolean): void {
         if (this.debugConsoleDiv) {
             const currentTimeMsec = time.getMsecTimestamp();
             if (this.nextUpdateTimeMsec === 0 || currentTimeMsec > this.nextUpdateTimeMsec) {
@@ -41,6 +35,10 @@ export class Monitor extends AbstractObservableComponent {
         } else {
             this.nextUpdateTimeMsec = 0;
         }
+    }
+
+    register(component: Observable) {
+        this.monitorableComponents.push(component);
     }
 
 }

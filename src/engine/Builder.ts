@@ -74,6 +74,9 @@ export class Builder {
             mainLoop.addLoopEndStep(loopEndStep);
         }
 
+        mainLoop.addDrawStep(graphicRenderer);
+        mainLoop.addLoopEndStep(monitor);
+        
         const engine = new Engine({ container: this.container});
         monitor.register(mainLoop);
         monitor.register(graphicRenderer);

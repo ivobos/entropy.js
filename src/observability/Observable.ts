@@ -2,8 +2,8 @@ import { MixinConstructor } from '../utils/MixinConstructor';
 import { Observable } from './Monitor';
 
 export interface ObserableOptions {
-    key?: Function; 
-    obsDetail?: Function;
+    key?: Function;         // constructor used to name this observable
+    obsDetail?: Function;   // function returning detailed text of observable
 }
 
 export function ObservableMixin<TBase extends MixinConstructor>(Base: TBase) {
