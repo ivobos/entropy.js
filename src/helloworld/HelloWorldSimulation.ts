@@ -4,7 +4,7 @@ import { HelloWorldCube } from "./HelloWorldCube";
 import { randReal } from "../utils/random";
 import { WorldModel } from "../engine/WorldModel";
 import { ComponentMixin, ComponentOptions } from "../container/Component";
-import { Planet } from './Planet';
+import { Star } from './Star';
 import { NoopBond, GravityBond } from '../model/Bond';
 import { Camera } from '../rendering/Camera';
 import { GraphicRenderer } from '../rendering/GraphicRenderer';
@@ -13,7 +13,7 @@ export class HelloWorldSimulation extends ComponentMixin(Object) implements SimS
 
     private manager: THREE.LoadingManager | undefined = undefined;
 
-    private planet?: Planet;
+    private star?: Star;
     
     constructor(options: ComponentOptions) {
         super({...options, key: HelloWorldSimulation});
@@ -24,12 +24,12 @@ export class HelloWorldSimulation extends ComponentMixin(Object) implements SimS
     // }  
 
     simStep(simulationTimestep: number): void {
-        if (!this.planet) {
-            this.planet = new Planet({});
+        if (!this.star) {
+            this.star = new Star({});
             const camera = this.resolve(GraphicRenderer).getCamera();
-            const bond = new GravityBond(this.planet, camera);
+            const bond = new GravityBond(this.star, camera);
             camera.setParentBond(bond);
-            this.planet.addChildBond(bond);
+            this.star.addChildBond(bond);
             // this.planet.
         }
         // if (this.resolve(WorldModel).objectCount() > 50) return;
