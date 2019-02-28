@@ -1,24 +1,31 @@
 import { ParentObject, ChildObject } from "./BoundObject";
 import * as THREE from 'three';
+import { Vector3 } from "three";
 
 export interface Bond {
+
     getRenderObjectsFromParent(): THREE.Object3D[]; 
+
+    relativeTranslate(offset: THREE.Vector3): void;
 }
 
-
 export class NoopBond implements Bond {
+
+    relativeTranslate(offset: THREE.Vector3): void {
+    }    
+    
     getRenderObjectsFromParent(): THREE.Object3D[] {
         return [];
     }
 
-
 }
 
-export class GravityBond implements Bond {
-
+export abstract class AbstractBond implements Bond {
+    
     parent: ParentObject;
     child: ChildObject;
     offset: THREE.Vector3 = new THREE.Vector3(0,0,-1);
+
     constructor(parent: ParentObject, child: ChildObject) {
         this.parent = parent;
         this.child = child;
@@ -29,5 +36,8 @@ export class GravityBond implements Bond {
         return [this.parent];
     }
 
+    relativeTranslate(offset: THREE.Vector3): void {
+        this.offset.add(offset);
+    }
 
 }

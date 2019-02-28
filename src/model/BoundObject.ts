@@ -37,6 +37,7 @@ export function ParentObjectMixin<TBase extends Object3DConstructor>(Base: TBase
 export interface ChildObject extends THREE.Object3D {
     setParentBond(bond: Bond): void;
     getRenderObjects(): THREE.Object3D[];
+    relativeTranslate(offset: THREE.Vector3) : void;
 }
 
 export interface ChildObjectOptions {
@@ -63,6 +64,12 @@ export function ChildObjectMixin<TBase extends Object3DConstructor>(Base: TBase)
                 return this.parentBond.getRenderObjectsFromParent();
             } else {
                 return [];
+            }
+        }
+
+        relativeTranslate(offset: THREE.Vector3): void {
+            if (this.parentBond) {
+                this.parentBond.relativeTranslate(offset);
             }
         }
 

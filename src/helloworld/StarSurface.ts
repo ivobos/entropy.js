@@ -11,7 +11,9 @@ export interface StarSurfaceOptions {
 export class StarSurface extends THREE.Mesh {
 
     constructor(options: StarSurfaceOptions) {
-        const geometry = new THREE.IcosahedronBufferGeometry( .1, 2 );
+//        const geometry = new THREE.SphereGeometry(.1, 4,4);
+        // const geometry = new THREE.CubeGeometry(.1,.1);
+       const geometry = new THREE.IcosahedronBufferGeometry( .1, 1 );
         const material = new THREE.ShaderMaterial({vertexShader: starSurfaceVertShader, fragmentShader: starSurfaceFragShader});
         super(geometry, material);
     }
