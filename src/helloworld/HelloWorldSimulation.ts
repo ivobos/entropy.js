@@ -39,6 +39,8 @@ export class HelloWorldSimulation extends ComponentMixin(Object) implements SimS
             const bond = new GravityBond(this.star, camera);
             camera.setParentBond(bond);
             this.star.addChildBond(bond);
+        } else {
+            this.star.simStep(simulationTimestep);
         }
     }
 

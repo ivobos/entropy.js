@@ -12,10 +12,17 @@ export interface StarOptions extends ParentObjectOptions {
 
 export class Star extends ParentObjectMixin(THREE.Group) {
 
+    private surface: StarSurface;
+
     constructor(options: StarOptions) {
         super();
-        this.add(new StarSurface({}));
+        this.surface = new StarSurface({});
+        this.add(this.surface);
         this.add(new StarCorona({}));
+    }
+
+    simStep(simulationTimestep: number) {
+        this.surface.simStep(simulationTimestep);
     }
 
 }
