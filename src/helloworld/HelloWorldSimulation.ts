@@ -25,10 +25,10 @@ export class HelloWorldSimulation extends ComponentMixin(Object) implements SimS
         const graphicRenderer : GraphicRenderer = this.resolve(GraphicRenderer); 
         const camera = graphicRenderer.getCamera();
         const offset = new THREE.Vector3();
-        if (globalKeyHandler.isKeyDown('a')) offset.x += .01;
-        if (globalKeyHandler.isKeyDown('d')) offset.x -= .01;
-        if (globalKeyHandler.isKeyDown('w')) offset.z += .01;
-        if (globalKeyHandler.isKeyDown('s')) offset.z -= .01;
+        if (globalKeyHandler.isKeyDown('a')) offset.x += .05;
+        if (globalKeyHandler.isKeyDown('d')) offset.x -= .05;
+        if (globalKeyHandler.isKeyDown('w')) offset.z += .05;
+        if (globalKeyHandler.isKeyDown('s')) offset.z -= .05;
         camera.relativeTranslate(offset);  
     }
 

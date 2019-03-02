@@ -22,6 +22,7 @@ export class Star extends ParentObjectMixin(THREE.Group) {
     }
 
     simStep(simulationTimestep: number) {
+        this.rotateY(0.0003);
         this.surface.simStep(simulationTimestep);
     }
 

@@ -24,7 +24,7 @@ export abstract class AbstractBond implements Bond {
     
     parent: ParentObject;
     child: ChildObject;
-    offset: THREE.Vector3 = new THREE.Vector3(0,0,-1);
+    offset: THREE.Vector3 = new THREE.Vector3(0,0,-6);
 
     constructor(parent: ParentObject, child: ChildObject) {
         this.parent = parent;
