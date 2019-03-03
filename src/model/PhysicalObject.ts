@@ -1,39 +1,53 @@
 import * as THREE from "three";
-import { Bond } from "./Bond";
+import { SimStep } from "../engine/MainLoop";
 
 export interface PhysicalObjectOptions {
-
+    mass: number;
 }
 
-export abstract class PhysicalObject extends THREE.Group {
+export abstract class PhysicalObject extends THREE.Group implements SimStep {
 
-    private childBonds: Bond[] = [];
-    private parentBond?: Bond;
+    private parentObject?: PhysicalObject;
+    private parentOffset: THREE.Vector3 = new THREE.Vector3(0,0,-6);
+
+    private childObjects: PhysicalObject[];
+
+    private mass: number;
+    private velocity: THREE.Vector3;
 
     constructor(options: PhysicalObjectOptions) {
         super();
+        this.childObjects = [];
+        this.mass = options.mass;
+        this.velocity = new THREE.Vector3(0,0,0);
     }
 
-    addChildBond(bond: Bond): void {
-        this.childBonds.push(bond);
+    addChildObject(child: PhysicalObject): void {
+        this.childObjects.push(child);
     }
 
-    setParentBond(bond: Bond): void {
-        this.parentBond = bond;
+    setParentObject(parent: PhysicalObject): void {
+        this.parentObject = parent;
     }
 
-    getRenderObjects(): THREE.Object3D[] {
-        if (this.parentBond) {
-            return this.parentBond.getRenderObjectsFromParent();
+    getReachableObjects(origin?: PhysicalObject): PhysicalObject[] {
+        if (origin) {
+            const child = this.childObjects[0];
+            this.position.copy(child.position.clone().add(child.parentOffset));
+            return [this];
         } else {
-            return [];
+            let objects: PhysicalObject[] = [this];
+            if (this.parentObject) objects = objects.concat(this.parentObject.getReachableObjects(this));
+            return objects;
         }
     }
 
     relativeTranslate(offset: THREE.Vector3): void {
-        if (this.parentBond) {
-            this.parentBond.relativeTranslate(offset);
-        }
+        this.velocity.add(offset);
     }
-    
+
+    simStep(simulationTimestep: number): void {
+        this.parentOffset.add(this.velocity);
+    }
+
 }

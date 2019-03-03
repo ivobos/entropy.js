@@ -25,7 +25,7 @@ export class GraphicRenderer extends AbstractObservableComponent implements Draw
 
     drawStep(interpolationPercentage: number): void {
         if (this.cameraHolder) {
-            for (const object3d of this.cameraHolder.getRenderObjects()) {
+            for (const object3d of this.cameraHolder.getReachableObjects()) {
                 if (!this.scene.children.includes(object3d)) {
                     this.scene.add(object3d);
                 }

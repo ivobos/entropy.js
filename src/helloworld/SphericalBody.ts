@@ -4,7 +4,6 @@ import fragmentShader from './star-frag.glsl';
 import vertexShader from './star-vert.glsl';
 import { StarSurface } from './StarSurface';
 import { StarCorona } from './StarCorona';
-import { ObservableMixin } from '../observability/Observable';
 import { PhysicalObject, PhysicalObjectOptions } from '../model/PhysicalObject';
 
 export interface SphericalBodyOptions extends PhysicalObjectOptions {
@@ -16,7 +15,7 @@ export class SphericalBody extends PhysicalObject {
     private surface: StarSurface;
 
     constructor(options: SphericalBodyOptions) {
-        super({});
+        super(options);
         this.surface = new StarSurface({});
         this.add(this.surface);
         this.add(new StarCorona({}));
@@ -25,6 +24,7 @@ export class SphericalBody extends PhysicalObject {
     simStep(simulationTimestep: number) {
         this.rotateY(0.0003);
         this.surface.simStep(simulationTimestep);
+        super.simStep(simulationTimestep);
     }
 
 }
