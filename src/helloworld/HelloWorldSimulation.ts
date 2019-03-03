@@ -4,7 +4,7 @@ import { HelloWorldCube } from "./HelloWorldCube";
 import { randReal } from "../utils/random";
 import { WorldModel } from "../engine/WorldModel";
 import { ComponentMixin, ComponentOptions } from "../container/Component";
-import { Star } from './Star';
+import { SphericalBody } from './SphericalBody';
 import { GravityBond } from '../model/GravityBond';
 import { Camera } from '../rendering/Camera';
 import { GraphicRenderer } from '../rendering/GraphicRenderer';
@@ -15,7 +15,7 @@ export class HelloWorldSimulation extends ComponentMixin(Object) implements SimS
 
     private manager: THREE.LoadingManager | undefined = undefined;
 
-    private star?: Star;
+    private star?: SphericalBody;
     
     constructor(options: ComponentOptions) {
         super({...options, key: HelloWorldSimulation});
@@ -34,7 +34,7 @@ export class HelloWorldSimulation extends ComponentMixin(Object) implements SimS
 
     simStep(simulationTimestep: number): void {
         if (!this.star) {
-            this.star = new Star({});
+            this.star = new SphericalBody({});
             const camera = this.resolve(GraphicRenderer).getCamera();
             const bond = new GravityBond(this.star, camera);
             camera.setParentBond(bond);

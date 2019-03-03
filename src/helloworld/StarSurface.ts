@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import texture from '../textures/UV_Grid_Lrg_Texture';
-import { ParentObjectMixin, ParentObjectOptions } from '../model/BoundObject';
 import noise4Dglsl from './noise4D.glsl';
 import starSurfaceFragShader from './StarSurfaceFrag.glsl';
 import starSurfaceVertShader from './StarSurfaceVert.glsl';

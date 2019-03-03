@@ -7,7 +7,7 @@ export interface ObserableOptions {
 }
 
 export function ObservableMixin<TBase extends MixinConstructor>(Base: TBase) {
-    return class extends Base implements Observable{
+    return class extends Base implements Observable {
 
         key?: Function; 
         obsDetail?: Function;

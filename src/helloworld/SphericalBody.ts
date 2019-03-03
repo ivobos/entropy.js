@@ -1,20 +1,21 @@
 import * as THREE from 'three';
 import texture from '../textures/UV_Grid_Lrg_Texture';
-import { ParentObjectMixin, ParentObjectOptions } from '../model/BoundObject';
+import { PhysicalObjectMixin, PhysicalObjectOptions } from '../model/BoundObject';
 import fragmentShader from './star-frag.glsl';
 import vertexShader from './star-vert.glsl';
 import { StarSurface } from './StarSurface';
 import { StarCorona } from './StarCorona';
+import { ObservableMixin } from '../observability/Observable';
 
-export interface StarOptions extends ParentObjectOptions {
+export interface SphericalBodyOptions extends PhysicalObjectOptions {
 
 }
 
-export class Star extends ParentObjectMixin(THREE.Group) {
+export class SphericalBody extends PhysicalObjectMixin(THREE.Group) {
 
     private surface: StarSurface;
 
-    constructor(options: StarOptions) {
+    constructor(options: SphericalBodyOptions) {
         super();
         this.surface = new StarSurface({});
         this.add(this.surface);

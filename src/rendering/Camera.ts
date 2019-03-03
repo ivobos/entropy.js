@@ -1,12 +1,12 @@
-import { ChildObjectMixin, ChildObjectOptions } from "../model/BoundObject";
+import { PhysicalObjectMixin, PhysicalObjectOptions } from "../model/BoundObject";
 import * as THREE from 'three';
 
 
-interface CameraOptions extends ChildObjectOptions {
+interface CameraOptions extends PhysicalObjectOptions {
 
 }
 
-export class Camera extends ChildObjectMixin(THREE.PerspectiveCamera) {
+export class Camera extends PhysicalObjectMixin(THREE.PerspectiveCamera) {
 
     constructor(options: CameraOptions) {
         super(70, window.innerWidth / window.innerHeight, 0.01, 1000 );

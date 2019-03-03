@@ -4,55 +4,36 @@ import { Bond } from './Bond';
 import * as THREE from 'three';
 
 
-export interface ParentObject extends THREE.Object3D {
+export interface PhysicalObject extends THREE.Object3D {
 
     addChildBond(bond: Bond): void;
+    setParentBond(bond: Bond): void;
+    getRenderObjects(): THREE.Object3D[];
+    relativeTranslate(offset: THREE.Vector3) : void;
 
 }
 
-export interface ParentObjectOptions {
+export interface PhysicalObjectOptions {
 
 }
 
 export type Object3DConstructor<T = THREE.Object3D> = new (...args: any[]) => T;
 
-export function ParentObjectMixin<TBase extends Object3DConstructor>(Base: TBase) {
-    return class extends Base implements ParentObject {
+export function PhysicalObjectMixin<TBase extends Object3DConstructor>(Base: TBase) {
+    return class extends Base implements PhysicalObject {
 
         // can't use private because https://github.com/Microsoft/TypeScript/issues/17293
         childBonds: Bond[] = [];
-
-        constructor(...args: any[]) {
-            super(...args);
-            const options = <ParentObjectOptions>args[0];
-        }
-
-        addChildBond(bond: Bond): void {
-            this.childBonds.push(bond);
-        }
-
-    };
-}
-
-export interface ChildObject extends THREE.Object3D {
-    setParentBond(bond: Bond): void;
-    getRenderObjects(): THREE.Object3D[];
-    relativeTranslate(offset: THREE.Vector3) : void;
-}
-
-export interface ChildObjectOptions {
-
-}
-
-
-export function ChildObjectMixin<TBase extends Object3DConstructor>(Base: TBase) {
-    return class extends Base implements ChildObject {
-        // can't use private because https://github.com/Microsoft/TypeScript/issues/17293
         parentBond?: Bond;
 
         constructor(...args: any[]) {
             super(...args);
-            const options = <ChildObjectOptions>args[0];
+            console.log("phys obj mixing ctor");
+            const options = <PhysicalObjectOptions>args[0];
+        }
+
+        addChildBond(bond: Bond): void {
+            this.childBonds.push(bond);
         }
 
         setParentBond(bond: Bond): void {
@@ -75,4 +56,3 @@ export function ChildObjectMixin<TBase extends Object3DConstructor>(Base: TBase)
 
     };
 }
-

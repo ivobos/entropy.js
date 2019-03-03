@@ -1,4 +1,4 @@
-import { ParentObject, ChildObject } from "./BoundObject";
+import { PhysicalObject } from "./BoundObject";
 import * as THREE from 'three';
 import { Vector3 } from "three";
 
@@ -22,11 +22,11 @@ export class NoopBond implements Bond {
 
 export abstract class AbstractBond implements Bond {
     
-    parent: ParentObject;
-    child: ChildObject;
+    parent: PhysicalObject;
+    child: PhysicalObject;
     offset: THREE.Vector3 = new THREE.Vector3(0,0,-6);
 
-    constructor(parent: ParentObject, child: ChildObject) {
+    constructor(parent: PhysicalObject, child: PhysicalObject) {
         this.parent = parent;
         this.child = child;
     }
