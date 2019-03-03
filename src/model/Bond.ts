@@ -1,4 +1,4 @@
-import { PhysicalObject } from "./BoundObject";
+import { PhysicalObject } from "./PhysicalObject";
 import * as THREE from 'three';
 import { Vector3 } from "three";
 
