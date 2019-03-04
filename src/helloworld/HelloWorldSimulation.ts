@@ -10,7 +10,6 @@ export class HelloWorldSimulation extends ComponentMixin(Object) implements SimS
 
     private manager: THREE.LoadingManager | undefined = undefined;
 
-    private star?: SphericalBody;
     private player?: Player;
 
     constructor(options: ComponentOptions) {
@@ -28,12 +27,14 @@ export class HelloWorldSimulation extends ComponentMixin(Object) implements SimS
     }
 
     simStep(simulationTimestep: number): void {
-        if (!this.star && !this.player) {
-            this.star = new SphericalBody({ mass: 1 });
-            this.player = new Player({ mass: 0.00001 });
-            // const bond = new GravityBond(this.star, this.player);
-            this.player.setParentObject(this.star);
-            this.star.addChildObject(this.player);
+        if (!this.player) {
+            const star = new SphericalBody({ radius: 2, mass: 1 });
+
+            const planet = new SphericalBody({ radius: 0.5, mass: 0.01, parent: star, parentOffset: new THREE.Vector3(0,0,-6.), velocity: new THREE.Vector3(.04, 0, 0)});
+            star.addChildObject(planet);
+
+            this.player = new Player({ mass: 0.0001, parent: star, parentOffset: new THREE.Vector3(0,0,-12) });
+            star.addChildObject(this.player);
             this.resolve(GraphicRenderer).setCameraHolder(this.player);
         } 
         if (this.player) {

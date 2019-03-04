@@ -5,7 +5,7 @@ import starSurfaceFragShader from './StarSurfaceFrag.glsl';
 import starSurfaceVertShader from './StarSurfaceVert.glsl';
 
 export interface StarSurfaceOptions {
-
+    radius: number;
 }
 
 export class StarSurface extends THREE.Mesh {
@@ -14,7 +14,7 @@ export class StarSurface extends THREE.Mesh {
         // const geometry = new THREE.SphereGeometry(.1, 4,4);
         // const geometry = new THREE.CubeGeometry(.1,.1);
       
-        const geometry = new THREE.IcosahedronBufferGeometry( 1, 2 );
+        const geometry = new THREE.IcosahedronBufferGeometry( options.radius, 2 );
 
         // box turned into sphere
         //   var geometry = new THREE.BoxGeometry(1, 1, 1, 32, 32, 32);
@@ -26,6 +26,7 @@ export class StarSurface extends THREE.Mesh {
         const material = new THREE.ShaderMaterial({
             uniforms: {
                 u_time: { value: 1.0 },
+                u_radius: { value: options.radius},
             },
             vertexShader: starSurfaceVertShader, 
             fragmentShader: noise4Dglsl+starSurfaceFragShader});

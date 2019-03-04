@@ -7,7 +7,7 @@ import { StarCorona } from './StarCorona';
 import { PhysicalObject, PhysicalObjectOptions } from '../model/PhysicalObject';
 
 export interface SphericalBodyOptions extends PhysicalObjectOptions {
-
+    radius: number;
 }
 
 export class SphericalBody extends PhysicalObject {
@@ -16,9 +16,9 @@ export class SphericalBody extends PhysicalObject {
 
     constructor(options: SphericalBodyOptions) {
         super(options);
-        this.surface = new StarSurface({});
+        this.surface = new StarSurface({ radius: options.radius});
         this.add(this.surface);
-        this.add(new StarCorona({}));
+        this.add(new StarCorona({ radius: options.radius * 2}));
     }
 
     simStep(simulationTimestep: number) {
