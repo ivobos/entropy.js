@@ -19,10 +19,20 @@ export class GraphicRenderer extends AbstractObservableComponent implements Draw
         this.scene = new THREE.Scene();
         this.scene.userData.changed = true;
         this.renderer = new THREE.WebGLRenderer( { antialias: true } );
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        window.addEventListener('resize', (event: UIEvent) => this.onWindowResize(event), false);
+        this.onWindowResize(undefined);    
         options.parentDiv.appendChild( this.renderer.domElement );
     }
 
+    onWindowResize(event: any): void {
+        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        if (this.cameraHolder) {
+            const camera = this.cameraHolder.getCamera();
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        }
+    }
+    
     drawStep(interpolationPercentage: number): void {
         if (this.cameraHolder) {
             for (const object3d of this.cameraHolder.getReachableObjects()) {
