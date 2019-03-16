@@ -1,17 +1,18 @@
 import * as THREE from "three";
 import { SimStep } from "../engine/MainLoop";
+import { G } from "./physics_constants";
 
 export interface PhysicalObjectOptions {
     mass: number;
     parent?: PhysicalObject;
-    parentOffset?: THREE.Vector3;
+    relativePosition?: THREE.Vector3;   // position relative to parent
     velocity?: THREE.Vector3;
 }
 
 export abstract class PhysicalObject extends THREE.Group implements SimStep {
 
-    private parentObject: PhysicalObject;   // points to itself if there is no parent
-    private parentOffset: THREE.Vector3;    //  = new THREE.Vector3(0,0,-6);
+    private parentObject: PhysicalObject;       // points to itself if there is no parent
+    private relativePosition: THREE.Vector3;    // position relative to parent
 
     private childObjects: PhysicalObject[];
 
@@ -21,7 +22,7 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
     constructor(options: PhysicalObjectOptions) {
         super();
         this.parentObject = options.parent || this;
-        this.parentOffset = options.parentOffset || new THREE.Vector3();
+        this.relativePosition = options.relativePosition || new THREE.Vector3();
         this.childObjects = [];
         this.mass = options.mass;
         this.velocity = options.velocity || new THREE.Vector3(0,0,0);
@@ -45,7 +46,7 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
         } else if (this.parentObject === origin) {
             // arrived at child of parent, walking outwards
             let objects: PhysicalObject[] = [];
-            this.position.copy(this.parentObject.position.clone().sub(this.parentOffset));
+            this.position.copy(this.parentObject.position.clone().add(this.relativePosition));
             objects.push(this);
             for (const child of this.childObjects) {
                 objects = objects.concat(child.getReachableObjects(this));
@@ -56,7 +57,7 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
             let objects: PhysicalObject[] = [];
             for (const child of this.childObjects) {
                 if (child === origin) {
-                    this.position.copy(child.position.clone().add(child.parentOffset));
+                    this.position.copy(child.position.clone().sub(child.relativePosition));
                     objects.push(this);
                 } else {
                     objects = objects.concat(child.getReachableObjects(this));
@@ -73,13 +74,20 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
         this.velocity.add(offset);
     }
 
-    simStep(simulationTimestep: number): void {
+    setOrbitVelocity(direction: THREE.Vector3) {
+        this.velocity.copy(direction.normalize().multiplyScalar(
+            Math.sqrt(G * this.parentObject.mass / this.relativePosition.length()))
+        );
+    }
+
+    simStep(simulationTimestepMsec: number): void {
         if (this.parentObject == this) return;
-        const force = .0006 * this.parentObject.mass * this.mass / this.position.distanceToSquared(this.parentObject.position);
-        const deltav = this.position.sub(this.parentObject.position).normalize().multiplyScalar(force * simulationTimestep / this.mass);
+        const timeDeltaSec = 1000 * simulationTimestepMsec;
+        const force = G * this.parentObject.mass * this.mass / this.position.distanceToSquared(this.parentObject.position);
+        const deltav = this.parentObject.position.clone().sub(this.position).normalize().multiplyScalar(force * timeDeltaSec / this.mass);
         // console.log("deltav="+JSON.stringify(deltav)+" "+this.constructor.name);
         this.velocity.add(deltav);
-        this.parentOffset.add(this.velocity);
+        this.relativePosition.add(this.velocity.clone().multiplyScalar(timeDeltaSec));
     }
 
 }

@@ -34,7 +34,7 @@
     "nodemon": "^1.18.9",
     "replace": "^1.0.0",
     "ts-jest": "^24.0.0",
-    "typescript": "^3.2.2"
+    "typescript": "^3.3.3333"
   },
   "dependencies": {
     "@types/bunyan": "^1.8.5",

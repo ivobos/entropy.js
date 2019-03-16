@@ -10,7 +10,7 @@ export interface LoopStartStep {
 export interface SimStep {
 
     // update simulation (physics and ai)
-    simStep(simulationTimestep: number): void;
+    simStep(simulationTimestepMsec: number): void;
 
 }
 
