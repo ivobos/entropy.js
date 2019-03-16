@@ -1,8 +1,9 @@
 import { AbstractObservableComponent, ObservableComponentOptions } from '../container/AbstractObservableComponent'
-
+import * as THREE from "three";
 
 export class GlobalMouseHandler extends AbstractObservableComponent {
-    
+    private mouseMoveVector = new THREE.Vector2();
+
     getAdditionalMonitorText(): string {
         let debugString = "mousePos:[";
         return debugString;
@@ -31,7 +32,16 @@ export class GlobalMouseHandler extends AbstractObservableComponent {
 
     onMouseMove(event: MouseEvent) {
         if ((document as any).pointerLockElement) {
-            console.log("Movement="+event.movementX+","+event.movementY);
+            this.mouseMoveVector.x -= event.movementX/1000;
+            this.mouseMoveVector.y -= event.movementY/1000;
         }
+    }
+
+    getMouseMove(): THREE.Vector2 {
+        return this.mouseMoveVector.clone();
+    }
+
+    resetMouseMove() {
+        this.mouseMoveVector.set(0,0);
     }
 }

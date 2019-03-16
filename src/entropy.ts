@@ -11,10 +11,11 @@ export { Container } from './container/Container';
 export { ComponentOptions, ComponentMixin } from './container/Component';
 export { InfinitePattern } from './helloworld/InfinitePattern';
 export { MapControlsSim } from './helloworld/MapControlsSim';
-export { globalKeyHandler } from './engine/globals';
+export { globalKeyHandler, globalMouseHandler } from './engine/globals';
 export * from './utils/random';
 export * from './utils/time';
 export { PhysicalObjectOptions, PhysicalObject } from './model/PhysicalObject';
+export { FocusedObject } from './model/FocusedObject';
 
 import { Builder } from './engine/Builder';
 // import * as logging from './logging';

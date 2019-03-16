@@ -17,7 +17,7 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
     private childObjects: PhysicalObject[];
 
     private mass: number;
-    private velocity: THREE.Vector3;
+    private velocity: THREE.Vector3;            // delta of relativePosition
 
     constructor(options: PhysicalObjectOptions) {
         super();
@@ -32,10 +32,6 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
         this.childObjects.push(child);
     }
 
-    // setParentObject(parent: PhysicalObject): void {
-    //     this.parentObject = parent;
-    // }
-
     getReachableObjects(origin?: PhysicalObject): PhysicalObject[] {
         if (!origin) {
             // start of the walk, this must be the player
@@ -46,7 +42,9 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
         } else if (this.parentObject === origin) {
             // arrived at child of parent, walking outwards
             let objects: PhysicalObject[] = [];
-            this.position.copy(this.parentObject.position.clone().add(this.relativePosition));
+            this.position
+                .copy(this.parentObject.position)
+                .add(this.relativePosition);
             objects.push(this);
             for (const child of this.childObjects) {
                 objects = objects.concat(child.getReachableObjects(this));
@@ -57,7 +55,11 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
             let objects: PhysicalObject[] = [];
             for (const child of this.childObjects) {
                 if (child === origin) {
-                    this.position.copy(child.position.clone().sub(child.relativePosition));
+                    this.position
+                        .copy(child.relativePosition)
+                        .applyQuaternion(child.quaternion.clone().inverse())
+                        .negate()
+                        .add(child.position);
                     objects.push(this);
                 } else {
                     objects = objects.concat(child.getReachableObjects(this));
@@ -70,8 +72,11 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
         }
     }
 
-    relativeTranslate(offset: THREE.Vector3): void {
-        this.velocity.add(offset);
+    move(deltav: THREE.Vector3, deltar: THREE.Vector2): void {
+        this.rotateY(deltar.x);
+        this.rotateX(deltar.y);
+        this.velocity.add(deltav.clone().applyQuaternion(this.quaternion));
+        this.velocity.multiplyScalar(0.95);
     }
 
     setOrbitVelocity(direction: THREE.Vector3) {
@@ -83,11 +88,19 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
     simStep(simulationTimestepMsec: number): void {
         if (this.parentObject == this) return;
         const timeDeltaSec = 1000 * simulationTimestepMsec;
-        const force = G * this.parentObject.mass * this.mass / this.position.distanceToSquared(this.parentObject.position);
-        const deltav = this.parentObject.position.clone().sub(this.position).normalize().multiplyScalar(force * timeDeltaSec / this.mass);
-        // console.log("deltav="+JSON.stringify(deltav)+" "+this.constructor.name);
+        const force = G * this.parentObject.mass * this.mass / this.relativePosition.lengthSq();
+        const deltav = this.relativePosition.clone()     
+                            .normalize()
+                            .multiplyScalar(- force * timeDeltaSec / this.mass);
         this.velocity.add(deltav);
         this.relativePosition.add(this.velocity.clone().multiplyScalar(timeDeltaSec));
     }
 
+    toJSON(key: any): any {
+        return { 
+            velocity: this.velocity,
+            mass: this.mass,
+            relativePosition: this.relativePosition,
+        };
+    }
 }

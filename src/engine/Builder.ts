@@ -7,6 +7,7 @@ import { MainLoop, SimStep, DrawStep, LoopEndStep, LoopStartStep } from './MainL
 import { Monitor } from '../observability/Monitor';
 import { textureCache, globalKeyHandler } from './globals';
 import { HtmlElements } from './HtmlElements';
+import { FocusedObject } from '../model/FocusedObject';
 
 let static_init_done = false;
 
@@ -60,6 +61,7 @@ export class Builder {
         const worldModel = new WorldModel({ container: this.container });
         const mainLoop = new MainLoop({ container: this.container});
         const monitor = new Monitor({container: this.container});
+        const focusedObject = new FocusedObject({container: this.container});
 
         for (const loopStartStep of this.loopStartSteps) {
             mainLoop.addLoopStartStep(loopStartStep);
@@ -84,6 +86,7 @@ export class Builder {
         monitor.register(textureCache);
         monitor.register(globalKeyHandler);
         monitor.register(engine);
+        monitor.register(focusedObject);
         return engine;
     }
 
