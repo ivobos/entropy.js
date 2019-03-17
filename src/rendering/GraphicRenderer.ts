@@ -39,9 +39,9 @@ export class GraphicRenderer extends AbstractObservableComponent implements Draw
                 if (!this.scene.children.includes(object3d)) {
                     this.scene.add(object3d);
                 }
-                this.renderer.render(this.scene, this.cameraHolder.getCamera());
-                this.rendered = true;
             }
+            this.renderer.render(this.scene, this.cameraHolder.getCamera());
+            this.rendered = true;
         }
     }
 
