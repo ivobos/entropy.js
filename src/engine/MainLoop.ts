@@ -14,6 +14,14 @@ export interface SimStep {
 
 }
 
+export interface BeforeDrawStep {
+
+    // prepare to render visuals
+    beforeDrawStep(interpolationPercentage: number): void;
+
+}
+
+
 export interface DrawStep {
 
     // render visuals
@@ -50,6 +58,7 @@ export class MainLoop extends ObservableMixin(ComponentMixin(Object))  {
     private running: boolean = false; // once loop has drawn its considered running
     private loopStartSteps: LoopStartStep[] = [];
     private simSteps: SimStep[] = [];
+    private beforeDrawSteps: BeforeDrawStep[] = [];
     private drawSteps: DrawStep[] = [];
     private loopEndSteps: LoopEndStep[] = [];
 
@@ -108,6 +117,9 @@ export class MainLoop extends ObservableMixin(ComponentMixin(Object))  {
     }
     addSimStep(simUpdate: SimStep) {
         this.simSteps.push(simUpdate);
+    }
+    addBeforeDrawStep(beforeDrawStep: BeforeDrawStep) {
+        this.beforeDrawSteps.push(beforeDrawStep);
     }
     addDrawStep(drawStep: DrawStep) {
         this.drawSteps.push(drawStep);
@@ -184,9 +196,13 @@ export class MainLoop extends ObservableMixin(ComponentMixin(Object))  {
                 break;
             }
         }
+        // prepare to draw screen
+        for (const module of this.beforeDrawSteps) {
+            module.beforeDrawStep(this.frameDelta / this.simulationTimestep);
+        }
         // render screen
-        for (const simModule of this.drawSteps) {
-            simModule.drawStep(this.frameDelta / this.simulationTimestep);
+        for (const module of this.drawSteps) {
+            module.drawStep(this.frameDelta / this.simulationTimestep);
         }
         // end of main loop
         for (const loopEndStep of this.loopEndSteps) {

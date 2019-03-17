@@ -3,6 +3,7 @@ import { ComponentMixin, ComponentOptions } from "../container/Component";
 import { ObservableMixin } from "../observability/Observable";
 
 
+// TODO: remove this class
 export class WorldModel extends ObservableMixin(ComponentMixin(Object)) {
 
     private numObjects = 0;
@@ -18,7 +19,7 @@ export class WorldModel extends ObservableMixin(ComponentMixin(Object)) {
 
     addObject3D(object3d: THREE.Object3D) {
         const renderer: GraphicRenderer = this.resolve(GraphicRenderer);
-        renderer.addObject3D(object3d);
+        // renderer.addObject3D(object3d);
         this.numObjects++;
     }
 

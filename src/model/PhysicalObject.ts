@@ -19,6 +19,8 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
     private mass: number;
     private velocity: THREE.Vector3;            // delta of relativePosition
 
+    private selected: boolean;
+
     constructor(options: PhysicalObjectOptions) {
         super();
         this.parentObject = options.parent || this;
@@ -26,6 +28,7 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
         this.childObjects = [];
         this.mass = options.mass;
         this.velocity = options.velocity || new THREE.Vector3(0,0,0);
+        this.selected = false;
     }
 
     addChildObject(child: PhysicalObject): void {
@@ -94,6 +97,14 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
                             .multiplyScalar(- force * timeDeltaSec / this.mass);
         this.velocity.add(deltav);
         this.relativePosition.add(this.velocity.clone().multiplyScalar(timeDeltaSec));
+    }
+
+    setSelected(selected: boolean) {
+        this.selected = selected;
+    }
+
+    isSelected() {
+        return this.selected;
     }
 
     toJSON(key: any): any {
