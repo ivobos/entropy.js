@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { CameraManager } from "./CameraManager";
 
 
-export class SceneManager extends AbstractObservableComponent implements BeforeDrawStep{
+export class SceneManager extends AbstractObservableComponent implements BeforeDrawStep {
     
     private scene : THREE.Scene;
 

@@ -1,6 +1,5 @@
 export  { VERSION } from './version';
 export const NAME = "entropy-engine";
-export { HelloWorldCube } from './helloworld/HelloWorldCube';
 export { GraphicRenderer } from './rendering/GraphicRenderer';
 export { CameraManager, CameraHolder } from './rendering/CameraManager';
 export { MainLoop, LoopStartStep, SimStep, BeforeDrawStep, DrawStep, LoopEndStep } from './engine/MainLoop';
@@ -9,8 +8,6 @@ export { WorldModel } from './engine/WorldModel';
 export { AbstractComponent } from './container/AbstractComponent';
 export { Container } from './container/Container';
 export { ComponentOptions, ComponentMixin } from './container/Component';
-export { InfinitePattern } from './helloworld/InfinitePattern';
-export { MapControlsSim } from './helloworld/MapControlsSim';
 export { globalKeyHandler, globalMouseHandler } from './engine/globals';
 export * from './utils/random';
 export * from './utils/time';

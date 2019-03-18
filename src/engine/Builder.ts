@@ -102,7 +102,6 @@ export class Builder {
         monitor.register(worldModel);        
         monitor.register(textureCache);
         monitor.register(globalKeyHandler);
-        monitor.register(engine);
         monitor.register(focusManager);
         monitor.register(cameraManager);
 
