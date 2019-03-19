@@ -1,6 +1,5 @@
 import { MainLoop } from "./MainLoop";
-import { ComponentMixin, ComponentOptions } from "../container/Component";
-import { ObservableMixin } from "../observability/Observable";
+import { ComponentOptions } from "../container/Component";
 import { AbstractComponent } from "../container/AbstractComponent";
 
 

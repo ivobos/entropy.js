@@ -1,5 +1,5 @@
 import { ComponentMixin, ComponentOptions } from "../container/Component";
-import { ObservableMixin } from "../observability/Observable";
+import { AbstractObservableComponent } from "../container/AbstractObservableComponent";
 
 export interface LoopStartStep {
 
@@ -40,7 +40,7 @@ export interface LoopEndStep {
 /**
  * Converted to ts from https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/src/mainloop.js
  */
-export class MainLoop extends ObservableMixin(ComponentMixin(Object))  {
+export class MainLoop extends AbstractObservableComponent  {
 
     private simulationTimestep = 1000 / 60; // simulation time size
     private rafHandle: number = 0;

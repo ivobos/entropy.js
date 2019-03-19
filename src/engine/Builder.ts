@@ -2,14 +2,15 @@ import { Engine } from './Engine';
 import * as time from '../utils/time';
 import { Container } from '../container/Container';
 import { GraphicRenderer } from '../rendering/GraphicRenderer';
-import { WorldModel } from './WorldModel';
 import { MainLoop, SimStep, BeforeDrawStep, DrawStep, LoopEndStep, LoopStartStep } from './MainLoop';
 import { Monitor } from '../observability/Monitor';
-import { textureCache, globalKeyHandler } from './globals';
 import { HtmlElements } from './HtmlElements';
 import { FocusManager as FocusManager } from '../model/FocusManager';
 import { CameraManager } from '../rendering/CameraManager';
 import { SceneManager } from '../rendering/SceneManager';
+import { TextureCache } from '../textures/TextureCache';
+import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
+import { GlobalMouseHandler } from '../input/GlobalMouseHandler';
 
 let static_init_done = false;
 
@@ -64,10 +65,12 @@ export class Builder {
         if (!static_init_done) {
             time.time_init();
         }
-        const canvas = new HtmlElements({ container: this.container, element: this.parentDiv});
-        const worldModel = new WorldModel({ container: this.container });
-        const mainLoop = new MainLoop({ container: this.container});
         const monitor = new Monitor({container: this.container});
+        const textureCache = new TextureCache({container: this.container});
+        const globalKeyHandler = new GlobalKeyboardHandler({ container: this.container});
+        const globalMouseHandler = new GlobalMouseHandler({ container: this.container});
+        const canvas = new HtmlElements({ container: this.container, element: this.parentDiv});
+        const mainLoop = new MainLoop({ container: this.container});
         const focusManager = new FocusManager({container: this.container});
         const cameraManager = new CameraManager({container: this.container});
         const sceneManager = new SceneManager({container: this.container});
@@ -97,13 +100,6 @@ export class Builder {
         mainLoop.addLoopEndStep(monitor);
         
         const engine = new Engine({ container: this.container});
-        monitor.register(mainLoop);
-        monitor.register(graphicRenderer);
-        monitor.register(worldModel);        
-        monitor.register(textureCache);
-        monitor.register(globalKeyHandler);
-        monitor.register(focusManager);
-        monitor.register(cameraManager);
 
         return engine;
     }

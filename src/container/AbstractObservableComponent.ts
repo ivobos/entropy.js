@@ -1,5 +1,6 @@
 import { ComponentMixin, ComponentOptions } from "./Component";
 import { ObservableMixin, ObserableOptions } from "../observability/Observable";
+import { Monitor } from "../observability/Monitor";
 
 export interface ObservableComponentOptions extends  ComponentOptions, ObserableOptions {
 
@@ -9,6 +10,7 @@ export abstract class AbstractObservableComponent extends ObservableMixin(Compon
 
     constructor(options: ObservableComponentOptions) {
         super({...options, obsDetail: () => this.getAdditionalMonitorText()});
+        this.resolve(Monitor).register(this);
     }
 
     abstract getAdditionalMonitorText(): string;

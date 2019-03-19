@@ -14,11 +14,10 @@ export class Monitor extends AbstractComponent implements LoopEndStep {
 
     private monitorableComponents : Array<Observable> = [];
     private nextUpdateTimeMsec: number = 0;
-    private debugConsoleDiv: HTMLElement;
+    private debugConsoleDiv?: HTMLElement;
 
     constructor(options: ObservableComponentOptions) {
         super({...options, key: Monitor});
-        this.debugConsoleDiv = this.resolve(HtmlElements).getDebugConsoleDiv();
     }    
 
     loopEndStep(fps: number, panic: boolean): void {
@@ -33,11 +32,15 @@ export class Monitor extends AbstractComponent implements LoopEndStep {
                 this.debugConsoleDiv.innerHTML = content;
             }
         } else {
+            this.debugConsoleDiv = this.resolve(HtmlElements).getDebugConsoleDiv();
             this.nextUpdateTimeMsec = 0;
         }
     }
 
     register(component: Observable) {
+        if (this.monitorableComponents.includes(component)) {
+            throw new Error("component already registered with monitor");
+        }
         this.monitorableComponents.push(component);
     }
 
