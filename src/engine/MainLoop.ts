@@ -1,5 +1,6 @@
-import { ComponentMixin, ComponentOptions } from "../container/Component";
+import { ComponentOptions } from "../container/Component";
 import { AbstractObservableComponent } from "../container/AbstractObservableComponent";
+import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
 
 export interface LoopStartStep {
 
@@ -43,6 +44,7 @@ export interface LoopEndStep {
 export class MainLoop extends AbstractObservableComponent  {
 
     private simulationTimestep = 1000 / 60; // simulation time size
+    private gameClockMultiplier = 1.;
     private rafHandle: number = 0;
     private lastFrameTimeMs: number = 0; // time of last execution of loop
     private minFrameDelay: number = 0;
@@ -66,6 +68,13 @@ export class MainLoop extends AbstractObservableComponent  {
         super({...options, key: MainLoop, obsDetail: () => this.getAdditionalMonitorText()});
     }
     
+    init(): void {
+        super.init();
+        const mainLoop = this.resolve(MainLoop);
+        this.resolve(GlobalKeyboardHandler).registerKey('-', () => mainLoop.updateClockMultiplier(.5));
+        this.resolve(GlobalKeyboardHandler).registerKey('=', () => mainLoop.updateClockMultiplier(2.));
+    }
+
     getAdditionalMonitorText(): string {
         return "FPS: "+this.getFPS().toFixed(1);
     }
@@ -159,27 +168,32 @@ export class MainLoop extends AbstractObservableComponent  {
     isRunning(): boolean {
         return this.running;
     }
-    animate(timestamp: number) {
+
+    updateClockMultiplier(multiplierMultiplier: number) {
+        this.gameClockMultiplier = Math.min(64., Math.max(1., this.gameClockMultiplier * multiplierMultiplier));
+    }
+
+    animate(timeStampMsec: number) {
         // request animation next time browser is ready
         this.rafHandle = requestAnimationFrame(this.animate.bind(this));
         // throttle frame rate
-        if (timestamp < this.lastFrameTimeMs + this.minFrameDelay) {
+        if (timeStampMsec < this.lastFrameTimeMs + this.minFrameDelay) {
             return;
         }
         // simulation time not yet simulated
-        this.frameDelta += timestamp - this.lastFrameTimeMs;
-        this.lastFrameTimeMs = timestamp;
+        this.frameDelta += timeStampMsec - this.lastFrameTimeMs;
+        this.lastFrameTimeMs = timeStampMsec;
         // functions that don't depend on time in simulation
         for (const loopStartStep of this.loopStartSteps) {
-            loopStartStep.loopStartStep(timestamp, this.frameDelta);
+            loopStartStep.loopStartStep(timeStampMsec, this.frameDelta);
         }
         // this.begin(timestamp, this.frameDelta);
         // update fps estimate
-        if (timestamp > this.lastFpsUpdate + this.fpsUpdateInterval) {
-            this.fps = this.fpsAlpha * this.framesSinceLastFpsUpdate * 1000 / (timestamp - this.lastFpsUpdate) +
+        if (timeStampMsec > this.lastFpsUpdate + this.fpsUpdateInterval) {
+            this.fps = this.fpsAlpha * this.framesSinceLastFpsUpdate * 1000 / (timeStampMsec - this.lastFpsUpdate) +
                 (1 - this.fpsAlpha) * this.fps;
             // reset fps counters
-            this.lastFpsUpdate = timestamp;
+            this.lastFpsUpdate = timeStampMsec;
             this.framesSinceLastFpsUpdate = 0;
         }
         // count current frame for next fps update
@@ -188,7 +202,7 @@ export class MainLoop extends AbstractObservableComponent  {
         this.numUpdateSteps = 0;
         while (this.frameDelta >= this.simulationTimestep) {
             for (const simStep of this.simSteps) {
-                simStep.simStep(this.simulationTimestep);
+                simStep.simStep(this.simulationTimestep*this.gameClockMultiplier);
             }
             this.frameDelta -= this.simulationTimestep;
             if (++this.numUpdateSteps >= 240) {

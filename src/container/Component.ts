@@ -19,6 +19,9 @@ export function ComponentMixin<TBase extends MixinConstructor>(Base: TBase) {
             }
         }
 
+        init(): void {
+        };
+    
         resolve<T extends {}>(key: new (args: any) => T) : T {
             return <T>this.container.resolve(key);
         }

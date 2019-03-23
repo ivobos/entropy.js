@@ -10,6 +10,10 @@ export abstract class AbstractObservableComponent extends ObservableMixin(Compon
 
     constructor(options: ObservableComponentOptions) {
         super({...options, obsDetail: () => this.getAdditionalMonitorText()});
+    }
+
+    init(): void {
+        super.init();
         this.resolve(Monitor).register(this);
     }
 

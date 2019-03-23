@@ -5,6 +5,6 @@ export abstract class AbstractComponent extends ComponentMixin(Object) {
     constructor(options: ComponentOptions) {
         super({...options});
     }
-   
+       
 }
 

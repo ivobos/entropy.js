@@ -90,7 +90,7 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
 
     simStep(simulationTimestepMsec: number): void {
         if (this.parentObject == this) return;
-        const timeDeltaSec = 1000 * simulationTimestepMsec;
+        const timeDeltaSec = simulationTimestepMsec / 1000;
         const force = G * this.parentObject.mass * this.mass / this.relativePosition.lengthSq();
         const deltav = this.relativePosition.clone()     
                             .normalize()

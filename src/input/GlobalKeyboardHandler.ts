@@ -5,7 +5,7 @@ export class GlobalKeyboardHandler extends AbstractObservableComponent {
     private keyHandlers:{ [index:string] : any } = {};
     
     getAdditionalMonitorText(): string {
-        let debugString = "pressedKeys:[";
+        let debugString = "downKeys:[";
         Object.keys(this.keyMap).forEach((key) => debugString=debugString+key)
         debugString+="]";
         return debugString;
@@ -15,6 +15,7 @@ export class GlobalKeyboardHandler extends AbstractObservableComponent {
         super({...options, key: GlobalKeyboardHandler});
         document.addEventListener('keydown', (event: KeyboardEvent) => this.onKeyDownCb(event), false);
         document.addEventListener('keyup', (event: KeyboardEvent) => this.onKeyUpCb(event), false);
+        document.addEventListener('keypress', (event: KeyboardEvent) => this.onKeyPressCb(event), false);
     }
 
     isKeyDown(key: any) {
@@ -22,6 +23,9 @@ export class GlobalKeyboardHandler extends AbstractObservableComponent {
     }
 
     registerKey(key: any, handler: any) {
+        if (key in this.keyHandlers) {
+            throw Error("key "+key+" already registered");
+        }
         this.keyHandlers[key] = handler;
     }
 
@@ -29,9 +33,6 @@ export class GlobalKeyboardHandler extends AbstractObservableComponent {
         // console.log("onkdown");
         if (event.target === document.body) {
             this.keyMap[event.key] = true;
-            if (this.keyHandlers[event.key]) {
-                this.keyHandlers[event.key]();
-           }
         }
     }
 
@@ -39,6 +40,14 @@ export class GlobalKeyboardHandler extends AbstractObservableComponent {
         // console.log("onkup");
         if (event.target === document.body) {
             delete this.keyMap[event.key];
+        }
+    }
+
+    onKeyPressCb(event: KeyboardEvent) {
+        if (event.target === document.body) {
+            if (this.keyHandlers[event.key]) {
+                this.keyHandlers[event.key]();
+            }
         }
     }
 }
