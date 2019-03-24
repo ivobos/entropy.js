@@ -1,12 +1,14 @@
 import * as THREE from "three";
 import { SimStep } from "../engine/MainLoop";
 import { G } from "./physics_constants";
+import { RenderStyle, RenderStyleProps } from "../rendering/RenderStyle";
 
 export interface PhysicalObjectOptions {
     mass: number;
     parent?: PhysicalObject;
     relativePosition?: THREE.Vector3;   // position relative to parent
     velocity?: THREE.Vector3;
+    radius: number;
 }
 
 export abstract class PhysicalObject extends THREE.Group implements SimStep {
@@ -17,6 +19,7 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
     private childObjects: PhysicalObject[];
 
     private mass: number;
+    private radius: number;
     private velocity: THREE.Vector3;            // delta of relativePosition
 
     private selected: boolean;
@@ -27,9 +30,12 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
         this.relativePosition = options.relativePosition || new THREE.Vector3();
         this.childObjects = [];
         this.mass = options.mass;
+        this.radius = options.radius;
         this.velocity = options.velocity || new THREE.Vector3(0,0,0);
         this.selected = false;
     }
+
+    abstract updateRenderStyle(renderStyleProps: RenderStyleProps): void;
 
     addChildObject(child: PhysicalObject): void {
         this.childObjects.push(child);
@@ -76,27 +82,44 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
     }
 
     move(deltav: THREE.Vector3, deltar: THREE.Vector2): void {
-        this.rotateY(deltar.x);
-        this.rotateX(deltar.y);
-        this.velocity.add(deltav.clone().applyQuaternion(this.quaternion));
-        this.velocity.multiplyScalar(0.95);
+        if (deltav.length() !== 0 || deltar.length() !== 0) {
+            this.rotateY(deltar.x);
+            this.rotateX(deltar.y);
+            this.velocity.add(deltav.clone().applyQuaternion(this.quaternion));
+            this.velocity.multiplyScalar(0.95);
+        }
     }
 
+    /**
+     * @param direction if the length < 1 then the velocity will be sub-orbit, if > 1 then it will be exit velocity
+     */
     setOrbitVelocity(direction: THREE.Vector3) {
-        this.velocity.copy(direction.normalize().multiplyScalar(
+        this.velocity.copy(direction.clone().multiplyScalar(
             Math.sqrt(G * this.parentObject.mass / this.relativePosition.length()))
         );
     }
 
+    // TODO: how to implement child to child collision
+    // TODO: implement re-parenting when gravity from another object is stronger than from parent
     simStep(simulationTimestepMsec: number): void {
         if (this.parentObject == this) return;
         const timeDeltaSec = simulationTimestepMsec / 1000;
+        // gravitational force
         const force = G * this.parentObject.mass * this.mass / this.relativePosition.lengthSq();
         const deltav = this.relativePosition.clone()     
                             .normalize()
                             .multiplyScalar(- force * timeDeltaSec / this.mass);
-        this.velocity.add(deltav);
+        this.velocity.add(deltav); // TODO: to conserve linear momentum have to update parentObject.velocity too        
         this.relativePosition.add(this.velocity.clone().multiplyScalar(timeDeltaSec));
+        // intersection
+       const overlap = this.relativePosition.length() - this.parentObject.radius - this.radius;
+       if (overlap < 0) {
+            const normal = this.relativePosition.clone().normalize();
+            this.velocity.reflect(normal);
+            // TODO: some energy would be released during reflection
+            // TODO adding velocity below is not accurate
+            this.relativePosition.add(this.velocity.clone().multiplyScalar(timeDeltaSec));
+       }
     }
 
     setSelected(selected: boolean) {

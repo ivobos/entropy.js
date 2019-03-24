@@ -1,6 +1,7 @@
 import { ComponentOptions } from "../container/Component";
 import { AbstractObservableComponent } from "../container/AbstractObservableComponent";
 import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
+import { Monitor } from "../observability/Monitor";
 
 export interface LoopStartStep {
 
@@ -70,6 +71,7 @@ export class MainLoop extends AbstractObservableComponent  {
     
     init(): void {
         super.init();
+        this.resolve(Monitor).register(this);
         const mainLoop = this.resolve(MainLoop);
         this.resolve(GlobalKeyboardHandler).registerKey('-', () => mainLoop.updateClockMultiplier(.5));
         this.resolve(GlobalKeyboardHandler).registerKey('=', () => mainLoop.updateClockMultiplier(2.));

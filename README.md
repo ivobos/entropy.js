@@ -30,10 +30,3 @@ note: if you do npm insall in your test app, you will have to npm link @ivobos/e
 Any changes in entropy-engine will be picked up by your test app and live re-loaded.
 
 see: https://medium.com/dailyjs/how-to-use-npm-link-7375b6219557
-
-
-## TODO list
-- don't render when there are no changes to the scene (saves battery)
--- should event loops still continue when nothing changes? and be woken up by input?
--- does it really save much battery?
-

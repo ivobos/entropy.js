@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { PhysicalObject } from '../model/PhysicalObject';
 import { AbstractObservableComponent, ObservableComponentOptions } from '../container/AbstractObservableComponent';
+import { Monitor } from '../observability/Monitor';
 
 export interface CameraHolder extends PhysicalObject {
 
@@ -14,6 +15,11 @@ export class CameraManager extends AbstractObservableComponent {
 
     constructor(options: ObservableComponentOptions) {
         super({...options, key: CameraManager});
+    }
+
+    init(): void {
+        super.init();
+        this.resolve(Monitor).register(this);
     }
 
     getAdditionalMonitorText(): string {

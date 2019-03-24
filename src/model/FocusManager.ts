@@ -4,6 +4,7 @@ import { BeforeDrawStep } from "../engine/MainLoop";
 import { SceneManager } from "../rendering/SceneManager";
 import * as THREE from 'three';
 import { CameraManager } from "../rendering/CameraManager";
+import { Monitor } from "../observability/Monitor";
 
 
 
@@ -14,6 +15,11 @@ export class FocusManager extends AbstractObservableComponent implements BeforeD
     constructor(options: ObservableComponentOptions) {
         super({...options, key: FocusManager});
         this.raycaster = new THREE.Raycaster();
+    }
+
+    init(): void {
+        super.init();
+        this.resolve(Monitor).register(this);
     }
 
     getAdditionalMonitorText(): string {

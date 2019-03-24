@@ -1,21 +1,27 @@
 import { AbstractObservableComponent, ObservableComponentOptions } from '../container/AbstractObservableComponent'
+import { Monitor } from '../observability/Monitor';
 
 export class GlobalKeyboardHandler extends AbstractObservableComponent {
+
     private keyMap:{ [index:string] : boolean } = {};
     private keyHandlers:{ [index:string] : any } = {};
     
+    constructor(options: ObservableComponentOptions) {
+        super({...options, key: GlobalKeyboardHandler});
+        document.addEventListener('keydown', (event: KeyboardEvent) => this.onKeyDownCb(event), false);
+        document.addEventListener('keyup', (event: KeyboardEvent) => this.onKeyUpCb(event), false);
+    }
+
+    init(): void {
+        super.init();
+        this.resolve(Monitor).register(this);
+    }
+
     getAdditionalMonitorText(): string {
         let debugString = "downKeys:[";
         Object.keys(this.keyMap).forEach((key) => debugString=debugString+key)
         debugString+="]";
         return debugString;
-    }
-
-    constructor(options: ObservableComponentOptions) {
-        super({...options, key: GlobalKeyboardHandler});
-        document.addEventListener('keydown', (event: KeyboardEvent) => this.onKeyDownCb(event), false);
-        document.addEventListener('keyup', (event: KeyboardEvent) => this.onKeyUpCb(event), false);
-        document.addEventListener('keypress', (event: KeyboardEvent) => this.onKeyPressCb(event), false);
     }
 
     isKeyDown(key: any) {
@@ -33,6 +39,9 @@ export class GlobalKeyboardHandler extends AbstractObservableComponent {
         // console.log("onkdown");
         if (event.target === document.body) {
             this.keyMap[event.key] = true;
+            if (this.keyHandlers[event.key]) {
+                this.keyHandlers[event.key]();
+            }
         }
     }
 
@@ -43,12 +52,5 @@ export class GlobalKeyboardHandler extends AbstractObservableComponent {
         }
     }
 
-    onKeyPressCb(event: KeyboardEvent) {
-        if (event.target === document.body) {
-            if (this.keyHandlers[event.key]) {
-                this.keyHandlers[event.key]();
-            }
-        }
-    }
 }
 

@@ -14,9 +14,9 @@ export abstract class AbstractObservableComponent extends ObservableMixin(Compon
 
     init(): void {
         super.init();
-        this.resolve(Monitor).register(this);
     }
 
+    // TODO: maybe just remove observablemixin and register manually and pass in this method during registration 
     abstract getAdditionalMonitorText(): string;
 
 }

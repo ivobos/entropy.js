@@ -1,8 +1,14 @@
 import { AbstractObservableComponent, ObservableComponentOptions } from '../container/AbstractObservableComponent'
 import * as THREE from "three";
+import { Monitor } from '../observability/Monitor';
 
 export class GlobalMouseHandler extends AbstractObservableComponent {
     private mouseMoveVector = new THREE.Vector2();
+
+    init(): void {
+        super.init();
+        this.resolve(Monitor).register(this);
+    }
 
     getAdditionalMonitorText(): string {
         let debugString = "mousePos:[";

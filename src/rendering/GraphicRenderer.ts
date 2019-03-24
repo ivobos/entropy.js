@@ -3,11 +3,13 @@ import { AbstractObservableComponent, ObservableComponentOptions } from '../cont
 import { DrawStep } from '../engine/MainLoop';
 import { CameraHolder, CameraManager } from './CameraManager';
 import { SceneManager } from './SceneManager';
+import { Monitor } from '../observability/Monitor';
 
 export interface GrapicRendererOptions extends ObservableComponentOptions {
     parentDiv: any
 }
 
+// TODO: support for different render modes, wireframe, and flat shade, etc
 export class GraphicRenderer extends AbstractObservableComponent implements DrawStep {
     
     private renderer : THREE.Renderer;
@@ -19,6 +21,11 @@ export class GraphicRenderer extends AbstractObservableComponent implements Draw
         window.addEventListener('resize', (event: UIEvent) => this.onWindowResize(event), false);
         this.onWindowResize(undefined);    
         options.parentDiv.appendChild( this.renderer.domElement );
+    }
+
+    init(): void {
+        super.init();
+        this.resolve(Monitor).register(this);
     }
 
     onWindowResize(event: any): void {

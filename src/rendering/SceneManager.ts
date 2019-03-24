@@ -2,16 +2,26 @@ import { AbstractObservableComponent, ObservableComponentOptions } from "../cont
 import { BeforeDrawStep } from "../engine/MainLoop";
 import * as THREE from 'three';
 import { CameraManager } from "./CameraManager";
+import { RenderStyle, RenderStyleProps } from "./RenderStyle";
+import { Monitor } from "../observability/Monitor";
+import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
 
 
 export class SceneManager extends AbstractObservableComponent implements BeforeDrawStep {
     
     private scene : THREE.Scene;
+    private renderStyle: RenderStyleProps = { wireframe: false};
 
     constructor(options: ObservableComponentOptions) {
         super({...options, key: SceneManager});
         this.scene = new THREE.Scene();
         this.scene.userData.changed = true;
+    }
+
+    init(): void {
+        super.init();
+        this.resolve(Monitor).register(this);
+        this.resolve(GlobalKeyboardHandler).registerKey('z', () => this.renderStyle.wireframe = !this.renderStyle.wireframe);
     }
 
     getAdditionalMonitorText(): string {
@@ -22,6 +32,7 @@ export class SceneManager extends AbstractObservableComponent implements BeforeD
         const cameraHolder = this.resolve(CameraManager).getCameraHolder();
         if (cameraHolder) {
             for (const object3d of cameraHolder.getReachableObjects()) {
+                object3d.updateRenderStyle(this.renderStyle);
                 if (!this.scene.children.includes(object3d)) {
                     this.scene.add(object3d);
                 }

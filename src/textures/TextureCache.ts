@@ -1,6 +1,7 @@
 import * as THREE from "three"
 import { AbstractObservableComponent, ObservableComponentOptions } from "../container/AbstractObservableComponent";
 import { Container } from "../container/Container";
+import { Monitor } from "../observability/Monitor";
 
 
 export class TextureCache extends AbstractObservableComponent {
@@ -12,6 +13,11 @@ export class TextureCache extends AbstractObservableComponent {
         super({...container, key: TextureCache});
         this.textureByUrl = new Map();
         this.textureLoader = new THREE.TextureLoader();
+    }
+
+    init(): void {
+        super.init();
+        this.resolve(Monitor).register(this);
     }
 
     getAdditionalMonitorText(): string {
