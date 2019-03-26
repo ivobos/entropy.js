@@ -10,7 +10,7 @@ import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
 export class SceneManager extends AbstractObservableComponent implements BeforeDrawStep {
     
     private scene : THREE.Scene;
-    private renderStyle: RenderStyleProps = { wireframe: false};
+    private renderStyle: RenderStyle = new RenderStyle({});
 
     constructor(options: ObservableComponentOptions) {
         super({...options, key: SceneManager});
@@ -21,11 +21,11 @@ export class SceneManager extends AbstractObservableComponent implements BeforeD
     init(): void {
         super.init();
         this.resolve(Monitor).register(this);
-        this.resolve(GlobalKeyboardHandler).registerKey('z', () => this.renderStyle.wireframe = !this.renderStyle.wireframe);
+        this.resolve(GlobalKeyboardHandler).registerKey('z', () => this.renderStyle.progress());
     }
 
     getAdditionalMonitorText(): string {
-        return "scene.children="+this.scene.children.length;
+        return "scene.children="+this.scene.children.length+" renderStyle="+JSON.stringify(this.renderStyle);
     }
 
     beforeDrawStep(interpolationPercentage: number): void {

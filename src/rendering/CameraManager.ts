@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { PhysicalObject } from '../model/PhysicalObject';
 import { AbstractObservableComponent, ObservableComponentOptions } from '../container/AbstractObservableComponent';
 import { Monitor } from '../observability/Monitor';
+import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 
 export interface CameraHolder extends PhysicalObject {
 
@@ -20,6 +21,15 @@ export class CameraManager extends AbstractObservableComponent {
     init(): void {
         super.init();
         this.resolve(Monitor).register(this);
+        this.resolve(GlobalKeyboardHandler).registerKey('o', () => this.updateFov(0.99));
+        this.resolve(GlobalKeyboardHandler).registerKey('p', () => this.updateFov(1.01));
+    }
+
+    updateFov(multiplier: number): void {
+        if (!this.cameraHolder) return;
+        const camera = this.cameraHolder.getCamera();
+        camera.fov *= multiplier;
+        camera.updateProjectionMatrix();
     }
 
     getAdditionalMonitorText(): string {

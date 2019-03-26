@@ -73,6 +73,8 @@ export class MainLoop extends AbstractObservableComponent  {
         super.init();
         this.resolve(Monitor).register(this);
         const mainLoop = this.resolve(MainLoop);
+        // TODO: add pause/unpause key
+        // TODO: should auto-pause when window loses focus, see https://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active
         this.resolve(GlobalKeyboardHandler).registerKey('-', () => mainLoop.updateClockMultiplier(.5));
         this.resolve(GlobalKeyboardHandler).registerKey('=', () => mainLoop.updateClockMultiplier(2.));
     }

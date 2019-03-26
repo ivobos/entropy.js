@@ -14,8 +14,8 @@ export interface PhysicalObjectOptions {
 export abstract class PhysicalObject extends THREE.Group implements SimStep {
 
     private parentObject: PhysicalObject;       // points to itself if there is no parent
-    private relativePosition: THREE.Vector3;    // position relative to parent
-
+    // TODO: this should be called parentOffset ?
+    private relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
     private childObjects: PhysicalObject[];
 
     private mass: number;
@@ -45,7 +45,7 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
         if (!origin) {
             // start of the walk, this must be the player
             this.position.set(0,0,0);
-            let objects: PhysicalObject[] = [this];
+            let objects: PhysicalObject[] = [];
             objects = objects.concat(this.parentObject.getReachableObjects(this));
             return objects;
         } else if (this.parentObject === origin) {
@@ -62,15 +62,13 @@ export abstract class PhysicalObject extends THREE.Group implements SimStep {
         } else {
             // arrived at one of players parents, walking inwards
             let objects: PhysicalObject[] = [];
+            this.position
+                .copy(origin.relativePosition)
+                .negate()
+                .add(origin.position);
+            objects.push(this);
             for (const child of this.childObjects) {
-                if (child === origin) {
-                    this.position
-                        .copy(child.relativePosition)
-                        .applyQuaternion(child.quaternion.clone().inverse())
-                        .negate()
-                        .add(child.position);
-                    objects.push(this);
-                } else {
+                if (child !== origin) {
                     objects = objects.concat(child.getReachableObjects(this));
                 }
             }
