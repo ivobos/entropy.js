@@ -21,8 +21,8 @@ export class CameraManager extends AbstractObservableComponent {
     init(): void {
         super.init();
         this.resolve(Monitor).register(this);
-        this.resolve(GlobalKeyboardHandler).registerKey('o', () => this.updateFov(0.99));
-        this.resolve(GlobalKeyboardHandler).registerKey('p', () => this.updateFov(1.01));
+        this.resolve(GlobalKeyboardHandler).registerKey('u', () => this.updateFov(0.99));
+        this.resolve(GlobalKeyboardHandler).registerKey('i', () => this.updateFov(1.01));
     }
 
     updateFov(multiplier: number): void {

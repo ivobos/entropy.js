@@ -2,6 +2,7 @@ import { ComponentOptions } from "../container/Component";
 import { AbstractObservableComponent } from "../container/AbstractObservableComponent";
 import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
 import { Monitor } from "../observability/Monitor";
+import { HtmlElements } from "./HtmlElements";
 
 export interface LoopStartStep {
 
@@ -64,6 +65,7 @@ export class MainLoop extends AbstractObservableComponent  {
     private beforeDrawSteps: BeforeDrawStep[] = [];
     private drawSteps: DrawStep[] = [];
     private loopEndSteps: LoopEndStep[] = [];
+    private simPause: boolean = false;
 
     constructor(options: ComponentOptions) {
         super({...options, key: MainLoop, obsDetail: () => this.getAdditionalMonitorText()});
@@ -73,10 +75,16 @@ export class MainLoop extends AbstractObservableComponent  {
         super.init();
         this.resolve(Monitor).register(this);
         const mainLoop = this.resolve(MainLoop);
-        // TODO: add pause/unpause key
-        // TODO: should auto-pause when window loses focus, see https://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active
-        this.resolve(GlobalKeyboardHandler).registerKey('-', () => mainLoop.updateClockMultiplier(.5));
-        this.resolve(GlobalKeyboardHandler).registerKey('=', () => mainLoop.updateClockMultiplier(2.));
+        const keyboard = this.resolve(GlobalKeyboardHandler);
+        // TODO: should reduce fps limit when window loses focus, see https://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active
+        keyboard.registerKey('-', () => mainLoop.updateClockMultiplier(.5));
+        keyboard.registerKey('=', () => mainLoop.updateClockMultiplier(2.));
+        keyboard.registerKey('p', () => mainLoop.togglePauseSimulation());
+    }
+
+    togglePauseSimulation(): void {
+        this.simPause = !this.simPause;
+        this.resolve(HtmlElements).showSimPausedText(this.simPause);
     }
 
     getAdditionalMonitorText(): string {
@@ -169,9 +177,6 @@ export class MainLoop extends AbstractObservableComponent  {
         cancelAnimationFrame(this.rafHandle);
         return this;
     }
-    isRunning(): boolean {
-        return this.running;
-    }
 
     updateClockMultiplier(multiplierMultiplier: number) {
         this.gameClockMultiplier = Math.min(64., Math.max(1., this.gameClockMultiplier * multiplierMultiplier));
@@ -205,8 +210,10 @@ export class MainLoop extends AbstractObservableComponent  {
         // run simulation update
         this.numUpdateSteps = 0;
         while (this.frameDelta >= this.simulationTimestep) {
-            for (const simStep of this.simSteps) {
-                simStep.simStep(this.simulationTimestep*this.gameClockMultiplier);
+            if (!this.simPause) {
+                for (const simStep of this.simSteps) {
+                    simStep.simStep(this.simulationTimestep*this.gameClockMultiplier);
+                }
             }
             this.frameDelta -= this.simulationTimestep;
             if (++this.numUpdateSteps >= 240) {

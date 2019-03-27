@@ -10,6 +10,7 @@ export class HtmlElements extends ComponentMixin(Object)  {
     private element: HTMLElement;
     private rendererDiv: HTMLElement;
     private debugConsoleDiv: HTMLElement;
+    private simPausedDialogDiv: HTMLElement;
 
     constructor(options: HtmlElementsOptions) {
         super({...options, key: HtmlElements});
@@ -33,6 +34,21 @@ export class HtmlElements extends ComponentMixin(Object)  {
         this.debugConsoleDiv.style.opacity = "0.5";
         this.debugConsoleDiv.style.fontSize = "10px";
         obsDiv.appendChild(this.debugConsoleDiv);
+
+        this.simPausedDialogDiv = document.createElement('div');
+        this.simPausedDialogDiv.innerHTML = "SIMULATION PAUSED";
+        // center it as per https://stackoverflow.com/a/36957305
+        this.simPausedDialogDiv.style.position = "fixed";
+        this.simPausedDialogDiv.style.top = "50%";
+        this.simPausedDialogDiv.style.left = "50%";
+        this.simPausedDialogDiv.style.transform = "translate(-50%, -50%)";
+        this.simPausedDialogDiv.style.color = "white";
+        this.simPausedDialogDiv.style.fontFamily = "Impact";
+        this.simPausedDialogDiv.style.fontSize = "32px";
+        this.simPausedDialogDiv.style.webkitTextStrokeWidth = "1px";
+        this.simPausedDialogDiv.style.webkitTextStrokeColor = "black";
+        this.simPausedDialogDiv.style.display = "none";
+        this.element.appendChild(this.simPausedDialogDiv);   
     }
 
     getRendererDiv() : HTMLElement {
@@ -41,6 +57,10 @@ export class HtmlElements extends ComponentMixin(Object)  {
 
     getDebugConsoleDiv() : HTMLElement {
         return this.debugConsoleDiv;
+    }
+
+    showSimPausedText(enabled: boolean) {
+        this.simPausedDialogDiv.style.display = enabled ? "block" : "none";
     }
 
 }
