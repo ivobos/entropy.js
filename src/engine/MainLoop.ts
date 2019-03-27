@@ -76,7 +76,7 @@ export class MainLoop extends AbstractObservableComponent  {
         this.resolve(Monitor).register(this);
         const mainLoop = this.resolve(MainLoop);
         const keyboard = this.resolve(GlobalKeyboardHandler);
-        // TODO: should reduce fps limit when window loses focus, see https://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active
+        // TODO: these shuld move to ExecutionController
         keyboard.registerKey('-', () => mainLoop.updateClockMultiplier(.5));
         keyboard.registerKey('=', () => mainLoop.updateClockMultiplier(2.));
         keyboard.registerKey('p', () => mainLoop.togglePauseSimulation());
@@ -84,7 +84,7 @@ export class MainLoop extends AbstractObservableComponent  {
 
     togglePauseSimulation(): void {
         this.simPause = !this.simPause;
-        this.resolve(HtmlElements).showSimPausedText(this.simPause);
+        this.resolve(HtmlElements).showExecutionModeText(this.simPause ? "PAUSED" : undefined);
     }
 
     getAdditionalMonitorText(): string {
@@ -113,8 +113,8 @@ export class MainLoop extends AbstractObservableComponent  {
     }
 
     // set maximum fps
-    setMaxAllowedFPS(fps: number) {
-        if (typeof fps === 'undefined') {
+    setMaxAllowedFPS(fps?: number) {
+        if (fps === undefined) {
             fps = Infinity;
         }
         if (fps === 0) {

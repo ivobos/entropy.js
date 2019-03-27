@@ -10,7 +10,7 @@ export class HtmlElements extends ComponentMixin(Object)  {
     private element: HTMLElement;
     private rendererDiv: HTMLElement;
     private debugConsoleDiv: HTMLElement;
-    private simPausedDialogDiv: HTMLElement;
+    private executionModeTextDiv: HTMLElement;
 
     constructor(options: HtmlElementsOptions) {
         super({...options, key: HtmlElements});
@@ -35,20 +35,20 @@ export class HtmlElements extends ComponentMixin(Object)  {
         this.debugConsoleDiv.style.fontSize = "10px";
         obsDiv.appendChild(this.debugConsoleDiv);
 
-        this.simPausedDialogDiv = document.createElement('div');
-        this.simPausedDialogDiv.innerHTML = "SIMULATION PAUSED";
+        this.executionModeTextDiv = document.createElement('div');
+        this.executionModeTextDiv.innerHTML = "SIMULATION PAUSED";
         // center it as per https://stackoverflow.com/a/36957305
-        this.simPausedDialogDiv.style.position = "fixed";
-        this.simPausedDialogDiv.style.top = "50%";
-        this.simPausedDialogDiv.style.left = "50%";
-        this.simPausedDialogDiv.style.transform = "translate(-50%, -50%)";
-        this.simPausedDialogDiv.style.color = "white";
-        this.simPausedDialogDiv.style.fontFamily = "Impact";
-        this.simPausedDialogDiv.style.fontSize = "32px";
-        this.simPausedDialogDiv.style.webkitTextStrokeWidth = "1px";
-        this.simPausedDialogDiv.style.webkitTextStrokeColor = "black";
-        this.simPausedDialogDiv.style.display = "none";
-        this.element.appendChild(this.simPausedDialogDiv);   
+        this.executionModeTextDiv.style.position = "fixed";
+        this.executionModeTextDiv.style.top = "50%";
+        this.executionModeTextDiv.style.left = "50%";
+        this.executionModeTextDiv.style.transform = "translate(-50%, -50%)";
+        this.executionModeTextDiv.style.color = "white";
+        this.executionModeTextDiv.style.fontFamily = "Impact";
+        this.executionModeTextDiv.style.fontSize = "32px";
+        this.executionModeTextDiv.style.webkitTextStrokeWidth = "1px";
+        this.executionModeTextDiv.style.webkitTextStrokeColor = "black";
+        this.executionModeTextDiv.style.display = "none";
+        this.element.appendChild(this.executionModeTextDiv);   
     }
 
     getRendererDiv() : HTMLElement {
@@ -59,8 +59,13 @@ export class HtmlElements extends ComponentMixin(Object)  {
         return this.debugConsoleDiv;
     }
 
-    showSimPausedText(enabled: boolean) {
-        this.simPausedDialogDiv.style.display = enabled ? "block" : "none";
+    showExecutionModeText(text?: string) {
+        if (text === undefined) {
+            this.executionModeTextDiv.style.display = "none";
+        } else {
+            this.executionModeTextDiv.innerHTML = text;           
+            this.executionModeTextDiv.style.display = "block";
+        }
     }
 
 }

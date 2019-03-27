@@ -10,7 +10,7 @@ import { SceneManager } from '../rendering/SceneManager';
 import { TextureCache } from '../textures/TextureCache';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { GlobalMouseHandler } from '../input/GlobalMouseHandler';
-import { EngineController } from './EngineController';
+import { ExecutionController } from './ExecutionController';
 
 let static_init_done = false;
 
@@ -75,12 +75,11 @@ export class Builder {
         const cameraManager = new CameraManager({container: this.container});
         const sceneManager = new SceneManager({container: this.container});
         const graphicRenderer = new GraphicRenderer({container: this.container, parentDiv: canvas.getRendererDiv()});    
-        const engineController = new EngineController({container: this.container});
+        const executionController = new ExecutionController({container: this.container});
 
         for (const loopStartStep of this.loopStartSteps) {
             mainLoop.addLoopStartStep(loopStartStep);
         }
-        mainLoop.addLoopStartStep(engineController);
 
         for (const simUpdate of this.simSteps) {
             mainLoop.addSimStep(simUpdate);
