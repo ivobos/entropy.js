@@ -1,15 +1,15 @@
-import * as THREE from "three"
-import { AbstractObservableComponent, ObservableComponentOptions } from "../container/AbstractObservableComponent";
-import { Container } from "../container/Container";
+import * as THREE from "three";
 import { Monitor } from "../observability/Monitor";
+import { AbstractComponent } from "../container/AbstractComponent";
+import { ComponentOptions } from "../container/Component";
 
 
-export class TextureCache extends AbstractObservableComponent {
+export class TextureCache extends AbstractComponent {
 
     private textureByUrl : Map<string, THREE.Texture>;
     private textureLoader: THREE.TextureLoader;
 
-    constructor(container: ObservableComponentOptions) {
+    constructor(container: ComponentOptions) {
         super({...container, key: TextureCache});
         this.textureByUrl = new Map();
         this.textureLoader = new THREE.TextureLoader();
@@ -17,11 +17,11 @@ export class TextureCache extends AbstractObservableComponent {
 
     init(): void {
         super.init();
-        this.resolve(Monitor).register(this);
+        this.resolve(Monitor).addEntry({ observable: this, additionalText: () => this.monitorText() });
     }
 
-    getAdditionalMonitorText(): string {
-        let debug = "cache entries="+this.textureByUrl.size;
+    monitorText(): string {
+        let debug = TextureCache.name+" cache entries="+this.textureByUrl.size;
         for (const key of this.textureByUrl.keys()) {
             debug += ","+key;
         }

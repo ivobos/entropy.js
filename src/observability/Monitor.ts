@@ -1,9 +1,10 @@
 import * as time from "../utils/time";
 import { HtmlElements } from "../engine/HtmlElements";
-import { AbstractObservableComponent, ObservableComponentOptions } from '../container/AbstractObservableComponent'
+
 import { LoopEndStep } from "../engine/MainLoop";
 import { AbstractComponent } from "../container/AbstractComponent";
 import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
+import { ComponentOptions } from "../container/Component";
 
 const UPDATE_PERIOD_MSEC = 1000;
 
@@ -11,13 +12,23 @@ export interface Observable {
     getMonitorText() : string;
 }
 
+
+export interface MonitorEntry {
+    name?: string,
+    jsonable?: any,
+    observable?: any,
+    observableDeprecated?: Observable,
+    additionalText?: () => string,
+}
+
 export class Monitor extends AbstractComponent implements LoopEndStep {
 
-    private monitorableComponents : Array<Observable> = [];
+    private observables : Array<Observable> = [];
+    private entries: Array<MonitorEntry> = [];
     private nextUpdateTimeMsec: number = 0;
     private debugConsoleDiv?: HTMLElement = undefined;
 
-    constructor(options: ObservableComponentOptions) {
+    constructor(options: ComponentOptions) {
         super({...options, key: Monitor});
     }    
 
@@ -26,12 +37,13 @@ export class Monitor extends AbstractComponent implements LoopEndStep {
         if (process.env.NODE_ENV === "development") {
             //this.toggleDebugConsole(); // in dev mode default to console on
         }
-        this.resolve(GlobalKeyboardHandler).registerKey('x' /*'F3'*/, () => this.toggleDebugConsole());
+        this.resolve(GlobalKeyboardHandler).registerKey('z' /*'F3'*/, () => this.toggleDebugConsole());
     }
 
     toggleDebugConsole(): void {
         if (this.debugConsoleDiv) {
             // disable it
+            // TODO make it invisible using style display:none
             this.debugConsoleDiv.innerHTML = "";
             this.debugConsoleDiv = undefined;
         } else {
@@ -46,19 +58,45 @@ export class Monitor extends AbstractComponent implements LoopEndStep {
             if (this.nextUpdateTimeMsec === 0 || currentTimeMsec > this.nextUpdateTimeMsec) {
                 this.nextUpdateTimeMsec = currentTimeMsec + UPDATE_PERIOD_MSEC;
                 let content = "";
-                for (const monitorable of this.monitorableComponents) {
-                    content += monitorable.getMonitorText() + "<br>";
+                for (const observable of this.observables) {
+                    content += observable.getMonitorText() + "<br>";
+                }
+                for (const entry of this.entries) {
+                    if (entry.name) content += entry.name + " ";
+                    if (entry.jsonable) content += JSON.stringify(entry.jsonable) + " ";
+                    if (entry.observable) content += this.getMonitorTextFor(entry.observable) + " ";
+                    if (entry.observableDeprecated) content += entry.observableDeprecated.getMonitorText() + " ";
+                    if (entry.additionalText) content += entry.additionalText() + " ";
+                    content += "<br>";
                 }
                 this.debugConsoleDiv.innerHTML = content;
             }
         }
     }
 
-    register(component: Observable) {
-        if (this.monitorableComponents.includes(component)) {
+    getMonitorTextFor(object: any): string {
+        let result = object.constructor.name+"( ";
+        for (const key in object) {
+            if (typeof object[key] === 'number' || typeof object[key] === 'boolean') {
+                result += " , "+key+"="+object[key];
+            }
+        }
+        result += ") ";
+        return result;        
+    }
+
+    register(observable: Observable) {
+        if (this.observables.includes(observable)) {
             throw new Error("component already registered with monitor");
         }
-        this.monitorableComponents.push(component);
+        this.observables.push(observable);
+    }
+
+    addEntry(entry: MonitorEntry) {
+        if (this.entries.includes(entry)) {
+            throw new Error("monitor entry already registered with monitor");
+        }
+        this.entries.push(entry);
     }
 
 }

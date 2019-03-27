@@ -1,12 +1,13 @@
-import { AbstractObservableComponent, ObservableComponentOptions } from '../container/AbstractObservableComponent'
 import { Monitor } from '../observability/Monitor';
+import { AbstractComponent } from '../container/AbstractComponent';
+import { ComponentOptions } from '../container/Component';
 
-export class GlobalKeyboardHandler extends AbstractObservableComponent {
+export class GlobalKeyboardHandler extends AbstractComponent {
 
     private keyMap:{ [index:string] : boolean } = {};
     private keyHandlers:{ [index:string] : any } = {};
     
-    constructor(options: ObservableComponentOptions) {
+    constructor(options: ComponentOptions) {
         super({...options, key: GlobalKeyboardHandler});
         document.addEventListener('keydown', (event: KeyboardEvent) => this.onKeyDownCb(event), false);
         document.addEventListener('keyup', (event: KeyboardEvent) => this.onKeyUpCb(event), false);
@@ -14,10 +15,10 @@ export class GlobalKeyboardHandler extends AbstractObservableComponent {
 
     init(): void {
         super.init();
-        this.resolve(Monitor).register(this);
+        this.resolve(Monitor).addEntry({ observable: this, additionalText: () => this.monitorText() });
     }
 
-    getAdditionalMonitorText(): string {
+    monitorText(): string {
         let debugString = "downKeys:[";
         Object.keys(this.keyMap).forEach((key) => debugString=debugString+key)
         debugString+="]";

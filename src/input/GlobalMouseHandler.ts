@@ -1,21 +1,17 @@
-import { AbstractObservableComponent, ObservableComponentOptions } from '../container/AbstractObservableComponent'
 import * as THREE from "three";
 import { Monitor } from '../observability/Monitor';
+import { AbstractComponent } from '../container/AbstractComponent';
+import { ComponentOptions } from '../container/Component';
 
-export class GlobalMouseHandler extends AbstractObservableComponent {
+export class GlobalMouseHandler extends AbstractComponent {
     private mouseMoveVector = new THREE.Vector2();
 
     init(): void {
         super.init();
-        this.resolve(Monitor).register(this);
+        this.resolve(Monitor).addEntry({ observable: this});
     }
 
-    getAdditionalMonitorText(): string {
-        let debugString = "mousePos:[";
-        return debugString;
-    }
-
-    constructor(options: ObservableComponentOptions) {
+    constructor(options: ComponentOptions) {
         super({...options, key: GlobalMouseHandler});
         document.body.addEventListener("click", (event: MouseEvent) => this.onClick(event), false);
         document.addEventListener('pointerlockchange', (event: Event) => this.onPointerLockChange(event), false);

@@ -1,20 +1,24 @@
 import { AbstractComponent } from "../container/AbstractComponent";
 import { LoopStartStep, MainLoop } from "./MainLoop";
-import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
 import { Monitor } from "../observability/Monitor";
-import { AbstractObservableComponent, ObservableComponentOptions } from "../container/AbstractObservableComponent";
 import { HtmlElements } from "./HtmlElements";
+import { ComponentOptions } from "../container/Component";
 
-
+// TODO: when re-gain visibility we know that time is lagged, so lower frame rate and display CATCHING UP ... message 
 // TODO: should probably add page visibility at some stage https://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active
-export class ExecutionController extends AbstractObservableComponent {
+export class ExecutionController extends AbstractComponent {
     
     private focused: boolean = true;
 
-    constructor(options: ObservableComponentOptions) {
+    constructor(options: ComponentOptions) {
         super({...options, key: ExecutionController});
         window.addEventListener('blur', (event: FocusEvent) => this.onBlur(event), false);
         window.addEventListener('focus', (event: FocusEvent) => this.onFocus(event), false);
+    }
+
+    init(): void {
+        super.init();
+        this.resolve(Monitor).addEntry({ observable: this });
     }
 
     onBlur(event: FocusEvent): void {
@@ -29,13 +33,4 @@ export class ExecutionController extends AbstractObservableComponent {
         this.resolve(HtmlElements).showExecutionModeText(undefined);
     }
     
-    getAdditionalMonitorText(): string {
-        return "";
-    }
-    
-    init(): void {
-        super.init();
-        this.resolve(Monitor).register(this);
-    }
-
 }

@@ -1,8 +1,8 @@
 import { ComponentOptions } from "../container/Component";
-import { AbstractObservableComponent } from "../container/AbstractObservableComponent";
 import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
 import { Monitor } from "../observability/Monitor";
 import { HtmlElements } from "./HtmlElements";
+import { AbstractComponent } from "../container/AbstractComponent";
 
 export interface LoopStartStep {
 
@@ -43,7 +43,7 @@ export interface LoopEndStep {
 /**
  * Converted to ts from https://github.com/IceCreamYou/MainLoop.js/blob/gh-pages/src/mainloop.js
  */
-export class MainLoop extends AbstractObservableComponent  {
+export class MainLoop extends AbstractComponent  {
 
     private simulationTimestep = 1000 / 60; // simulation time size
     private gameClockMultiplier = 1.;
@@ -68,12 +68,12 @@ export class MainLoop extends AbstractObservableComponent  {
     private simPause: boolean = false;
 
     constructor(options: ComponentOptions) {
-        super({...options, key: MainLoop, obsDetail: () => this.getAdditionalMonitorText()});
+        super({...options, key: MainLoop});
     }
     
     init(): void {
         super.init();
-        this.resolve(Monitor).register(this);
+        this.resolve(Monitor).addEntry({ observable: this , additionalText: () => this.monitorText() });
         const mainLoop = this.resolve(MainLoop);
         const keyboard = this.resolve(GlobalKeyboardHandler);
         // TODO: these shuld move to ExecutionController
@@ -87,7 +87,7 @@ export class MainLoop extends AbstractObservableComponent  {
         this.resolve(HtmlElements).showExecutionModeText(this.simPause ? "PAUSED" : undefined);
     }
 
-    getAdditionalMonitorText(): string {
+    monitorText(): string {
         return "FPS: "+this.getFPS().toFixed(1);
     }
             

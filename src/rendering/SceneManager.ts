@@ -1,18 +1,19 @@
-import { AbstractObservableComponent, ObservableComponentOptions } from "../container/AbstractObservableComponent";
 import { BeforeDrawStep } from "../engine/MainLoop";
 import * as THREE from 'three';
 import { CameraManager } from "./CameraManager";
 import { RenderStyle, RenderStyleProps } from "./RenderStyle";
 import { Monitor } from "../observability/Monitor";
 import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
+import { ComponentOptions } from "../container/Component";
+import { AbstractComponent } from "../container/AbstractComponent";
 
 
-export class SceneManager extends AbstractObservableComponent implements BeforeDrawStep {
+export class SceneManager extends AbstractComponent implements BeforeDrawStep {
     
     private scene : THREE.Scene;
     private renderStyle: RenderStyle = new RenderStyle({});
 
-    constructor(options: ObservableComponentOptions) {
+    constructor(options: ComponentOptions) {
         super({...options, key: SceneManager});
         this.scene = new THREE.Scene();
         this.scene.userData.changed = true;
@@ -20,11 +21,11 @@ export class SceneManager extends AbstractObservableComponent implements BeforeD
 
     init(): void {
         super.init();
-        this.resolve(Monitor).register(this);
-        this.resolve(GlobalKeyboardHandler).registerKey('z', () => this.renderStyle.progress());
+        this.resolve(Monitor).addEntry({ observable: this, additionalText: () => this.monitorText() });
+        this.resolve(GlobalKeyboardHandler).registerKey('x', () => this.renderStyle.progress());
     }
 
-    getAdditionalMonitorText(): string {
+    monitorText(): string {
         return "scene.children="+this.scene.children.length+" renderStyle="+JSON.stringify(this.renderStyle);
     }
 

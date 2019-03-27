@@ -1,16 +1,17 @@
 import * as THREE from 'three';
-import { AbstractObservableComponent, ObservableComponentOptions } from '../container/AbstractObservableComponent';
 import { DrawStep } from '../engine/MainLoop';
 import { CameraHolder, CameraManager } from './CameraManager';
 import { SceneManager } from './SceneManager';
 import { Monitor } from '../observability/Monitor';
+import { AbstractComponent } from '../container/AbstractComponent';
+import { ComponentOptions } from '../container/Component';
 
-export interface GrapicRendererOptions extends ObservableComponentOptions {
+export interface GrapicRendererOptions extends ComponentOptions {
     parentDiv: any
 }
 
 // TODO: support for different render modes, wireframe, and flat shade, etc
-export class GraphicRenderer extends AbstractObservableComponent implements DrawStep {
+export class GraphicRenderer extends AbstractComponent implements DrawStep {
     
     private renderer : THREE.Renderer;
     private rendered: boolean = false;
@@ -25,7 +26,7 @@ export class GraphicRenderer extends AbstractObservableComponent implements Draw
 
     init(): void {
         super.init();
-        this.resolve(Monitor).register(this);
+        this.resolve(Monitor).addEntry({ observable: this });
     }
 
     onWindowResize(event: any): void {
@@ -45,17 +46,6 @@ export class GraphicRenderer extends AbstractObservableComponent implements Draw
             this.rendered = true;
         }
     }
-
-    // BaseComponent abstract method
-    getAdditionalMonitorText(): string {
-        let result = "rendered="+this.rendered;
-        return result;
-    }
-
-    // addObject3D(object3d: THREE.Object3D) {
-    //     this.scene.add( object3d );
-    //     this.scene.userData.changed = true;
-    // }
 
     getHTMLElement() : HTMLElement {
         return this.renderer.domElement;
