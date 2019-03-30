@@ -6,11 +6,12 @@ import { Monitor } from '../observability/Monitor';
 import { HtmlElements } from './HtmlElements';
 import { FocusManager as FocusManager } from '../model/FocusManager';
 import { CameraManager } from '../rendering/CameraManager';
-import { SceneManager } from '../rendering/SceneManager';
 import { TextureCache } from '../textures/TextureCache';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { GlobalMouseHandler } from '../input/GlobalMouseHandler';
 import { ExecutionController } from './ExecutionController';
+import { GraphManager } from '../model/GraphManager';
+import { SimExecutor } from '../model/SimExecutor';
 
 let static_init_done = false;
 
@@ -72,10 +73,11 @@ export class Builder {
         const canvas = new HtmlElements({ container: this.container, element: this.parentDiv});
         const mainLoop = new MainLoop({ container: this.container});
         const focusManager = new FocusManager({container: this.container});
+        const graphManager = new GraphManager({container: this.container});
         const cameraManager = new CameraManager({container: this.container});
-        const sceneManager = new SceneManager({container: this.container});
         const graphicRenderer = new GraphicRenderer({container: this.container, parentDiv: canvas.getRendererDiv()});    
         const executionController = new ExecutionController({container: this.container});
+        const simExecutor = new SimExecutor({container: this.container});
 
         for (const loopStartStep of this.loopStartSteps) {
             mainLoop.addLoopStartStep(loopStartStep);
@@ -84,12 +86,11 @@ export class Builder {
         for (const simUpdate of this.simSteps) {
             mainLoop.addSimStep(simUpdate);
         }
+        mainLoop.addSimStep(simExecutor);
 
         for (const beforeDrawStep of this.beforeDrawSteps) {
             mainLoop.addBeforeDrawStep(beforeDrawStep);
         }
-        mainLoop.addBeforeDrawStep(sceneManager);
-        mainLoop.addBeforeDrawStep(focusManager);
 
         for (const drawStep of this.drawSteps) {
             mainLoop.addDrawStep(drawStep);
@@ -100,7 +101,8 @@ export class Builder {
             mainLoop.addLoopEndStep(loopEndStep);
         }
         mainLoop.addLoopEndStep(monitor);
-        
+        mainLoop.addLoopEndStep(focusManager);
+
         this.container.initComponents();
 
         return mainLoop;

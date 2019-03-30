@@ -1,20 +1,26 @@
 import * as THREE from 'three';
 import { DrawStep } from '../engine/MainLoop';
 import { CameraHolder, CameraManager } from './CameraManager';
-import { SceneManager } from './SceneManager';
 import { Monitor } from '../observability/Monitor';
 import { AbstractComponent } from '../container/AbstractComponent';
 import { ComponentOptions } from '../container/Component';
+import { GraphManager } from '../model/GraphManager';
+import { UpdateRenderStyleOperation } from './UpdateRenderStyleOperation';
+import { RenderStyle } from './RenderStyle';
+import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
+import { UpdatePositionWalk } from '../model/UpdatePositionWalk';
+import { UpdateSceneOperation } from './UpdateSceneOperation';
+import { UpdateObjectsBeforeRender } from './UpdateObjectsBeforeRender';
 
 export interface GrapicRendererOptions extends ComponentOptions {
     parentDiv: any
 }
 
-// TODO: support for different render modes, wireframe, and flat shade, etc
 export class GraphicRenderer extends AbstractComponent implements DrawStep {
     
     private renderer : THREE.Renderer;
-    private rendered: boolean = false;
+    private renderStyle: RenderStyle = new RenderStyle({});
+    private scene: THREE.Scene;
 
     constructor(options: GrapicRendererOptions) {
         super({...options, key: GraphicRenderer});
@@ -22,11 +28,19 @@ export class GraphicRenderer extends AbstractComponent implements DrawStep {
         window.addEventListener('resize', (event: UIEvent) => this.onWindowResize(event), false);
         this.onWindowResize(undefined);    
         options.parentDiv.appendChild( this.renderer.domElement );
+        this.scene = new THREE.Scene();
+        this.resolve(Monitor).addEntry({ observable: this, additionalText: () => this.monitorText() });
+
     }
 
     init(): void {
         super.init();
         this.resolve(Monitor).addEntry({ observable: this });
+        this.resolve(GlobalKeyboardHandler).registerKey('x', () => this.renderStyle.progress());
+    }
+
+    monitorText(): string {
+        return "scene.children="+this.scene.children.length+" renderStyle="+JSON.stringify(this.renderStyle);
     }
 
     onWindowResize(event: any): void {
@@ -39,11 +53,13 @@ export class GraphicRenderer extends AbstractComponent implements DrawStep {
     }
     
     drawStep(interpolationPercentage: number): void {
-        const scene = this.resolve(SceneManager).getScene();
+        this.resolve(GraphManager).execute(new UpdateObjectsBeforeRender(interpolationPercentage));
+        this.resolve(GraphManager).execute(new UpdateRenderStyleOperation(this.renderStyle));
+        this.resolve(GraphManager).execute(new UpdatePositionWalk());      
+        this.resolve(GraphManager).execute(new UpdateSceneOperation(this.scene));
         const camera = this.resolve(CameraManager).getCamera();
         if (camera) {
-            this.renderer.render(scene, camera);
-            this.rendered = true;
+            this.renderer.render(this.scene, camera);
         }
     }
 
@@ -51,5 +67,8 @@ export class GraphicRenderer extends AbstractComponent implements DrawStep {
         return this.renderer.domElement;
     }
     
+    getScene(): THREE.Scene {
+        return this.scene;
+    }
 }
 

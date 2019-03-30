@@ -1,15 +1,15 @@
 import { PhysicalObject } from "./PhysicalObject";
-import { BeforeDrawStep } from "../engine/MainLoop";
-import { SceneManager } from "../rendering/SceneManager";
+import { LoopEndStep } from "../engine/MainLoop";
 import * as THREE from 'three';
 import { CameraManager } from "../rendering/CameraManager";
 import { Monitor } from "../observability/Monitor";
 import { AbstractComponent } from "../container/AbstractComponent";
 import { ComponentOptions } from "../container/Component";
+import { GraphicRenderer } from "../rendering/GraphicRenderer";
 
 
 
-export class FocusManager extends AbstractComponent implements BeforeDrawStep {
+export class FocusManager extends AbstractComponent implements LoopEndStep {
     private focusedObject: PhysicalObject | undefined;
     private raycaster: THREE.Raycaster;
 
@@ -32,8 +32,9 @@ export class FocusManager extends AbstractComponent implements BeforeDrawStep {
         this.focusedObject = obj;
     }
 
-    beforeDrawStep(interpolationPercentage: number): void {
-        const scene = this.resolve(SceneManager).getScene();
+    // TODO: this should move into GraphiRenderer to simlify things
+    loopEndStep(fps: number, panic: boolean): void {
+        const scene = this.resolve(GraphicRenderer).getScene();
         const camera = this.resolve(CameraManager).getCamera();
         if (this.focusedObject) {
             this.focusedObject.setSelected(false);

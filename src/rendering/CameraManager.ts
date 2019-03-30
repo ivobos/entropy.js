@@ -4,6 +4,7 @@ import { Monitor } from '../observability/Monitor';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { AbstractComponent } from '../container/AbstractComponent';
 import { ComponentOptions } from '../container/Component';
+import { GraphManager } from '../model/GraphManager';
 
 export interface CameraHolder extends PhysicalObject {
 
@@ -13,8 +14,6 @@ export interface CameraHolder extends PhysicalObject {
 
 export class CameraManager extends AbstractComponent {
     
-    private cameraHolder?: CameraHolder;
-
     constructor(options: ComponentOptions) {
         super({...options, key: CameraManager});
     }
@@ -27,30 +26,26 @@ export class CameraManager extends AbstractComponent {
     }
 
     updateFov(multiplier: number): void {
-        if (!this.cameraHolder) return;
-        const camera = this.cameraHolder.getCamera();
-        camera.fov *= multiplier;
-        camera.updateProjectionMatrix();
+        const camera = this.getCamera();
+        if (camera) {
+            camera.fov *= multiplier;
+            camera.updateProjectionMatrix();
+        }
     }
 
     monitorText(): string {
         let result = "";
-        if (this.cameraHolder) {
+        const camera = this.getCamera();
+        if (camera) {
             const monitor = this.resolve(Monitor);
-            result += " "+monitor.getMonitorTextFor(this.cameraHolder.getCamera());
+            result += " "+monitor.getMonitorTextFor(camera);
         }
         return result;
     }
 
-    setCameraHolder(cameraHolder: CameraHolder) {
-        this.cameraHolder = cameraHolder;
-    }
-
     getCamera(): THREE.PerspectiveCamera | undefined {
-        return this.cameraHolder && this.cameraHolder.getCamera();
+        const cameraHolder = this.resolve(GraphManager).getCameraHolder();
+        return cameraHolder && cameraHolder.getCamera();
     }
     
-    getCameraHolder(): CameraHolder | undefined {
-        return this.cameraHolder;
-    }
 }

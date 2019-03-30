@@ -2,7 +2,7 @@ import { BaseGraphWalk } from "./GraphWalk";
 import { PhysicalObject } from "./PhysicalObject";
 import { G } from "./physics_constants";
 
-export class ExecuteObjectPhysics extends BaseGraphWalk {
+export class UpdateObjectPhysics extends BaseGraphWalk {
 
     private readonly timeDeltaSec: number;
 

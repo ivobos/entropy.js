@@ -4,12 +4,15 @@ import { Monitor } from "../observability/Monitor";
 import { HtmlElements } from "./HtmlElements";
 import { AbstractComponent } from "../container/AbstractComponent";
 
+// TODO: should this be removed and replaced with InputProcessor
 export interface LoopStartStep {
 
     loopStartStep(timestamp: number, frameDelta: number ): void;
 
 }
 
+
+// TODO: can this be removed and all sim registration should happen in SimExecutor
 export interface SimStep {
 
     // update simulation (physics and ai)
@@ -17,6 +20,8 @@ export interface SimStep {
 
 }
 
+
+// TODO: can this be remved?
 export interface BeforeDrawStep {
 
     // prepare to render visuals
@@ -25,6 +30,7 @@ export interface BeforeDrawStep {
 }
 
 
+// TODO: can this be removed and call GraphicsRenderer directly?
 export interface DrawStep {
 
     // render visuals
@@ -32,6 +38,7 @@ export interface DrawStep {
 
 }
 
+// TODO: can this be removed?
 export interface LoopEndStep {
 
     // end of game loop, called once

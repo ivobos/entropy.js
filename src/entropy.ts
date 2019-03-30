@@ -11,12 +11,11 @@ export * from './utils/random';
 export * from './utils/time';
 export { PhysicalObjectOptions, PhysicalObject } from './model/PhysicalObject';
 export { FocusManager } from './model/FocusManager';
-export { SceneManager } from './rendering/SceneManager';
 export { GlobalMouseHandler } from './input/GlobalMouseHandler';
 export { GlobalKeyboardHandler } from './input/GlobalKeyboardHandler';
 export { TextureCache } from './textures/TextureCache';
 export { RenderStyle, RenderStyleProps } from './rendering/RenderStyle';
-export { ExecuteObjectPhysics } from './model/ExecuteObjectPhysics';
+export { GraphManager } from './model/GraphManager';
 
 import { Builder } from './engine/Builder';
 
