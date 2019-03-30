@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { SimStep } from "../engine/MainLoop";
-import { G } from "./physics_constants";
+import { G } from "../physics/physics_constants";
 import { RenderStyle, RenderStyleProps } from "../rendering/RenderStyle";
 import { GraphWalk } from "./GraphWalk";
 

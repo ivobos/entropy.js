@@ -3,13 +3,7 @@ import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
 import { Monitor } from "../observability/Monitor";
 import { HtmlElements } from "./HtmlElements";
 import { AbstractComponent } from "../container/AbstractComponent";
-
-// TODO: should this be removed and replaced with InputProcessor
-export interface LoopStartStep {
-
-    loopStartStep(timestamp: number, frameDelta: number ): void;
-
-}
+import { InputProcessor } from "../input/InputProcessor";
 
 
 // TODO: can this be removed and all sim registration should happen in SimExecutor
@@ -67,7 +61,6 @@ export class MainLoop extends AbstractComponent  {
     private panic: boolean = false; // is simulation too far behind
     private started: boolean = false; // has loop started
     private running: boolean = false; // once loop has drawn its considered running
-    private loopStartSteps: LoopStartStep[] = [];
     private simSteps: SimStep[] = [];
     private beforeDrawSteps: BeforeDrawStep[] = [];
     private drawSteps: DrawStep[] = [];
@@ -139,10 +132,6 @@ export class MainLoop extends AbstractComponent  {
         this.frameDelta = 0;
         return oldFrameDelta;
     }
-    // add simulation module
-    addLoopStartStep(loopStartStep: LoopStartStep) {
-        this.loopStartSteps.push(loopStartStep);
-    }
     addSimStep(simUpdate: SimStep) {
         this.simSteps.push(simUpdate);
     }
@@ -199,10 +188,8 @@ export class MainLoop extends AbstractComponent  {
         // simulation time not yet simulated
         this.frameDelta += timeStampMsec - this.lastFrameTimeMs;
         this.lastFrameTimeMs = timeStampMsec;
-        // functions that don't depend on time in simulation
-        for (const loopStartStep of this.loopStartSteps) {
-            loopStartStep.loopStartStep(timeStampMsec, this.frameDelta);
-        }
+        // process input
+        this.resolve(InputProcessor).processInput(timeStampMsec, this.frameDelta);
         // this.begin(timestamp, this.frameDelta);
         // update fps estimate
         if (timeStampMsec > this.lastFpsUpdate + this.fpsUpdateInterval) {

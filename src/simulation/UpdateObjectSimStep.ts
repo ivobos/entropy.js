@@ -1,6 +1,6 @@
 
-import { PhysicalObject } from "./PhysicalObject";
-import { BaseGraphWalk } from "./GraphWalk";
+import { PhysicalObject } from "../model/PhysicalObject";
+import { BaseGraphWalk } from "../model/GraphWalk";
 import { SimStep } from "../engine/MainLoop";
 
 

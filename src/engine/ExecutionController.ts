@@ -1,5 +1,5 @@
 import { AbstractComponent } from "../container/AbstractComponent";
-import { LoopStartStep, MainLoop } from "./MainLoop";
+import { MainLoop } from "./MainLoop";
 import { Monitor } from "../observability/Monitor";
 import { HtmlElements } from "./HtmlElements";
 import { ComponentOptions } from "../container/Component";

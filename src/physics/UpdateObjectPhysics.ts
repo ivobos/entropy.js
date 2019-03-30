@@ -1,5 +1,5 @@
-import { BaseGraphWalk } from "./GraphWalk";
-import { PhysicalObject } from "./PhysicalObject";
+import { BaseGraphWalk } from "../model/GraphWalk";
+import { PhysicalObject } from "../model/PhysicalObject";
 import { G } from "./physics_constants";
 
 export class UpdateObjectPhysics extends BaseGraphWalk {
