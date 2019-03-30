@@ -6,6 +6,7 @@ import { Monitor } from "../observability/Monitor";
 import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
 import { ComponentOptions } from "../container/Component";
 import { AbstractComponent } from "../container/AbstractComponent";
+import { UpdatePositionWalk } from "../model/UpdatePositionWalk";
 
 
 export class SceneManager extends AbstractComponent implements BeforeDrawStep {
@@ -32,12 +33,15 @@ export class SceneManager extends AbstractComponent implements BeforeDrawStep {
     beforeDrawStep(interpolationPercentage: number): void {
         const cameraHolder = this.resolve(CameraManager).getCameraHolder();
         if (cameraHolder) {
-            for (const object3d of cameraHolder.getReachableObjects()) {
+            const walk = cameraHolder.walkGraph(new UpdatePositionWalk());
+            for (const object3d of walk.getVisitedNodes()) {
+                // TODO: update render style should be an operation
                 object3d.updateRenderStyle(this.renderStyle);
                 if (!this.scene.children.includes(object3d)) {
                     this.scene.add(object3d);
                 }
             }
+            
         }   
     }
 

@@ -16,6 +16,8 @@ export { GlobalMouseHandler } from './input/GlobalMouseHandler';
 export { GlobalKeyboardHandler } from './input/GlobalKeyboardHandler';
 export { TextureCache } from './textures/TextureCache';
 export { RenderStyle, RenderStyleProps } from './rendering/RenderStyle';
+export { ExecuteObjectPhysics } from './model/ExecuteObjectPhysics';
+
 import { Builder } from './engine/Builder';
 
 // import * as logging from './logging';

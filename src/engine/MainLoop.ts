@@ -77,8 +77,8 @@ export class MainLoop extends AbstractComponent  {
         const mainLoop = this.resolve(MainLoop);
         const keyboard = this.resolve(GlobalKeyboardHandler);
         // TODO: these shuld move to ExecutionController
-        keyboard.registerKey('-', () => mainLoop.updateClockMultiplier(.5));
-        keyboard.registerKey('=', () => mainLoop.updateClockMultiplier(2.));
+        keyboard.registerKey('9', () => mainLoop.updateClockMultiplier(.5));
+        keyboard.registerKey('0', () => mainLoop.updateClockMultiplier(2.));
         keyboard.registerKey('p', () => mainLoop.togglePauseSimulation());
     }
 
