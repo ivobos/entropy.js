@@ -5,16 +5,8 @@ import { HtmlElements } from "./HtmlElements";
 import { AbstractComponent } from "../container/AbstractComponent";
 import { InputProcessor } from "../input/InputProcessor";
 import { SimulationProcessor } from "../simulation/SimulationProcessor";
+import { GraphicRenderer } from "../rendering/GraphicRenderer";
 
-
-
-// TODO: can this be removed and call GraphicsRenderer directly?
-export interface DrawStep {
-
-    // render visuals
-    drawStep(interpolationPercentage: number): void;
-
-}
 
 // TODO: can this be removed?
 export interface LoopEndStep {
@@ -45,7 +37,6 @@ export class MainLoop extends AbstractComponent  {
     private panic: boolean = false; // is simulation too far behind
     private started: boolean = false; // has loop started
     private running: boolean = false; // once loop has drawn its considered running
-    private drawSteps: DrawStep[] = [];
     private loopEndSteps: LoopEndStep[] = [];
     private simPause: boolean = false;
 
@@ -114,9 +105,6 @@ export class MainLoop extends AbstractComponent  {
         this.frameDelta = 0;
         return oldFrameDelta;
     }
-    addDrawStep(drawStep: DrawStep) {
-        this.drawSteps.push(drawStep);
-    }
     addLoopEndStep(loopEndStep: LoopEndStep) {
         this.loopEndSteps.push(loopEndStep);
     }
@@ -129,10 +117,7 @@ export class MainLoop extends AbstractComponent  {
     }
     startCallback(timestamp: number) {
         // Render the initial state before any updates occur.
-        // this.draw(1);
-        for (const drawStep of this.drawSteps) {
-            drawStep.drawStep(1);
-        }
+        this.resolve(GraphicRenderer).doRender(1);
         // application starts drawing.
         this.running = true;
         // Reset variables that are used for tracking time so that we
@@ -190,9 +175,7 @@ export class MainLoop extends AbstractComponent  {
             }
         }
         // render screen
-        for (const module of this.drawSteps) {
-            module.drawStep(this.frameDelta / this.simulationTimestep);
-        }
+        this.resolve(GraphicRenderer).doRender(this.frameDelta / this.simulationTimestep);
         // end of main loop
         for (const loopEndStep of this.loopEndSteps) {
             loopEndStep.loopEndStep(this.fps, this.panic);

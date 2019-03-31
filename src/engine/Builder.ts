@@ -1,7 +1,7 @@
 import * as time from '../utils/time';
 import { Container } from '../container/Container';
 import { GraphicRenderer } from '../rendering/GraphicRenderer';
-import { MainLoop, DrawStep, LoopEndStep } from './MainLoop';
+import { MainLoop, LoopEndStep } from './MainLoop';
 import { Monitor } from '../observability/Monitor';
 import { HtmlElements } from './HtmlElements';
 import { FocusManager as FocusManager } from '../model/FocusManager';
@@ -25,7 +25,6 @@ export class Builder {
 
     private container = new Container();
     private parentDiv: HTMLElement | null = null;
-    private drawSteps: DrawStep[] = [];
     private loopEndSteps: LoopEndStep[] = [];
     private handlersList: Handlers[] = [];
 
@@ -36,11 +35,6 @@ export class Builder {
 
     getContainer(): Container {
         return this.container;
-    }
-
-    addDrawStep(drawStep: DrawStep): Builder {
-        this.drawSteps.push(drawStep);
-        return this;
     }
 
     addLoopEndStep(loopEndStep: LoopEndStep): Builder {
@@ -80,11 +74,6 @@ export class Builder {
             if (handlers.inputHandler) inputProcessor.registerHandler(handlers.inputHandler);
             if (handlers.simulationHandler) simulationProcessor.registerHandler(handlers.simulationHandler);
         }
-
-        for (const drawStep of this.drawSteps) {
-            mainLoop.addDrawStep(drawStep);
-        }
-        mainLoop.addDrawStep(graphicRenderer);
 
         for (const loopEndStep of this.loopEndSteps) {
             mainLoop.addLoopEndStep(loopEndStep);

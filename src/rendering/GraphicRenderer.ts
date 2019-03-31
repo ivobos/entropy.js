@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { DrawStep } from '../engine/MainLoop';
 import { CameraHolder, CameraManager } from './CameraManager';
 import { Monitor } from '../observability/Monitor';
 import { AbstractComponent } from '../container/AbstractComponent';
@@ -16,7 +15,7 @@ export interface GrapicRendererOptions extends ComponentOptions {
     parentDiv: any
 }
 
-export class GraphicRenderer extends AbstractComponent implements DrawStep {
+export class GraphicRenderer extends AbstractComponent {
     
     private renderer : THREE.Renderer;
     private renderStyle: RenderStyle = new RenderStyle({});
@@ -52,7 +51,7 @@ export class GraphicRenderer extends AbstractComponent implements DrawStep {
         }
     }
     
-    drawStep(interpolationPercentage: number): void {
+    doRender(interpolationPercentage: number): void {
         this.resolve(GraphManager).execute(new UpdateObjectsBeforeRender(interpolationPercentage));
         this.resolve(GraphManager).execute(new UpdateRenderStyleOperation(this.renderStyle));
         this.resolve(GraphManager).execute(new UpdatePositionWalk());      
