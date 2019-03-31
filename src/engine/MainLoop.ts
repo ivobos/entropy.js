@@ -8,15 +8,6 @@ import { SimulationProcessor } from "../simulation/SimulationProcessor";
 
 
 
-// TODO: can this be remved?
-export interface BeforeDrawStep {
-
-    // prepare to render visuals
-    beforeDrawStep(interpolationPercentage: number): void;
-
-}
-
-
 // TODO: can this be removed and call GraphicsRenderer directly?
 export interface DrawStep {
 
@@ -54,7 +45,6 @@ export class MainLoop extends AbstractComponent  {
     private panic: boolean = false; // is simulation too far behind
     private started: boolean = false; // has loop started
     private running: boolean = false; // once loop has drawn its considered running
-    private beforeDrawSteps: BeforeDrawStep[] = [];
     private drawSteps: DrawStep[] = [];
     private loopEndSteps: LoopEndStep[] = [];
     private simPause: boolean = false;
@@ -123,9 +113,6 @@ export class MainLoop extends AbstractComponent  {
         var oldFrameDelta = this.frameDelta;
         this.frameDelta = 0;
         return oldFrameDelta;
-    }
-    addBeforeDrawStep(beforeDrawStep: BeforeDrawStep) {
-        this.beforeDrawSteps.push(beforeDrawStep);
     }
     addDrawStep(drawStep: DrawStep) {
         this.drawSteps.push(drawStep);
@@ -201,10 +188,6 @@ export class MainLoop extends AbstractComponent  {
                 this.panic = true;
                 break;
             }
-        }
-        // prepare to draw screen
-        for (const module of this.beforeDrawSteps) {
-            module.beforeDrawStep(this.frameDelta / this.simulationTimestep);
         }
         // render screen
         for (const module of this.drawSteps) {

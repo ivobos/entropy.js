@@ -1,7 +1,6 @@
 
-import { PhysicalObject } from "../model/PhysicalObject";
+import { PhysicalObject, SimulationStep } from "../model/PhysicalObject";
 import { BaseGraphWalk } from "../model/GraphWalk";
-import { SimulationStep } from "./SimulationProcessor";
 
 
 export class UpdateObjectSimulationStep extends BaseGraphWalk {

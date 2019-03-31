@@ -11,6 +11,15 @@ export interface PhysicalObjectOptions {
     radius: number;
 }
 
+export interface PrepareForRenderStep {
+    // prepare to render visuals
+    prepareForRenderStep(interpolationPercentage: number): void;
+}
+
+export interface SimulationStep {
+    // update simulation
+    simulationStep(simulationTimestepMsec: number): void;
+}
 
 // TODO: rename to GraphObject
 export abstract class PhysicalObject extends THREE.Group { 

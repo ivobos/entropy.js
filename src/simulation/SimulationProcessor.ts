@@ -8,10 +8,6 @@ import { UpdatePositionWalk } from "../model/UpdatePositionWalk";
 
 export type SimulationFunction = (simulationTimestepMsec: number) => void;
 
-export interface SimulationStep {
-    // update simulation
-    simulationStep(simulationTimestepMsec: number): void;
-}
 
 export class SimulationProcessor extends AbstractComponent {
 

@@ -1,6 +1,5 @@
 import { GraphWalk } from "../model/GraphWalk";
-import { PhysicalObject } from "../model/PhysicalObject";
-import { BeforeDrawStep } from "../engine/MainLoop";
+import { PhysicalObject, PrepareForRenderStep } from "../model/PhysicalObject";
 
 export class UpdateObjectsBeforeRender implements GraphWalk {
     private interpolationPercentage: number;
@@ -10,9 +9,9 @@ export class UpdateObjectsBeforeRender implements GraphWalk {
     }
 
     nodeVisitor(node: PhysicalObject, prevNode?: PhysicalObject | undefined): void {
-        const b = (node as any) as BeforeDrawStep;
-        if (b.beforeDrawStep) {
-            b.beforeDrawStep(this.interpolationPercentage);
+        const b = (node as any) as PrepareForRenderStep;
+        if (b.prepareForRenderStep) {
+            b.prepareForRenderStep(this.interpolationPercentage);
         }
     }
     
