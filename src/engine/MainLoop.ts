@@ -4,15 +4,8 @@ import { Monitor } from "../observability/Monitor";
 import { HtmlElements } from "./HtmlElements";
 import { AbstractComponent } from "../container/AbstractComponent";
 import { InputProcessor } from "../input/InputProcessor";
+import { SimulationProcessor } from "../simulation/SimulationProcessor";
 
-
-// TODO: can this be removed and all sim registration should happen in SimExecutor
-export interface SimStep {
-
-    // update simulation (physics and ai)
-    simStep(simulationTimestepMsec: number): void;
-
-}
 
 
 // TODO: can this be remved?
@@ -61,7 +54,6 @@ export class MainLoop extends AbstractComponent  {
     private panic: boolean = false; // is simulation too far behind
     private started: boolean = false; // has loop started
     private running: boolean = false; // once loop has drawn its considered running
-    private simSteps: SimStep[] = [];
     private beforeDrawSteps: BeforeDrawStep[] = [];
     private drawSteps: DrawStep[] = [];
     private loopEndSteps: LoopEndStep[] = [];
@@ -131,9 +123,6 @@ export class MainLoop extends AbstractComponent  {
         var oldFrameDelta = this.frameDelta;
         this.frameDelta = 0;
         return oldFrameDelta;
-    }
-    addSimStep(simUpdate: SimStep) {
-        this.simSteps.push(simUpdate);
     }
     addBeforeDrawStep(beforeDrawStep: BeforeDrawStep) {
         this.beforeDrawSteps.push(beforeDrawStep);
@@ -205,9 +194,7 @@ export class MainLoop extends AbstractComponent  {
         this.numUpdateSteps = 0;
         while (this.frameDelta >= this.simulationTimestep) {
             if (!this.simPause) {
-                for (const simStep of this.simSteps) {
-                    simStep.simStep(this.simulationTimestep*this.gameClockMultiplier);
-                }
+                this.resolve(SimulationProcessor).processSimulationStep(this.simulationTimestep*this.gameClockMultiplier);
             }
             this.frameDelta -= this.simulationTimestep;
             if (++this.numUpdateSteps >= 240) {

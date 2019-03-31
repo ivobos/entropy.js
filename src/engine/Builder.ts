@@ -1,7 +1,7 @@
 import * as time from '../utils/time';
 import { Container } from '../container/Container';
 import { GraphicRenderer } from '../rendering/GraphicRenderer';
-import { MainLoop, SimStep, BeforeDrawStep, DrawStep, LoopEndStep } from './MainLoop';
+import { MainLoop, BeforeDrawStep, DrawStep, LoopEndStep } from './MainLoop';
 import { Monitor } from '../observability/Monitor';
 import { HtmlElements } from './HtmlElements';
 import { FocusManager as FocusManager } from '../model/FocusManager';
@@ -11,20 +11,20 @@ import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { GlobalMouseHandler } from '../input/GlobalMouseHandler';
 import { ExecutionController } from './ExecutionController';
 import { GraphManager } from '../model/GraphManager';
-import { SimulationProcessor } from '../simulation/SimulationProcessor';
+import { SimulationProcessor, SimulationFunction } from '../simulation/SimulationProcessor';
 import { InputProcessor, InputHandlerFunction } from '../input/InputProcessor';
 
 let static_init_done = false;
 
 export interface Handlers {
     inputHandler?: InputHandlerFunction;
+    simulationHandler?: SimulationFunction;
 }
 
 export class Builder {
 
     private container = new Container();
     private parentDiv: HTMLElement | null = null;
-    private simSteps: SimStep[] = [];
     private beforeDrawSteps: BeforeDrawStep[] = [];
     private drawSteps: DrawStep[] = [];
     private loopEndSteps: LoopEndStep[] = [];
@@ -37,11 +37,6 @@ export class Builder {
 
     getContainer(): Container {
         return this.container;
-    }
-
-    addSimStep(simUpdate: SimStep): Builder {
-        this.simSteps.push(simUpdate);
-        return this;
     }
 
     addBeforeDrawStep(beforeDrawStep: BeforeDrawStep): Builder {
@@ -82,19 +77,15 @@ export class Builder {
         const cameraManager = new CameraManager({container: this.container});
         const graphicRenderer = new GraphicRenderer({container: this.container, parentDiv: canvas.getRendererDiv()});    
         const executionController = new ExecutionController({container: this.container});
-        const simProcessor = new SimulationProcessor({container: this.container});
+        const simulationProcessor = new SimulationProcessor({container: this.container});
         const inputProcessor = new InputProcessor({container: this.container});
 
         this.container.initComponents();
 
         for (const handlers of this.handlersList) {
             if (handlers.inputHandler) inputProcessor.registerHandler(handlers.inputHandler);
+            if (handlers.simulationHandler) simulationProcessor.registerHandler(handlers.simulationHandler);
         }
-
-        for (const simUpdate of this.simSteps) {
-            mainLoop.addSimStep(simUpdate);
-        }
-        mainLoop.addSimStep(simProcessor);
 
         for (const beforeDrawStep of this.beforeDrawSteps) {
             mainLoop.addBeforeDrawStep(beforeDrawStep);

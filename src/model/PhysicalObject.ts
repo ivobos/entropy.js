@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { SimStep } from "../engine/MainLoop";
 import { G } from "../physics/physics_constants";
 import { RenderStyle, RenderStyleProps } from "../rendering/RenderStyle";
 import { GraphWalk } from "./GraphWalk";
@@ -14,7 +13,7 @@ export interface PhysicalObjectOptions {
 
 
 // TODO: rename to GraphObject
-export abstract class PhysicalObject extends THREE.Group { // implements SimStep {
+export abstract class PhysicalObject extends THREE.Group { 
 
     // TODO: no-parent should use undefined
     parentObject: PhysicalObject;       // points to itself if there is no parent

@@ -1,10 +1,10 @@
 
 import { PhysicalObject } from "../model/PhysicalObject";
 import { BaseGraphWalk } from "../model/GraphWalk";
-import { SimStep } from "../engine/MainLoop";
+import { SimulationStep } from "./SimulationProcessor";
 
 
-export class UpdateObjectSimStep extends BaseGraphWalk {
+export class UpdateObjectSimulationStep extends BaseGraphWalk {
 
     private simulationTimestepMsec: number;
     
@@ -14,9 +14,9 @@ export class UpdateObjectSimStep extends BaseGraphWalk {
     }
 
     nodeVisitor(node: PhysicalObject, prevNode?: PhysicalObject): void {
-        const b = (node as any) as SimStep;
-        if (b.simStep) {
-            b.simStep(this.simulationTimestepMsec);
+        const b = (node as any) as SimulationStep;
+        if (b.simulationStep) {
+            b.simulationStep(this.simulationTimestepMsec);
         }
     }
 
