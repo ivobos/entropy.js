@@ -1,5 +1,4 @@
 import { PhysicalObject } from "./PhysicalObject";
-import { LoopEndStep } from "../engine/MainLoop";
 import * as THREE from 'three';
 import { CameraManager } from "../rendering/CameraManager";
 import { Monitor } from "../observability/Monitor";
@@ -9,7 +8,7 @@ import { GraphicRenderer } from "../rendering/GraphicRenderer";
 
 
 
-export class FocusManager extends AbstractComponent implements LoopEndStep {
+export class FocusManager extends AbstractComponent {
     private focusedObject: PhysicalObject | undefined;
     private raycaster: THREE.Raycaster;
 
@@ -32,8 +31,8 @@ export class FocusManager extends AbstractComponent implements LoopEndStep {
         this.focusedObject = obj;
     }
 
-    // TODO: this should move into GraphiRenderer to simlify things
-    loopEndStep(fps: number, panic: boolean): void {
+    // TODO: this should move into GraphiRenderer to simPlify things
+    processFocus(fps: number, panic: boolean): void {
         const scene = this.resolve(GraphicRenderer).getScene();
         const camera = this.resolve(CameraManager).getCamera();
         if (this.focusedObject) {

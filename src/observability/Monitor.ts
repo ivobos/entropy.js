@@ -1,7 +1,6 @@
 import * as time from "../utils/time";
 import { HtmlElements } from "../engine/HtmlElements";
 
-import { LoopEndStep } from "../engine/MainLoop";
 import { AbstractComponent } from "../container/AbstractComponent";
 import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
 import { ComponentOptions } from "../container/Component";
@@ -21,7 +20,7 @@ export interface MonitorEntry {
     additionalText?: () => string,
 }
 
-export class Monitor extends AbstractComponent implements LoopEndStep {
+export class Monitor extends AbstractComponent {
 
     private observables : Array<Observable> = [];
     private entries: Array<MonitorEntry> = [];
@@ -52,7 +51,7 @@ export class Monitor extends AbstractComponent implements LoopEndStep {
         }
     }
 
-    loopEndStep(fps: number, panic: boolean): void {
+    updateMonitor(fps: number, panic: boolean): void {
         if (this.debugConsoleDiv) {
             const currentTimeMsec = time.getMsecTimestamp();
             if (this.nextUpdateTimeMsec === 0 || currentTimeMsec > this.nextUpdateTimeMsec) {

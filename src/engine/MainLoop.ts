@@ -6,15 +6,7 @@ import { AbstractComponent } from "../container/AbstractComponent";
 import { InputProcessor } from "../input/InputProcessor";
 import { SimulationProcessor } from "../simulation/SimulationProcessor";
 import { GraphicRenderer } from "../rendering/GraphicRenderer";
-
-
-// TODO: can this be removed?
-export interface LoopEndStep {
-
-    // end of game loop, called once
-    loopEndStep(fps: number, panic: boolean): void;
-
-}
+import { FocusManager } from "../model/FocusManager";
 
 
 /**
@@ -37,7 +29,6 @@ export class MainLoop extends AbstractComponent  {
     private panic: boolean = false; // is simulation too far behind
     private started: boolean = false; // has loop started
     private running: boolean = false; // once loop has drawn its considered running
-    private loopEndSteps: LoopEndStep[] = [];
     private simPause: boolean = false;
 
     constructor(options: ComponentOptions) {
@@ -104,9 +95,6 @@ export class MainLoop extends AbstractComponent  {
         var oldFrameDelta = this.frameDelta;
         this.frameDelta = 0;
         return oldFrameDelta;
-    }
-    addLoopEndStep(loopEndStep: LoopEndStep) {
-        this.loopEndSteps.push(loopEndStep);
     }
     start() {
         if (!this.started) {
@@ -177,9 +165,8 @@ export class MainLoop extends AbstractComponent  {
         // render screen
         this.resolve(GraphicRenderer).doRender(this.frameDelta / this.simulationTimestep);
         // end of main loop
-        for (const loopEndStep of this.loopEndSteps) {
-            loopEndStep.loopEndStep(this.fps, this.panic);
-        }
+        this.resolve(Monitor).updateMonitor(this.fps, this.panic);
+        this.resolve(FocusManager).processFocus(this.fps, this.panic);
         this.panic = false;
     }
 }

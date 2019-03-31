@@ -1,7 +1,7 @@
 import * as time from '../utils/time';
 import { Container } from '../container/Container';
 import { GraphicRenderer } from '../rendering/GraphicRenderer';
-import { MainLoop, LoopEndStep } from './MainLoop';
+import { MainLoop } from './MainLoop';
 import { Monitor } from '../observability/Monitor';
 import { HtmlElements } from './HtmlElements';
 import { FocusManager as FocusManager } from '../model/FocusManager';
@@ -25,7 +25,6 @@ export class Builder {
 
     private container = new Container();
     private parentDiv: HTMLElement | null = null;
-    private loopEndSteps: LoopEndStep[] = [];
     private handlersList: Handlers[] = [];
 
     addHandlers(handlers: Handlers): Builder {
@@ -35,11 +34,6 @@ export class Builder {
 
     getContainer(): Container {
         return this.container;
-    }
-
-    addLoopEndStep(loopEndStep: LoopEndStep): Builder {
-        this.loopEndSteps.push(loopEndStep);
-        return this;
     }
 
     setElement(parentDiv: HTMLElement | null): Builder {
@@ -74,12 +68,6 @@ export class Builder {
             if (handlers.inputHandler) inputProcessor.registerHandler(handlers.inputHandler);
             if (handlers.simulationHandler) simulationProcessor.registerHandler(handlers.simulationHandler);
         }
-
-        for (const loopEndStep of this.loopEndSteps) {
-            mainLoop.addLoopEndStep(loopEndStep);
-        }
-        mainLoop.addLoopEndStep(monitor);
-        mainLoop.addLoopEndStep(focusManager);
 
         return mainLoop;
     }

@@ -2,7 +2,7 @@ export  { VERSION } from './version';
 export const NAME = "entropy-engine";
 export { GraphicRenderer } from './rendering/GraphicRenderer';
 export { CameraManager, CameraHolder } from './rendering/CameraManager';
-export { MainLoop, LoopEndStep } from './engine/MainLoop';
+export { MainLoop } from './engine/MainLoop';
 export { Monitor } from './observability/Monitor';
 export { AbstractComponent } from './container/AbstractComponent';
 export { Container } from './container/Container';
