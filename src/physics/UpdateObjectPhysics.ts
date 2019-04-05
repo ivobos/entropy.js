@@ -1,8 +1,8 @@
-import { BaseGraphWalk } from "../model/GraphWalk";
+import { BaseGraphNodeVisitor } from "../model/GraphNodeVisitor";
 import { PhysicalObject } from "../model/PhysicalObject";
 import { G } from "./physics_constants";
 
-export class UpdateObjectPhysics extends BaseGraphWalk {
+export class UpdateObjectPhysics extends BaseGraphNodeVisitor {
 
     private readonly timeDeltaSec: number;
 
@@ -13,7 +13,7 @@ export class UpdateObjectPhysics extends BaseGraphWalk {
 
     // TODO: how to implement child to child collision
     // TODO: implement re-parenting when gravity from another object is stronger than from parent
-    nodeVisitor(node: PhysicalObject, prevNode?: PhysicalObject): void {
+    visit(node: PhysicalObject, prevNode?: PhysicalObject): void {
         if (node.parentObject == node) return;
         // gravitational force
         const force = G * node.parentObject.mass * node.mass / node.relativePosition.lengthSq();

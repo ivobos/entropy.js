@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { G } from "../physics/physics_constants";
 import { RenderStyle, RenderStyleProps } from "../rendering/RenderStyle";
-import { GraphWalk } from "./GraphWalk";
+import { GraphNodeVisitor } from "./GraphNodeVisitor";
 
 export interface PhysicalObjectOptions {
     mass: number;
@@ -54,15 +54,15 @@ export abstract class PhysicalObject extends THREE.Group {
         this.childObjects.push(child);
     }
 
-    walkGraph<T extends GraphWalk>(walk: T, prevNode?: PhysicalObject): T {
-        walk.nodeVisitor(this, prevNode);
+    accept<T extends GraphNodeVisitor>(walk: T, prevNode?: PhysicalObject): T {
+        walk.visit(this, prevNode);
         for (const child of this.childObjects) {
             if (child !== prevNode) {
-                child.walkGraph(walk, this);
+                child.accept(walk, this);
             }
         }
         if (this.parentObject !== this && this.parentObject !== prevNode) {
-            this.parentObject.walkGraph(walk, this);
+            this.parentObject.accept(walk, this);
         }
         return walk;
     } 

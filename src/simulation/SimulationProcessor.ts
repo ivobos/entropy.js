@@ -22,9 +22,9 @@ export class SimulationProcessor extends AbstractComponent {
     }
 
     processSimulationStep(simulationTimestepMsec: number): void {
-        this.resolve(GraphManager).execute(new UpdateObjectSimulationStep(simulationTimestepMsec));
-        this.resolve(GraphManager).execute(new UpdatePositionWalk());  
-        this.resolve(GraphManager).execute(new UpdateObjectPhysics(simulationTimestepMsec));
+        this.resolve(GraphManager).accept(new UpdateObjectSimulationStep(simulationTimestepMsec));
+        this.resolve(GraphManager).accept(new UpdatePositionWalk());  
+        this.resolve(GraphManager).accept(new UpdateObjectPhysics(simulationTimestepMsec));
         for (const simulationFunction of this.simulationFunctions) {
             simulationFunction(simulationTimestepMsec);
         }

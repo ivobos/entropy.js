@@ -1,16 +1,16 @@
 
 import { PhysicalObject } from "./PhysicalObject";
-import { BaseGraphWalk } from "./GraphWalk";
+import { BaseGraphNodeVisitor } from "./GraphNodeVisitor";
 
 // TODO rename to UpdObjPosOperation
-export class UpdatePositionWalk extends BaseGraphWalk {
+export class UpdatePositionWalk extends BaseGraphNodeVisitor {
 
     constructor() {
         super();
     }
 
-    nodeVisitor(node: PhysicalObject, prevNode?: PhysicalObject): void {
-        super.nodeVisitor(node, prevNode);
+    visit(node: PhysicalObject, prevNode?: PhysicalObject): void {
+        super.visit(node, prevNode);
         if (!prevNode) {
             node.position.set(0,0,0);
         } else if (node.parentObject === prevNode) {

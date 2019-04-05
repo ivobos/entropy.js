@@ -52,10 +52,10 @@ export class GraphicRenderer extends AbstractComponent {
     }
     
     doRender(interpolationPercentage: number): void {
-        this.resolve(GraphManager).execute(new UpdateObjectsBeforeRender(interpolationPercentage));
-        this.resolve(GraphManager).execute(new UpdateRenderStyleOperation(this.renderStyle));
-        this.resolve(GraphManager).execute(new UpdatePositionWalk());      
-        this.resolve(GraphManager).execute(new UpdateSceneOperation(this.scene));
+        this.resolve(GraphManager).accept(new UpdateObjectsBeforeRender(interpolationPercentage));
+        this.resolve(GraphManager).accept(new UpdateRenderStyleOperation(this.renderStyle));
+        this.resolve(GraphManager).accept(new UpdatePositionWalk());      
+        this.resolve(GraphManager).accept(new UpdateSceneOperation(this.scene));
         const camera = this.resolve(CameraManager).getCamera();
         if (camera) {
             this.renderer.render(this.scene, camera);

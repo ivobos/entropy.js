@@ -1,7 +1,7 @@
 import { AbstractComponent } from "../container/AbstractComponent";
 import { ComponentOptions } from "../container/Component";
 import { CameraHolder } from "../rendering/CameraManager";
-import { GraphWalk } from "./GraphWalk";
+import { GraphNodeVisitor } from "./GraphNodeVisitor";
 
 
 export class GraphManager extends AbstractComponent {
@@ -20,8 +20,8 @@ export class GraphManager extends AbstractComponent {
         return this.cameraHolder;
     }
 
-    execute(operation: GraphWalk) {
+    accept(visitor: GraphNodeVisitor) {
         const  node = this.getCameraHolder();
-        if (node) node.walkGraph(operation);
+        if (node) node.accept(visitor);
     }
 }

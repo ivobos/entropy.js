@@ -1,12 +1,10 @@
 import { PhysicalObject } from "./PhysicalObject";
 
-
-// TODO rename to GraphOperation
-export interface GraphWalk {
-    nodeVisitor(node: PhysicalObject, prevNode?: PhysicalObject): void;
+export interface GraphNodeVisitor {
+    visit(node: PhysicalObject, prevNode?: PhysicalObject): void;
 }
 
-export class BaseGraphWalk implements GraphWalk {
+export class BaseGraphNodeVisitor implements GraphNodeVisitor {
     private readonly visitedNodes: PhysicalObject[];
 
     // TODO: add method that determines if the walk should continue deeper from this node
@@ -15,7 +13,7 @@ export class BaseGraphWalk implements GraphWalk {
         this.visitedNodes = [];
     }
 
-    nodeVisitor(node: PhysicalObject, prevNode?: PhysicalObject): void {
+    visit(node: PhysicalObject, prevNode?: PhysicalObject): void {
         this.visitedNodes.push(node);
     };
 
