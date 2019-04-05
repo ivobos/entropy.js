@@ -1,26 +1,26 @@
 
-import { PhysicalObject } from "./PhysicalObject";
-import { BaseGraphNodeVisitor } from "./BaseGraphNodeVisitor";
+import { SimObject } from "./SimObject";
+import { SimObjectVisitor } from "./SimObjectVisitor";
 
 // TODO rename to UpdObjPosOperation
-export class UpdatePositionWalk extends BaseGraphNodeVisitor {
+export class UpdatePositionWalk extends SimObjectVisitor {
 
     constructor() {
         super();
     }
 
-    visit(node: PhysicalObject, prevNode?: PhysicalObject): void {
+    visit(node: SimObject, prevNode?: SimObject): void {
         super.visit(node, prevNode);
         if (!prevNode) {
-            node.position.set(0,0,0);
+            node.object3d.position.set(0,0,0);
         } else if (node.parentObject === prevNode) {
-            node.position.copy(prevNode.position)
+            node.object3d.position.copy(prevNode.object3d.position)
                 .add(node.relativePosition);
         } else {
-            node.position
+            node.object3d.position
                 .copy(prevNode.relativePosition)
                 .negate()
-                .add(prevNode.position);
+                .add(prevNode.object3d.position);
         }
     }
 

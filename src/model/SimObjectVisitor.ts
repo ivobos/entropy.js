@@ -1,22 +1,22 @@
-import { PhysicalObject } from "./PhysicalObject";
-import { GraphNode } from "./GraphNode";
-import { GraphNodeVisitor } from "./GraphNodeVisitor";
+import { SimObject } from "./SimObject";
 
-export class BaseGraphNodeVisitor implements GraphNodeVisitor {
+export class SimObjectVisitor {
 
-    private readonly visitedNodes: PhysicalObject[];
+    private readonly visitedNodes: SimObject[];
 
     constructor() {
         this.visitedNodes = [];
     }
 
+    // SimObject calls this method when visited
     // override this to implement custom visit logic
-    visit(currentNode: PhysicalObject, prevNode?: PhysicalObject): void {
+    visit(currentNode: SimObject, prevNode?: SimObject): void {
         this.visitedNodes.push(currentNode);
     }
     
+    // SimObject calls this method to continue traversal
     // override this to change traversal 
-    traverse(current: GraphNode, parent: GraphNode, children: GraphNode[], prevNode?: GraphNode): void {
+    traverse(current: SimObject, parent: SimObject, children: SimObject[], prevNode?: SimObject): void {
         for (const child of children) {
             if (child !== prevNode) {
                 child.accept(this, current);
@@ -27,7 +27,7 @@ export class BaseGraphNodeVisitor implements GraphNodeVisitor {
         }
     }
 
-    getVisitedNodes(): PhysicalObject[] {
+    getVisitedNodes(): SimObject[] {
         return this.visitedNodes;
     }
 

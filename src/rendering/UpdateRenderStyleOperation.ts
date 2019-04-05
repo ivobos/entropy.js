@@ -1,9 +1,8 @@
-import { GraphNodeVisitor } from "../model/GraphNodeVisitor";
-import { BaseGraphNodeVisitor } from "../model/BaseGraphNodeVisitor";
+import { SimObjectVisitor } from "../model/SimObjectVisitor";
 import { RenderStyle } from "./RenderStyle";
-import { PhysicalObject } from "../model/PhysicalObject";
+import { SimObject } from "../model/SimObject";
 
-export class UpdateRenderStyleOperation extends BaseGraphNodeVisitor {
+export class UpdateRenderStyleOperation extends SimObjectVisitor {
     
     private renderStyle: RenderStyle;
 
@@ -12,7 +11,7 @@ export class UpdateRenderStyleOperation extends BaseGraphNodeVisitor {
         this.renderStyle = renderStyle;
     }
 
-    visit(node: PhysicalObject, prevNode?: PhysicalObject | undefined): void {
+    visit(node: SimObject, prevNode?: SimObject | undefined): void {
         node.updateRenderStyle(this.renderStyle);
     }
 

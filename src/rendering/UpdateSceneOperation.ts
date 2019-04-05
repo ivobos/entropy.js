@@ -1,8 +1,7 @@
-import { GraphNodeVisitor } from "../model/GraphNodeVisitor";
-import { BaseGraphNodeVisitor } from "../model/BaseGraphNodeVisitor";
-import { PhysicalObject } from "../model/PhysicalObject";
+import { SimObjectVisitor } from "../model/SimObjectVisitor";
+import { SimObject } from "../model/SimObject";
 
-export class UpdateSceneOperation extends BaseGraphNodeVisitor {
+export class UpdateSceneOperation extends SimObjectVisitor {
 
     private scene: THREE.Scene;
 
@@ -11,9 +10,9 @@ export class UpdateSceneOperation extends BaseGraphNodeVisitor {
         this.scene = scene;
     }
 
-    visit(object3d: PhysicalObject, prevNode?: PhysicalObject | undefined): void {
-        if (!this.scene.children.includes(object3d)) {
-            this.scene.add(object3d);
+    visit(currentNode: SimObject, prevNode?: SimObject | undefined): void {
+        if (!this.scene.children.includes(currentNode.object3d)) {
+            this.scene.add(currentNode.object3d);
         }
     }    
 }

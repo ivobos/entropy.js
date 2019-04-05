@@ -1,9 +1,9 @@
 
-import { PhysicalObject, SimulationStep } from "../model/PhysicalObject";
-import { BaseGraphNodeVisitor } from "../model/BaseGraphNodeVisitor";
+import { SimObject, SimulationStep } from "../model/SimObject";
+import { SimObjectVisitor } from "../model/SimObjectVisitor";
 
 
-export class UpdateObjectSimulationStep extends BaseGraphNodeVisitor {
+export class UpdateObjectSimulationStep extends SimObjectVisitor {
 
     private simulationTimestepMsec: number;
     
@@ -12,7 +12,7 @@ export class UpdateObjectSimulationStep extends BaseGraphNodeVisitor {
         this.simulationTimestepMsec = simulationTimestepMsec;
     }
 
-    visit(node: PhysicalObject, prevNode?: PhysicalObject): void {
+    visit(node: SimObject, prevNode?: SimObject): void {
         const b = (node as any) as SimulationStep;
         if (b.simulationStep) {
             b.simulationStep(this.simulationTimestepMsec);

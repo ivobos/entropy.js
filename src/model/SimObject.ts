@@ -1,16 +1,9 @@
 import * as THREE from "three";
 import { G } from "../physics/physics_constants";
 import { RenderStyle, RenderStyleProps } from "../rendering/RenderStyle";
-import { GraphNodeVisitor } from "./GraphNodeVisitor";
-import { GraphNode } from "./GraphNode";
-
-export interface PhysicalObjectOptions {
-    mass: number;
-    parent?: PhysicalObject;
-    relativePosition?: THREE.Vector3;   // position relative to parent
-    velocity?: THREE.Vector3;
-    radius: number;
-}
+import { EnhancedGroup } from "./EnhancedGroup";
+import { SimObjectVisitor } from "./SimObjectVisitor";
+import { SimObjectOptions } from "./SimObjectOptions";
 
 export interface PrepareForRenderStep {
     // prepare to render visuals
@@ -22,14 +15,20 @@ export interface SimulationStep {
     simulationStep(simulationTimestepMsec: number): void;
 }
 
-// TODO: rename to GraphObject
-export abstract class PhysicalObject extends THREE.Group implements GraphNode { 
+// TODO: all data will be carried in properties, the only private members we should retain are those that deal with graph traversal
+// TODO: should not be abstract once all data is moved to properties not directly manipulated by this class
+// The SimObject has two responsibilities
+// 1) interacts with SimObjectVisitor to traverse the object graph
+// 2) holds object attributes but doesn't interact with them in any way
+export abstract class SimObject { 
+
+    object3d: THREE.Group;
 
     // TODO: no-parent should use undefined
-    parentObject: PhysicalObject;       // points to itself if there is no parent
+    parentObject: SimObject;       // points to itself if there is no parent
     // TODO: this should be called parentOffset ?
     relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
-    private childObjects: PhysicalObject[];
+    private childObjects: SimObject[];
 
     mass: number;
     radius: number;
@@ -37,8 +36,10 @@ export abstract class PhysicalObject extends THREE.Group implements GraphNode {
 
     private selected: boolean;
 
-    constructor(options: PhysicalObjectOptions) {
-        super();
+    constructor(options: SimObjectOptions) {
+        // super();
+        this.object3d = new EnhancedGroup();
+        this.object3d.userData.graphNode = this;
         this.parentObject = options.parent || this;
         this.relativePosition = options.relativePosition || new THREE.Vector3();
         this.childObjects = [];
@@ -51,12 +52,13 @@ export abstract class PhysicalObject extends THREE.Group implements GraphNode {
     // TODO: this should be implemented as graph operation
     abstract updateRenderStyle(renderStyleProps: RenderStyleProps): void;
 
-    addChildObject(child: PhysicalObject): void {
+    addChildObject(child: SimObject): void {
         this.childObjects.push(child);
     }
 
-    // GraphNode.accept
-    accept<T extends GraphNodeVisitor>(graphNodeVisitor: T, prevNode?: GraphNode): T {
+    // GraphManager calls this to start graph traversal
+    // NodeVisitor calls this to continue graph traversal
+    accept<T extends SimObjectVisitor>(graphNodeVisitor: T, prevNode?: SimObject): T {
         graphNodeVisitor.visit(this, prevNode);
         graphNodeVisitor.traverse(this, this.parentObject, this.childObjects, prevNode);
         return graphNodeVisitor;
@@ -64,9 +66,9 @@ export abstract class PhysicalObject extends THREE.Group implements GraphNode {
 
     move(deltav: THREE.Vector3, deltar: THREE.Vector2): void {
         if (deltav.length() !== 0 || deltar.length() !== 0) {
-            this.rotateY(deltar.x);
-            this.rotateX(deltar.y);
-            this.velocity.add(deltav.clone().applyQuaternion(this.quaternion));
+            this.object3d.rotateY(deltar.x);
+            this.object3d.rotateX(deltar.y);
+            this.velocity.add(deltav.clone().applyQuaternion(this.object3d.quaternion));
             this.velocity.multiplyScalar(0.95);
         }
     }

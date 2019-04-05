@@ -1,8 +1,7 @@
-import { GraphNodeVisitor } from "../model/GraphNodeVisitor";
-import { BaseGraphNodeVisitor } from "../model/BaseGraphNodeVisitor";
-import { PhysicalObject, PrepareForRenderStep } from "../model/PhysicalObject";
+import { SimObjectVisitor } from "../model/SimObjectVisitor";
+import { SimObject, PrepareForRenderStep } from "../model/SimObject";
 
-export class UpdateObjectsBeforeRender extends BaseGraphNodeVisitor {
+export class UpdateObjectsBeforeRender extends SimObjectVisitor {
 
     private interpolationPercentage: number;
 
@@ -11,7 +10,7 @@ export class UpdateObjectsBeforeRender extends BaseGraphNodeVisitor {
         this.interpolationPercentage = interpolationPercentage;
     }
 
-    visit(node: PhysicalObject, prevNode?: PhysicalObject | undefined): void {
+    visit(node: SimObject, prevNode?: SimObject | undefined): void {
         const b = (node as any) as PrepareForRenderStep;
         if (b.prepareForRenderStep) {
             b.prepareForRenderStep(this.interpolationPercentage);
