@@ -1,10 +1,13 @@
 import { GraphNodeVisitor } from "../model/GraphNodeVisitor";
+import { BaseGraphNodeVisitor } from "../model/BaseGraphNodeVisitor";
 import { PhysicalObject, PrepareForRenderStep } from "../model/PhysicalObject";
 
-export class UpdateObjectsBeforeRender implements GraphNodeVisitor {
+export class UpdateObjectsBeforeRender extends BaseGraphNodeVisitor {
+
     private interpolationPercentage: number;
 
     constructor(interpolationPercentage:  number) {
+        super();
         this.interpolationPercentage = interpolationPercentage;
     }
 

@@ -1,6 +1,6 @@
 
 import { PhysicalObject, SimulationStep } from "../model/PhysicalObject";
-import { BaseGraphNodeVisitor } from "../model/GraphNodeVisitor";
+import { BaseGraphNodeVisitor } from "../model/BaseGraphNodeVisitor";
 
 
 export class UpdateObjectSimulationStep extends BaseGraphNodeVisitor {

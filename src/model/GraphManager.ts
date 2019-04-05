@@ -21,7 +21,7 @@ export class GraphManager extends AbstractComponent {
     }
 
     accept(visitor: GraphNodeVisitor) {
-        const  node = this.getCameraHolder();
+        const node = this.getCameraHolder();
         if (node) node.accept(visitor);
     }
 }

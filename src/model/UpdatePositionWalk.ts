@@ -1,6 +1,6 @@
 
 import { PhysicalObject } from "./PhysicalObject";
-import { BaseGraphNodeVisitor } from "./GraphNodeVisitor";
+import { BaseGraphNodeVisitor } from "./BaseGraphNodeVisitor";
 
 // TODO rename to UpdObjPosOperation
 export class UpdatePositionWalk extends BaseGraphNodeVisitor {

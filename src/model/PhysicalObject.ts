@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { G } from "../physics/physics_constants";
 import { RenderStyle, RenderStyleProps } from "../rendering/RenderStyle";
 import { GraphNodeVisitor } from "./GraphNodeVisitor";
+import { GraphNode } from "./GraphNode";
 
 export interface PhysicalObjectOptions {
     mass: number;
@@ -22,7 +23,7 @@ export interface SimulationStep {
 }
 
 // TODO: rename to GraphObject
-export abstract class PhysicalObject extends THREE.Group { 
+export abstract class PhysicalObject extends THREE.Group implements GraphNode { 
 
     // TODO: no-parent should use undefined
     parentObject: PhysicalObject;       // points to itself if there is no parent
@@ -54,17 +55,11 @@ export abstract class PhysicalObject extends THREE.Group {
         this.childObjects.push(child);
     }
 
-    accept<T extends GraphNodeVisitor>(walk: T, prevNode?: PhysicalObject): T {
-        walk.visit(this, prevNode);
-        for (const child of this.childObjects) {
-            if (child !== prevNode) {
-                child.accept(walk, this);
-            }
-        }
-        if (this.parentObject !== this && this.parentObject !== prevNode) {
-            this.parentObject.accept(walk, this);
-        }
-        return walk;
+    // GraphNode.accept
+    accept<T extends GraphNodeVisitor>(graphNodeVisitor: T, prevNode?: GraphNode): T {
+        graphNodeVisitor.visit(this, prevNode);
+        graphNodeVisitor.traverse(this, this.parentObject, this.childObjects, prevNode);
+        return graphNodeVisitor;
     } 
 
     move(deltav: THREE.Vector3, deltar: THREE.Vector2): void {

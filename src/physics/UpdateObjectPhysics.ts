@@ -1,4 +1,4 @@
-import { BaseGraphNodeVisitor } from "../model/GraphNodeVisitor";
+import { BaseGraphNodeVisitor } from "../model/BaseGraphNodeVisitor";
 import { PhysicalObject } from "../model/PhysicalObject";
 import { G } from "./physics_constants";
 
