@@ -1,6 +1,6 @@
 
-import { SimObject, SimulationStep } from "../model/SimObject";
-import { SimObjectVisitor } from "../model/SimObjectVisitor";
+import { SimObject, SimulationStep } from "../graph/object/SimObject";
+import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
 
 
 export class UpdateObjectSimulationStep extends SimObjectVisitor {

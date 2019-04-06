@@ -4,13 +4,13 @@ import { GraphicRenderer } from '../rendering/GraphicRenderer';
 import { MainLoop } from './MainLoop';
 import { Monitor } from '../observability/Monitor';
 import { HtmlElements } from './HtmlElements';
-import { FocusManager as FocusManager } from '../model/FocusManager';
+import { FocusManager as FocusManager } from '../graph/object/FocusManager';
 import { CameraManager } from '../rendering/CameraManager';
 import { TextureCache } from '../textures/TextureCache';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { GlobalMouseHandler } from '../input/GlobalMouseHandler';
 import { ExecutionController } from './ExecutionController';
-import { GraphManager } from '../model/GraphManager';
+import { GraphManager } from '../graph/GraphManager';
 import { SimulationProcessor, SimulationFunction } from '../simulation/SimulationProcessor';
 import { InputProcessor, InputHandlerFunction } from '../input/InputProcessor';
 

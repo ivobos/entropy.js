@@ -1,10 +1,12 @@
 
 import { AbstractComponent } from "../container/AbstractComponent";
-import { GraphManager } from "../model/GraphManager";
+import { GraphManager } from "../graph/GraphManager";
 import { UpdateObjectPhysics } from "../physics/UpdateObjectPhysics";
 import { ComponentOptions } from "../container/Component";
 import { UpdateObjectSimulationStep } from "./UpdateObjectSimulationStep";
-import { UpdatePositionWalk } from "../model/UpdatePositionWalk";
+import { UpdatePositionWalk } from "../graph/operations/UpdatePositionWalk";
+import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
+import { updateBoundingRadius } from "../graph/object/concerns/collision";
 
 export type SimulationFunction = (simulationTimestepMsec: number) => void;
 
@@ -28,6 +30,9 @@ export class SimulationProcessor extends AbstractComponent {
         for (const simulationFunction of this.simulationFunctions) {
             simulationFunction(simulationTimestepMsec);
         }
+        // TODO: traversin this way will not update bounding radius correcly, we have to update it for all'
+        // children first and then parents
+        this.resolve(GraphManager).accept(new SimObjectVisitor(updateBoundingRadius));
     }
 
 }

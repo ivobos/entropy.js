@@ -1,7 +1,7 @@
 import { AbstractComponent } from "../container/AbstractComponent";
 import { ComponentOptions } from "../container/Component";
 import { CameraHolder } from "../rendering/CameraManager";
-import { SimObjectVisitor } from "./SimObjectVisitor";
+import { SimObjectVisitor } from "./operations/SimObjectVisitor";
 
 export class GraphManager extends AbstractComponent {
 

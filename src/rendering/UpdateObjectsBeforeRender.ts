@@ -1,5 +1,5 @@
-import { SimObjectVisitor } from "../model/SimObjectVisitor";
-import { SimObject, PrepareForRenderStep } from "../model/SimObject";
+import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
+import { SimObject, PrepareForRenderStep } from "../graph/object/SimObject";
 
 export class UpdateObjectsBeforeRender extends SimObjectVisitor {
 

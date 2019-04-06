@@ -1,6 +1,6 @@
-import { SimObjectVisitor } from "../model/SimObjectVisitor";
+import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
 import { RenderStyle } from "./RenderStyle";
-import { SimObject } from "../model/SimObject";
+import { SimObject } from "../graph/object/SimObject";
 
 export class UpdateRenderStyleOperation extends SimObjectVisitor {
     

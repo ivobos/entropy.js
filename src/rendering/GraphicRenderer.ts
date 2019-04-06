@@ -3,11 +3,11 @@ import { CameraHolder, CameraManager } from './CameraManager';
 import { Monitor } from '../observability/Monitor';
 import { AbstractComponent } from '../container/AbstractComponent';
 import { ComponentOptions } from '../container/Component';
-import { GraphManager } from '../model/GraphManager';
+import { GraphManager } from '../graph/GraphManager';
 import { UpdateRenderStyleOperation } from './UpdateRenderStyleOperation';
 import { RenderStyle } from './RenderStyle';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
-import { UpdatePositionWalk } from '../model/UpdatePositionWalk';
+import { UpdatePositionWalk } from '../graph/operations/UpdatePositionWalk';
 import { UpdateSceneOperation } from './UpdateSceneOperation';
 import { UpdateObjectsBeforeRender } from './UpdateObjectsBeforeRender';
 

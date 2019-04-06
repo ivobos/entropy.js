@@ -1,16 +1,22 @@
-import { SimObject } from "./SimObject";
+import { SimObject } from "../object/SimObject";
 
+export type SimObjectVisitFunction = (currentNode: SimObject, prevNode?: SimObject) => void;
+
+// TODO: rename to SimGraphOperation
 export class SimObjectVisitor {
 
     private readonly visitedNodes: SimObject[];
+    private readonly visitFunction?: SimObjectVisitFunction;
 
-    constructor() {
+    constructor(visitFunction?: SimObjectVisitFunction) {
         this.visitedNodes = [];
+        this.visitFunction = visitFunction;
     }
 
     // SimObject calls this method when visited
     // override this to implement custom visit logic
     visit(currentNode: SimObject, prevNode?: SimObject): void {
+        if (this.visitFunction) this.visitFunction(currentNode, prevNode);
         this.visitedNodes.push(currentNode);
     }
     

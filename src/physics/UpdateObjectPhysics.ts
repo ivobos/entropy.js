@@ -1,6 +1,7 @@
-import { SimObjectVisitor } from "../model/SimObjectVisitor";
-import { SimObject } from "../model/SimObject";
+import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
+import { SimObject } from "../graph/object/SimObject";
 import { G } from "./physics_constants";
+import { PhysicalObject } from "../graph/object/concerns/physics";
 
 export class UpdateObjectPhysics extends SimObjectVisitor {
 
@@ -15,21 +16,23 @@ export class UpdateObjectPhysics extends SimObjectVisitor {
     // TODO: implement re-parenting when gravity from another object is stronger than from parent
     visit(node: SimObject, prevNode?: SimObject): void {
         if (node.parentObject == node) return;
+        const physicalObject = node as PhysicalObject;
+        const parentPhysicalObject = node.parentObject as PhysicalObject;
         // gravitational force
-        const force = G * node.parentObject.mass * node.mass / node.relativePosition.lengthSq();
-        const deltav = node.relativePosition.clone()     
+        const force = G * parentPhysicalObject.mass * physicalObject.mass / physicalObject.relativePosition.lengthSq();
+        const deltav = physicalObject.relativePosition.clone()     
                             .normalize()
-                            .multiplyScalar(- force * this.timeDeltaSec / node.mass);
-        node.velocity.add(deltav); // TODO: to conserve linear momentum have to update parentObject.velocity too        
-        node.relativePosition.add(node.velocity.clone().multiplyScalar(this.timeDeltaSec));
+                            .multiplyScalar(- force * this.timeDeltaSec / physicalObject.mass);
+                            physicalObject.velocity.add(deltav); // TODO: to conserve linear momentum have to update parentObject.velocity too        
+        physicalObject.relativePosition.add(physicalObject.velocity.clone().multiplyScalar(this.timeDeltaSec));
         // intersection
-       const overlap = node.relativePosition.length() - node.parentObject.radius - node.radius;
+       const overlap = physicalObject.relativePosition.length() - parentPhysicalObject.radius - physicalObject.radius;
        if (overlap < 0) {
-            const normal = node.relativePosition.clone().normalize();
-            node.velocity.reflect(normal);
+            const normal = physicalObject.relativePosition.clone().normalize();
+            physicalObject.velocity.reflect(normal);
             // TODO: some energy would be released during reflection
             // TODO adding velocity below is not accurate
-            node.relativePosition.add(node.velocity.clone().multiplyScalar(this.timeDeltaSec));
+            physicalObject.relativePosition.add(physicalObject.velocity.clone().multiplyScalar(this.timeDeltaSec));
        }
     }
 }

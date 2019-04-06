@@ -1,5 +1,6 @@
-import { SimObjectVisitor } from "../model/SimObjectVisitor";
-import { SimObject } from "../model/SimObject";
+import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
+import { SimObject } from "../graph/object/SimObject";
+import { PhysicalObject } from "../graph/object/concerns/physics";
 
 export class UpdateSceneOperation extends SimObjectVisitor {
 
@@ -11,8 +12,9 @@ export class UpdateSceneOperation extends SimObjectVisitor {
     }
 
     visit(currentNode: SimObject, prevNode?: SimObject | undefined): void {
-        if (!this.scene.children.includes(currentNode.object3d)) {
-            this.scene.add(currentNode.object3d);
+        const thisObject3d = (currentNode as PhysicalObject).object3d;
+        if (!this.scene.children.includes(thisObject3d)) {
+            this.scene.add(thisObject3d);
         }
     }    
 }
