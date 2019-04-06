@@ -11,6 +11,7 @@ export * from './utils/random';
 export * from './utils/time';
 export { SimObject, SimulationStep, PrepareForRenderStep } from './graph/object/SimObject';
 export { PhysicalObject } from './graph/object/concerns/physics';
+export { SelectableObject } from './graph/object/concerns/selection';
 export { SimObjectOptions } from './graph/object/SimObjectOptions';
 export { FocusManager } from './graph/object/FocusManager';
 export { GlobalMouseHandler } from './input/GlobalMouseHandler';

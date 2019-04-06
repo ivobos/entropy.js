@@ -4,6 +4,7 @@ import { SimObjectVisitor } from "../operations/SimObjectVisitor";
 import { SimObjectOptions } from "./SimObjectOptions";
 import { boundingRadiusInit } from "./concerns/collision";
 import { physicalObjectInit } from "./concerns/physics";
+import { selectableObjectInit } from "./concerns/selection";
 
 export interface PrepareForRenderStep {
     // prepare to render visuals
@@ -28,15 +29,12 @@ export abstract class SimObject {
     parentObject: SimObject;       // points to itself if there is no parent
     childObjects: SimObject[];
 
-    private selected: boolean;
-
     constructor(options: SimObjectOptions) {
         this.parentObject = options.parent || this;
         this.childObjects = [];
         physicalObjectInit(this, options);
-        boundingRadiusInit(this, options);
-        
-        this.selected = false;
+        boundingRadiusInit(this, options);        
+        selectableObjectInit(this, options);
     }
 
     // TODO: this should be implemented as graph operation
@@ -53,15 +51,6 @@ export abstract class SimObject {
         graphNodeVisitor.traverse(this, this.parentObject, this.childObjects, prevNode);
         return graphNodeVisitor;
     } 
-
-    // TODO move selection to concerns/selection.ts
-    setSelected(selected: boolean) {
-        this.selected = selected;
-    }
-
-    isSelected() {
-        return this.selected;
-    }
 
     toJSON(key: any): any {
         return { 

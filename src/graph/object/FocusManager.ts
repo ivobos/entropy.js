@@ -5,6 +5,7 @@ import { Monitor } from "../../observability/Monitor";
 import { AbstractComponent } from "../../container/AbstractComponent";
 import { ComponentOptions } from "../../container/Component";
 import { GraphicRenderer } from "../../rendering/GraphicRenderer";
+import { SelectableObject } from "./concerns/selection";
 
 
 
@@ -36,7 +37,7 @@ export class FocusManager extends AbstractComponent {
         const scene = this.resolve(GraphicRenderer).getScene();
         const camera = this.resolve(CameraManager).getCamera();
         if (this.focusedObject) {
-            this.focusedObject.setSelected(false);
+            (this.focusedObject as SelectableObject).setSelected(false);
             this.focusedObject = undefined;
         }
         if (camera) {
@@ -44,7 +45,7 @@ export class FocusManager extends AbstractComponent {
             const intersects = this.raycaster.intersectObjects( scene.children, false );
             for ( var i = 0; i < intersects.length; i++ ) {
                 this.focusedObject = intersects[i].object.userData.graphNode as SimObject;
-                this.focusedObject.setSelected(true);
+                (this.focusedObject as SelectableObject).setSelected(true);
                 break;
             }
         }
