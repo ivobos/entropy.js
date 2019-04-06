@@ -1,12 +1,12 @@
 import * as THREE from 'three';
-import { SimObject } from '../graph/object/SimObject';
+import { GraphObject } from '../graph/object/GraphObject';
 import { Monitor } from '../observability/Monitor';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { AbstractComponent } from '../container/AbstractComponent';
 import { ComponentOptions } from '../container/Component';
 import { GraphManager } from '../graph/GraphManager';
 
-export interface CameraHolder extends SimObject {
+export interface CameraHolder extends GraphObject {
 
     getCamera() : THREE.PerspectiveCamera;
 

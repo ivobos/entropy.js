@@ -5,29 +5,20 @@ import { SimObjectOptions } from "./SimObjectOptions";
 import { boundingRadiusInit } from "./concerns/collision";
 import { physicalObjectInit } from "./concerns/physics";
 import { selectableObjectInit } from "./concerns/selection";
+import { renderableObjectInit } from "./concerns/presentation";
+import { simObjectInit } from "./concerns/simulation";
 
-export interface PrepareForRenderStep {
-    // prepare to render visuals
-    prepareForRenderStep(interpolationPercentage: number): void;
-}
-
-export interface SimulationStep {
-    // update simulation
-    simulationStep(simulationTimestepMsec: number): void;
-}
-
-export type SimObjectInitFunction = (simObject: SimObject, options: SimObjectOptions) => void;
+export type SimObjectInitFunction = (simObject: GraphObject, options: SimObjectOptions) => void;
 
 // TODO: all data will be carried in properties, the only private members we should retain are those that deal with graph traversal
-// TODO: should not be abstract once all data is moved to properties not directly manipulated by this class
 // The SimObject has two responsibilities
 // 1) interacts with SimObjectVisitor to traverse the object graph
 // 2) holds object fields but doesn't interact with them in any way
-export abstract class SimObject { 
+export class GraphObject { 
 
     // TODO: no-parent should use undefined
-    parentObject: SimObject;       // points to itself if there is no parent
-    childObjects: SimObject[];
+    parentObject: GraphObject;       // points to itself if there is no parent
+    childObjects: GraphObject[];
 
     constructor(options: SimObjectOptions) {
         this.parentObject = options.parent || this;
@@ -35,18 +26,17 @@ export abstract class SimObject {
         physicalObjectInit(this, options);
         boundingRadiusInit(this, options);        
         selectableObjectInit(this, options);
+        renderableObjectInit(this, options);
+        simObjectInit(this, options);
     }
 
-    // TODO: this should be implemented as graph operation
-    abstract updateRenderStyle(renderStyleProps: RenderStyleProps): void;
-
-    addChildObject(child: SimObject): void {
+    addChildObject(child: GraphObject): void {
         this.childObjects.push(child);
     }
 
     // GraphManager calls this to start graph traversal
     // NodeVisitor calls this to continue graph traversal
-    accept<T extends SimObjectVisitor>(graphNodeVisitor: T, prevNode?: SimObject): T {
+    accept<T extends SimObjectVisitor>(graphNodeVisitor: T, prevNode?: GraphObject): T {
         graphNodeVisitor.visit(this, prevNode);
         graphNodeVisitor.traverse(this, this.parentObject, this.childObjects, prevNode);
         return graphNodeVisitor;

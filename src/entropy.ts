@@ -9,7 +9,7 @@ export { Container } from './container/Container';
 export { ComponentOptions, ComponentMixin } from './container/Component';
 export * from './utils/random';
 export * from './utils/time';
-export { SimObject, SimulationStep, PrepareForRenderStep } from './graph/object/SimObject';
+export { GraphObject } from './graph/object/GraphObject';
 export { PhysicalObject } from './graph/object/concerns/physics';
 export { SelectableObject } from './graph/object/concerns/selection';
 export { SimObjectOptions } from './graph/object/SimObjectOptions';

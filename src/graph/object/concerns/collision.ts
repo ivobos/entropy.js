@@ -1,4 +1,4 @@
-import { SimObject, SimObjectInitFunction } from "../SimObject";
+import { GraphObject, SimObjectInitFunction } from "../GraphObject";
 import { SimObjectVisitFunction } from "../../operations/SimObjectVisitor";
 
 interface ObjectWithBoundingRadius {
@@ -7,11 +7,11 @@ interface ObjectWithBoundingRadius {
     radius: number;
 }
 
-export const boundingRadiusInit: SimObjectInitFunction = function(simObject: SimObject): void {
+export const boundingRadiusInit: SimObjectInitFunction = function(simObject: GraphObject): void {
     (simObject as unknown as ObjectWithBoundingRadius).boundingRadius = 0;
 }
 
-export const updateBoundingRadius: SimObjectVisitFunction = function(currentNode: SimObject, prevNode?: SimObject): void {
+export const updateBoundingRadius: SimObjectVisitFunction = function(currentNode: GraphObject, prevNode?: GraphObject): void {
     const thisObject = currentNode as unknown as ObjectWithBoundingRadius;
     thisObject.boundingRadius = thisObject.radius;
     for (const childNode of currentNode.childObjects) {

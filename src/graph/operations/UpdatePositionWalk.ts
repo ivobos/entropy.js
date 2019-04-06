@@ -1,5 +1,5 @@
 
-import { SimObject } from "../object/SimObject";
+import { GraphObject } from "../object/GraphObject";
 import { SimObjectVisitor } from "./SimObjectVisitor";
 import { PhysicalObject } from "../object/concerns/physics";
 
@@ -11,7 +11,7 @@ export class UpdatePositionWalk extends SimObjectVisitor {
         super();
     }
 
-    visit(node: SimObject, prevNode?: SimObject): void {
+    visit(node: GraphObject, prevNode?: GraphObject): void {
         super.visit(node, prevNode);
         const thisObject3d = (node as PhysicalObject).object3d;
         const physicalObject = node as PhysicalObject;

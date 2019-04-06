@@ -1,11 +1,11 @@
-import { SimObject, SimObjectInitFunction } from "../SimObject";
+import { GraphObject, SimObjectInitFunction } from "../GraphObject";
 import { EnhancedGroup } from "../EnhancedGroup";
 import { G } from "../../../physics/physics_constants";
 import { SimObjectOptions } from "../SimObjectOptions";
 import * as THREE from "three";
 
 
-export interface PhysicalObject extends SimObject {
+export interface PhysicalObject extends GraphObject {
     object3d: THREE.Group;
     velocity: THREE.Vector3;            // delta of relativePosition
     relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
@@ -16,7 +16,7 @@ export interface PhysicalObject extends SimObject {
     setOrbitVelocity(direction: THREE.Vector3): void;
 }
 
-export const physicalObjectInit: SimObjectInitFunction = function(simObject: SimObject, options: SimObjectOptions): void {
+export const physicalObjectInit: SimObjectInitFunction = function(simObject: GraphObject, options: SimObjectOptions): void {
     const physicalObject = simObject as PhysicalObject;
     physicalObject.object3d = new EnhancedGroup();
     physicalObject.object3d.userData.graphNode = physicalObject;
@@ -33,7 +33,7 @@ export const physicalObjectInit: SimObjectInitFunction = function(simObject: Sim
             this.velocity.multiplyScalar(0.95);
         }
     }
-    
+
     /**
      * @param direction if the length < 1 then the velocity will be sub-orbit, if > 1 then it will be exit velocity
      */
