@@ -6,7 +6,7 @@ import { AbstractComponent } from "../container/AbstractComponent";
 import { InputProcessor } from "../input/InputProcessor";
 import { SimulationProcessor } from "../simulation/SimulationProcessor";
 import { GraphicRenderer } from "../rendering/GraphicRenderer";
-import { FocusManager } from "../graph/node/FocusManager";
+import { FocusManager } from "../input/FocusManager";
 
 
 /**
@@ -166,7 +166,6 @@ export class MainLoop extends AbstractComponent  {
         this.resolve(GraphicRenderer).doRender(this.frameDelta / this.simulationTimestep);
         // end of main loop
         this.resolve(Monitor).updateMonitor(this.fps, this.panic);
-        this.resolve(FocusManager).processFocus(this.fps, this.panic);
         this.panic = false;
     }
 }

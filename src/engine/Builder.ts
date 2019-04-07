@@ -4,7 +4,7 @@ import { GraphicRenderer } from '../rendering/GraphicRenderer';
 import { MainLoop } from './MainLoop';
 import { Monitor } from '../observability/Monitor';
 import { HtmlElements } from './HtmlElements';
-import { FocusManager as FocusManager } from '../graph/node/FocusManager';
+import { FocusManager as FocusManager } from '../input/FocusManager';
 import { CameraManager } from '../rendering/CameraManager';
 import { TextureCache } from '../textures/TextureCache';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';

@@ -10,6 +10,8 @@ import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { UpdatePositionWalk } from '../graph/operations/UpdatePositionWalk';
 import { UpdateSceneOperation } from './UpdateSceneOperation';
 import { UpdateObjectsBeforeRender } from './UpdateObjectsBeforeRender';
+import { FocusManager } from '../input/FocusManager';
+import { GraphNode } from '../graph/node/graph-node';
 
 export interface GrapicRendererOptions extends ComponentOptions {
     parentDiv: any
@@ -20,6 +22,7 @@ export class GraphicRenderer extends AbstractComponent {
     private renderer : THREE.Renderer;
     private renderStyle: RenderStyle = new RenderStyle({});
     private scene: THREE.Scene;
+    private raycaster: THREE.Raycaster;
 
     constructor(options: GrapicRendererOptions) {
         super({...options, key: GraphicRenderer});
@@ -29,7 +32,7 @@ export class GraphicRenderer extends AbstractComponent {
         options.parentDiv.appendChild( this.renderer.domElement );
         this.scene = new THREE.Scene();
         this.resolve(Monitor).addEntry({ observable: this, additionalText: () => this.monitorText() });
-
+        this.raycaster = new THREE.Raycaster();
     }
 
     init(): void {
@@ -52,14 +55,28 @@ export class GraphicRenderer extends AbstractComponent {
     }
     
     doRender(interpolationPercentage: number): void {
+        // prepare graph objects for rendering
         this.resolve(GraphManager).accept(new UpdateObjectsBeforeRender(interpolationPercentage));
         this.resolve(GraphManager).accept(new UpdateRenderStyleOperation(this.renderStyle));
         this.resolve(GraphManager).accept(new UpdatePositionWalk());      
         this.resolve(GraphManager).accept(new UpdateSceneOperation(this.scene));
         const camera = this.resolve(CameraManager).getCamera();
+        // render
         if (camera) {
             this.renderer.render(this.scene, camera);
         }
+        // raycast from center of screen to update focus
+        if (camera) {
+            let newFocusedObject: GraphNode | undefined = undefined;
+            this.raycaster.setFromCamera( new THREE.Vector2(), camera);
+            const intersects = this.raycaster.intersectObjects( this.scene.children, false );
+            for ( var i = 0; i < intersects.length; i++ ) {
+                newFocusedObject = intersects[i].object.userData.graphNode as GraphNode;
+                break;
+            }
+            this.resolve(FocusManager).setFocusOn(newFocusedObject);
+        }
+
     }
 
     getHTMLElement() : HTMLElement {

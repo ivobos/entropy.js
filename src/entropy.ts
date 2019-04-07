@@ -10,7 +10,7 @@ export { ComponentOptions, ComponentMixin } from './container/Component';
 export {  GraphObjectOptions, GraphObject } from './graph/node/object/graph-object';
 export * from './utils/random';
 export * from './utils/time';
-export { FocusManager } from './graph/node/FocusManager';
+export { FocusManager } from './input/FocusManager';
 export { GlobalMouseHandler } from './input/GlobalMouseHandler';
 export { GlobalKeyboardHandler } from './input/GlobalKeyboardHandler';
 export { TextureCache } from './textures/TextureCache';
