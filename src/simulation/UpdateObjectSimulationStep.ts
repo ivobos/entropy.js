@@ -1,10 +1,10 @@
 
 import { GraphNode } from "../graph/node/graph-node";
-import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
+import { GraphOperation } from "../graph/graph-operation";
 import { SimObject } from "../graph/node/object/concerns/simulation";
 
 
-export class UpdateObjectSimulationStep extends SimObjectVisitor {
+export class UpdateObjectSimulationStep extends GraphOperation {
 
     private simulationTimestepMsec: number;
     

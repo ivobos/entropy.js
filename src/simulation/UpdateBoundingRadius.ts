@@ -1,6 +1,6 @@
-import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
+import { GraphOperation } from "../graph/graph-operation";
 
-export class UpdateBoundingRadius extends SimObjectVisitor {
+export class UpdateBoundingRadius extends GraphOperation {
 
     
 }

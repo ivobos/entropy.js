@@ -1,9 +1,9 @@
-import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
+import { GraphOperation } from "../graph/graph-operation";
 import { RenderStyle } from "./RenderStyle";
 import { GraphNode } from "../graph/node/graph-node";
 import { RenderableObject } from "../graph/node/object/concerns/presentation";
 
-export class UpdateRenderStyleOperation extends SimObjectVisitor {
+export class UpdateRenderStyleOperation extends GraphOperation {
     
     private renderStyle: RenderStyle;
 

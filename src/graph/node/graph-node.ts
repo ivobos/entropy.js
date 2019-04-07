@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { SimObjectVisitor } from "../operations/SimObjectVisitor";
+import { GraphOperation } from "../graph-operation";
 import { boundingRadiusInit } from "./object/concerns/collision";
 import { physicalObjectInit } from "./object/concerns/physics";
 import { selectableObjectInit } from "./object/concerns/selection";
@@ -23,8 +23,8 @@ export class GraphNode {
     }
 
     // GraphManager calls this to start graph traversal
-    // NodeVisitor calls this to continue graph traversal
-    accept<T extends SimObjectVisitor>(graphNodeVisitor: T, prevNode?: GraphNode): T {
+    // GraphOperation calls this to continue graph traversal
+    accept<T extends GraphOperation>(graphNodeVisitor: T, prevNode?: GraphNode): T {
         graphNodeVisitor.visit(this, prevNode);
         graphNodeVisitor.traverse(this, this.parentObject, this.childObjects, prevNode);
         return graphNodeVisitor;

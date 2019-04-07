@@ -1,8 +1,9 @@
 import { GraphNode } from "../../graph-node";
 import { G } from "../../../../physics/physics_constants";
 import * as THREE from "three";
-import { GraphObjectOptions, GraphObjectInitFunction } from "../graph-object";
+import { GraphObjectOptions, GraphObjectInitFunction, GraphObject } from "../graph-object";
 import { RenderableObject } from "./presentation";
+import { GraphObjectVisitFunction } from "../../../graph-operation";
 
 
 export interface PhysicalObject extends RenderableObject {
@@ -40,5 +41,22 @@ export const physicalObjectInit: GraphObjectInitFunction = function(simObject: G
             Math.sqrt(G * parentPhysicalObject.mass / this.relativePosition.length()))
         );
     }
-
 }
+
+export const updateObjectPosition: GraphObjectVisitFunction = function(thisNode: GraphNode, prevNode?: GraphNode): void {
+    const graphObject = thisNode as GraphObject;
+    if (!prevNode) {
+        graphObject.object3d.position.set(0,0,0);
+    } else if (thisNode.parentObject === prevNode) {
+        const prevObject3d = (prevNode as PhysicalObject).object3d;
+        graphObject.object3d.position.copy(prevObject3d.position)
+            .add(graphObject.relativePosition);
+    } else {
+        const prevGraphObject = prevNode as GraphObject;
+        graphObject.object3d.position
+            .copy(prevGraphObject.relativePosition)
+            .negate()
+            .add(prevGraphObject.object3d.position);
+    }
+}
+

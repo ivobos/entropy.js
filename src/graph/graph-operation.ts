@@ -1,27 +1,24 @@
-import { GraphNode } from "../node/graph-node";
+import { GraphNode } from "./node/graph-node";
 
-export type SimObjectVisitFunction = (currentNode: GraphNode, prevNode?: GraphNode) => void;
+export type GraphObjectVisitFunction = (currentNode: GraphNode, prevNode?: GraphNode) => void;
 
-// TODO: rename to SimGraphOperation
-export class SimObjectVisitor {
+export class GraphOperation {
 
     private readonly visitedNodes: GraphNode[];
-    private readonly visitFunction?: SimObjectVisitFunction;
+    private readonly visitFunction?: GraphObjectVisitFunction;
 
-    constructor(visitFunction?: SimObjectVisitFunction) {
+    constructor(visitFunction?: GraphObjectVisitFunction) {
         this.visitedNodes = [];
         this.visitFunction = visitFunction;
     }
 
-    // SimObject calls this method when visited
-    // override this to implement custom visit logic
+    // GraphNode calls this method when visited
     visit(currentNode: GraphNode, prevNode?: GraphNode): void {
         if (this.visitFunction) this.visitFunction(currentNode, prevNode);
         this.visitedNodes.push(currentNode);
     }
     
-    // SimObject calls this method to continue traversal
-    // override this to change traversal 
+    // GraphNode calls this method to continue traversal
     traverse(current: GraphNode, parent: GraphNode, children: GraphNode[], prevNode?: GraphNode): void {
         for (const child of children) {
             if (child !== prevNode) {

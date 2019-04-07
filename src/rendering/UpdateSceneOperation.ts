@@ -1,8 +1,8 @@
-import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
+import { GraphOperation } from "../graph/graph-operation";
 import { GraphNode } from "../graph/node/graph-node";
 import { PhysicalObject } from "../graph/node/object/concerns/physics";
 
-export class UpdateSceneOperation extends SimObjectVisitor {
+export class UpdateSceneOperation extends GraphOperation {
 
     private scene: THREE.Scene;
 

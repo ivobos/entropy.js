@@ -7,11 +7,12 @@ import { GraphManager } from '../graph/GraphManager';
 import { UpdateRenderStyleOperation } from './UpdateRenderStyleOperation';
 import { RenderStyle } from './RenderStyle';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
-import { UpdatePositionWalk } from '../graph/operations/UpdatePositionWalk';
 import { UpdateSceneOperation } from './UpdateSceneOperation';
 import { UpdateObjectsBeforeRender } from './UpdateObjectsBeforeRender';
 import { FocusManager } from '../input/FocusManager';
 import { GraphNode } from '../graph/node/graph-node';
+import { GraphOperation } from '../graph/graph-operation';
+import { updateObjectPosition } from '../graph/node/object/concerns/physics';
 
 export interface GrapicRendererOptions extends ComponentOptions {
     parentDiv: any
@@ -55,11 +56,12 @@ export class GraphicRenderer extends AbstractComponent {
     }
     
     doRender(interpolationPercentage: number): void {
+        const graphManager = this.resolve(GraphManager);
         // prepare graph objects for rendering
-        this.resolve(GraphManager).accept(new UpdateObjectsBeforeRender(interpolationPercentage));
-        this.resolve(GraphManager).accept(new UpdateRenderStyleOperation(this.renderStyle));
-        this.resolve(GraphManager).accept(new UpdatePositionWalk());      
-        this.resolve(GraphManager).accept(new UpdateSceneOperation(this.scene));
+        graphManager.accept(new UpdateObjectsBeforeRender(interpolationPercentage));
+        graphManager.accept(new UpdateRenderStyleOperation(this.renderStyle));
+        graphManager.accept(new GraphOperation(updateObjectPosition));
+        graphManager.accept(new UpdateSceneOperation(this.scene));
         const camera = this.resolve(CameraManager).getCamera();
         // render
         if (camera) {

@@ -1,7 +1,7 @@
 import { AbstractComponent } from "../container/AbstractComponent";
 import { ComponentOptions } from "../container/Component";
 import { CameraHolder } from "../rendering/CameraManager";
-import { SimObjectVisitor } from "./operations/SimObjectVisitor";
+import { GraphOperation } from "./graph-operation";
 import { GraphNode } from "./node/graph-node";
 import { GraphObject, GraphObjectOptions } from "./node/object/graph-object";
 import { physicalObjectInit } from "./node/object/concerns/physics";
@@ -36,7 +36,7 @@ export class GraphManager extends AbstractComponent {
         return graphObject as GraphObject;
     }
 
-    accept(visitor: SimObjectVisitor) {
+    accept(visitor: GraphOperation) {
         const node = this.getCameraHolder();
         if (node) node.accept(visitor);
     }

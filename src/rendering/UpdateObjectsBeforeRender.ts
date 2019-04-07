@@ -1,8 +1,8 @@
-import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
+import { GraphOperation } from "../graph/graph-operation";
 import { GraphNode } from "../graph/node/graph-node";
 import { RenderableObject } from "../graph/node/object/concerns/presentation";
 
-export class UpdateObjectsBeforeRender extends SimObjectVisitor {
+export class UpdateObjectsBeforeRender extends GraphOperation {
 
     private interpolationPercentage: number;
 
