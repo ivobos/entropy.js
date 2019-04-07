@@ -6,6 +6,7 @@ import { PhysicalObject } from "./concerns/physics";
 import { SelectableObject } from "./concerns/selection";
 import { CameraHolder } from "../../../rendering/CameraManager";
 
+export type GraphObjectInitFunction = (simObject: GraphNode, options: GraphObjectOptions) => void;
 
 export interface GraphObjectOptions {
     mass: number;

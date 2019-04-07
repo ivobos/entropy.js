@@ -7,8 +7,6 @@ import { renderableObjectInit } from "./object/concerns/presentation";
 import { simObjectInit } from "./object/concerns/simulation";
 import { GraphObjectOptions } from "./object/graph-object";
 
-export type SimObjectInitFunction = (simObject: GraphNode, options: GraphObjectOptions) => void;
-
 export class GraphNode { 
 
     // TODO: no-parent should use undefined

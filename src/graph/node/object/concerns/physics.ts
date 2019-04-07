@@ -1,12 +1,11 @@
-import { GraphNode, SimObjectInitFunction } from "../../graph-node";
-import { EnhancedGroup } from "../../EnhancedGroup";
+import { GraphNode } from "../../graph-node";
 import { G } from "../../../../physics/physics_constants";
 import * as THREE from "three";
-import { GraphObjectOptions } from "../graph-object";
+import { GraphObjectOptions, GraphObjectInitFunction } from "../graph-object";
+import { RenderableObject } from "./presentation";
 
 
-export interface PhysicalObject extends GraphNode {
-    object3d: THREE.Group;
+export interface PhysicalObject extends RenderableObject {
     velocity: THREE.Vector3;            // delta of relativePosition
     relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
     mass: number;
@@ -16,10 +15,8 @@ export interface PhysicalObject extends GraphNode {
     setOrbitVelocity(direction: THREE.Vector3): void;
 }
 
-export const physicalObjectInit: SimObjectInitFunction = function(simObject: GraphNode, options: GraphObjectOptions): void {
+export const physicalObjectInit: GraphObjectInitFunction = function(simObject: GraphNode, options: GraphObjectOptions): void {
     const physicalObject = simObject as PhysicalObject;
-    physicalObject.object3d = new EnhancedGroup();
-    physicalObject.object3d.userData.graphNode = physicalObject;
     physicalObject.relativePosition = options.relativePosition || new THREE.Vector3();
     physicalObject.mass = options.mass;
     physicalObject.radius = options.radius;

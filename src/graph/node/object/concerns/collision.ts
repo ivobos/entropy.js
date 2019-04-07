@@ -1,5 +1,6 @@
-import { GraphNode, SimObjectInitFunction } from "../../graph-node";
+import { GraphNode } from "../../graph-node";
 import { SimObjectVisitFunction } from "../../../operations/SimObjectVisitor";
+import { GraphObjectInitFunction } from "../graph-object";
 
 export interface ObjectWithBoundingRadius {
     boundingRadius: number;
@@ -7,7 +8,7 @@ export interface ObjectWithBoundingRadius {
     radius: number;
 }
 
-export const boundingRadiusInit: SimObjectInitFunction = function(simObject: GraphNode): void {
+export const boundingRadiusInit: GraphObjectInitFunction = function(simObject: GraphNode): void {
     (simObject as unknown as ObjectWithBoundingRadius).boundingRadius = 0;
 }
 
