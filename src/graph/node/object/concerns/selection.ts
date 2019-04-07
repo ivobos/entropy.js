@@ -1,14 +1,14 @@
-import { GraphObject, SimObjectInitFunction } from "../GraphObject";
-import { SimObjectOptions } from "../SimObjectOptions";
+import { GraphNode, SimObjectInitFunction } from "../../graph-node";
+import { GraphObjectOptions } from "../graph-object";
 
 
-export interface SelectableObject extends GraphObject {
+export interface SelectableObject extends GraphNode {
     selected: boolean;
     setSelected(selected: boolean): void;
     isSelected(): boolean;
 }
 
-export const selectableObjectInit: SimObjectInitFunction = function(simObject: GraphObject, options: SimObjectOptions): void {
+export const selectableObjectInit: SimObjectInitFunction = function(simObject: GraphNode, options: GraphObjectOptions): void {
     const selectableObject = simObject as SelectableObject;
     selectableObject.selected = false;
 

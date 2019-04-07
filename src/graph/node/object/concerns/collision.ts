@@ -1,17 +1,17 @@
-import { GraphObject, SimObjectInitFunction } from "../GraphObject";
-import { SimObjectVisitFunction } from "../../operations/SimObjectVisitor";
+import { GraphNode, SimObjectInitFunction } from "../../graph-node";
+import { SimObjectVisitFunction } from "../../../operations/SimObjectVisitor";
 
-interface ObjectWithBoundingRadius {
+export interface ObjectWithBoundingRadius {
     boundingRadius: number;
     object3d: THREE.Group;
     radius: number;
 }
 
-export const boundingRadiusInit: SimObjectInitFunction = function(simObject: GraphObject): void {
+export const boundingRadiusInit: SimObjectInitFunction = function(simObject: GraphNode): void {
     (simObject as unknown as ObjectWithBoundingRadius).boundingRadius = 0;
 }
 
-export const updateBoundingRadius: SimObjectVisitFunction = function(currentNode: GraphObject, prevNode?: GraphObject): void {
+export const updateBoundingRadius: SimObjectVisitFunction = function(currentNode: GraphNode, prevNode?: GraphNode): void {
     const thisObject = currentNode as unknown as ObjectWithBoundingRadius;
     thisObject.boundingRadius = thisObject.radius;
     for (const childNode of currentNode.childObjects) {

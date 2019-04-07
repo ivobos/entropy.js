@@ -6,7 +6,7 @@ import { ComponentOptions } from "../container/Component";
 import { UpdateObjectSimulationStep } from "./UpdateObjectSimulationStep";
 import { UpdatePositionWalk } from "../graph/operations/UpdatePositionWalk";
 import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
-import { updateBoundingRadius } from "../graph/object/concerns/collision";
+import { updateBoundingRadius } from "../graph/node/object/concerns/collision";
 
 export type SimulationFunction = (simulationTimestepMsec: number) => void;
 

@@ -1,7 +1,7 @@
 import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
-import { GraphObject } from "../graph/object/GraphObject";
+import { GraphNode } from "../graph/node/graph-node";
 import { G } from "./physics_constants";
-import { PhysicalObject } from "../graph/object/concerns/physics";
+import { PhysicalObject } from "../graph/node/object/concerns/physics";
 
 export class UpdateObjectPhysics extends SimObjectVisitor {
 
@@ -14,7 +14,7 @@ export class UpdateObjectPhysics extends SimObjectVisitor {
 
     // TODO: how to implement child to child collision
     // TODO: implement re-parenting when gravity from another object is stronger than from parent
-    visit(node: GraphObject, prevNode?: GraphObject): void {
+    visit(node: GraphNode, prevNode?: GraphNode): void {
         if (node.parentObject == node) return;
         const physicalObject = node as PhysicalObject;
         const parentPhysicalObject = node.parentObject as PhysicalObject;

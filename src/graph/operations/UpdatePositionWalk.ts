@@ -1,7 +1,7 @@
 
-import { GraphObject } from "../object/GraphObject";
+import { GraphNode } from "../node/graph-node";
 import { SimObjectVisitor } from "./SimObjectVisitor";
-import { PhysicalObject } from "../object/concerns/physics";
+import { PhysicalObject } from "../node/object/concerns/physics";
 
 // TODO rename to UpdObjPosOperation
 // TODO move to physics.ts
@@ -11,7 +11,7 @@ export class UpdatePositionWalk extends SimObjectVisitor {
         super();
     }
 
-    visit(node: GraphObject, prevNode?: GraphObject): void {
+    visit(node: GraphNode, prevNode?: GraphNode): void {
         super.visit(node, prevNode);
         const thisObject3d = (node as PhysicalObject).object3d;
         const physicalObject = node as PhysicalObject;

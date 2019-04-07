@@ -6,7 +6,7 @@ import { AbstractComponent } from "../container/AbstractComponent";
 import { InputProcessor } from "../input/InputProcessor";
 import { SimulationProcessor } from "../simulation/SimulationProcessor";
 import { GraphicRenderer } from "../rendering/GraphicRenderer";
-import { FocusManager } from "../graph/object/FocusManager";
+import { FocusManager } from "../graph/node/FocusManager";
 
 
 /**

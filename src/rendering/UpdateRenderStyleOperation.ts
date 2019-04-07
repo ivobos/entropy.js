@@ -1,7 +1,7 @@
 import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
 import { RenderStyle } from "./RenderStyle";
-import { GraphObject } from "../graph/object/GraphObject";
-import { RenderableObject } from "../graph/object/concerns/presentation";
+import { GraphNode } from "../graph/node/graph-node";
+import { RenderableObject } from "../graph/node/object/concerns/presentation";
 
 export class UpdateRenderStyleOperation extends SimObjectVisitor {
     
@@ -12,7 +12,7 @@ export class UpdateRenderStyleOperation extends SimObjectVisitor {
         this.renderStyle = renderStyle;
     }
 
-    visit(node: GraphObject, prevNode?: GraphObject | undefined): void {
+    visit(node: GraphNode, prevNode?: GraphNode | undefined): void {
         const renderableObject = node as RenderableObject;
         if (renderableObject.updateRenderStyle) renderableObject.updateRenderStyle(this.renderStyle);
     }

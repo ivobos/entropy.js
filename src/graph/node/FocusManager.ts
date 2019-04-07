@@ -1,16 +1,16 @@
-import { GraphObject } from "./GraphObject";
+import { GraphNode } from "./graph-node";
 import * as THREE from 'three';
 import { CameraManager } from "../../rendering/CameraManager";
 import { Monitor } from "../../observability/Monitor";
 import { AbstractComponent } from "../../container/AbstractComponent";
 import { ComponentOptions } from "../../container/Component";
 import { GraphicRenderer } from "../../rendering/GraphicRenderer";
-import { SelectableObject } from "./concerns/selection";
+import { SelectableObject } from "./object/concerns/selection";
 
 
 
 export class FocusManager extends AbstractComponent {
-    private focusedObject: GraphObject | undefined;
+    private focusedObject: GraphNode | undefined;
     private raycaster: THREE.Raycaster;
 
     constructor(options: ComponentOptions) {
@@ -28,7 +28,7 @@ export class FocusManager extends AbstractComponent {
         return this.focusedObject.constructor.name+" "+JSON.stringify(this.focusedObject);
     }
 
-    setFocusOn(obj: GraphObject) {
+    setFocusOn(obj: GraphNode) {
         this.focusedObject = obj;
     }
 
@@ -44,7 +44,7 @@ export class FocusManager extends AbstractComponent {
             this.raycaster.setFromCamera( new THREE.Vector2(), camera);
             const intersects = this.raycaster.intersectObjects( scene.children, false );
             for ( var i = 0; i < intersects.length; i++ ) {
-                this.focusedObject = intersects[i].object.userData.graphNode as GraphObject;
+                this.focusedObject = intersects[i].object.userData.graphNode as GraphNode;
                 (this.focusedObject as SelectableObject).setSelected(true);
                 break;
             }

@@ -1,7 +1,7 @@
 
-import { GraphObject } from "../graph/object/GraphObject";
+import { GraphNode } from "../graph/node/graph-node";
 import { SimObjectVisitor } from "../graph/operations/SimObjectVisitor";
-import { SimObject } from "../graph/object/concerns/simulation";
+import { SimObject } from "../graph/node/object/concerns/simulation";
 
 
 export class UpdateObjectSimulationStep extends SimObjectVisitor {
@@ -13,7 +13,7 @@ export class UpdateObjectSimulationStep extends SimObjectVisitor {
         this.simulationTimestepMsec = simulationTimestepMsec;
     }
 
-    visit(node: GraphObject, prevNode?: GraphObject): void {
+    visit(node: GraphNode, prevNode?: GraphNode): void {
         const simObject = (node as any) as SimObject;
         if (simObject.simulationStep) {
             simObject.simulationStep(this.simulationTimestepMsec);
