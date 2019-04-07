@@ -3,6 +3,7 @@ import { GraphNode } from "../graph/node/graph-node";
 import { G } from "./physics_constants";
 import { PhysicalObject } from "../graph/node/object/concerns/physics";
 
+// TODO move into physics.ts
 export class UpdateObjectPhysics extends GraphOperation {
 
     private readonly timeDeltaSec: number;

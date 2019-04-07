@@ -3,6 +3,8 @@ import { RenderStyle } from "./RenderStyle";
 import { GraphNode } from "../graph/node/graph-node";
 import { RenderableObject } from "../graph/node/object/concerns/presentation";
 
+// TODO: move into concerns/presentation.ts
+// TODO: or this should only be called when render style actually changes
 export class UpdateRenderStyleOperation extends GraphOperation {
     
     private renderStyle: RenderStyle;

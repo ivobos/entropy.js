@@ -3,7 +3,7 @@ import { GraphNode } from "../graph/node/graph-node";
 import { GraphOperation } from "../graph/graph-operation";
 import { SimObject } from "../graph/node/object/concerns/simulation";
 
-
+// TODO: convert to use GraphOperation
 export class UpdateObjectSimulationStep extends GraphOperation {
 
     private simulationTimestepMsec: number;

@@ -2,6 +2,7 @@ import { GraphOperation } from "../graph/graph-operation";
 import { GraphNode } from "../graph/node/graph-node";
 import { PhysicalObject } from "../graph/node/object/concerns/physics";
 
+// TODO: move into GraphicRenderer.ts
 export class UpdateSceneOperation extends GraphOperation {
 
     private scene: THREE.Scene;
