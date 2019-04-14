@@ -32,6 +32,7 @@ export class GraphicRenderer extends AbstractComponent {
         this.onWindowResize(undefined);    
         options.parentDiv.appendChild( this.renderer.domElement );
         this.scene = new THREE.Scene();
+        this.scene.add( new THREE.AmbientLight( 0x888888 ) );
         this.resolve(Monitor).addEntry({ observable: this, additionalText: () => this.monitorText() });
         this.raycaster = new THREE.Raycaster();
     }
