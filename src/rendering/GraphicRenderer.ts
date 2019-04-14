@@ -1,18 +1,16 @@
 import * as THREE from 'three';
-import { CameraHolder, CameraManager } from './CameraManager';
+import { CameraManager } from './CameraManager';
 import { Monitor } from '../observability/Monitor';
 import { AbstractComponent } from '../container/AbstractComponent';
 import { ComponentOptions } from '../container/Component';
 import { GraphManager } from '../graph/GraphManager';
-import { UpdateRenderStyleOperation } from './UpdateRenderStyleOperation';
 import { RenderStyle } from './RenderStyle';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
-import { UpdateSceneOperation } from './UpdateSceneOperation';
-import { UpdateObjectsBeforeRender } from './UpdateObjectsBeforeRender';
 import { FocusManager } from '../input/FocusManager';
 import { GraphNode } from '../graph/node/graph-node';
-import { GraphOperation } from '../graph/graph-operation';
-import { updateObjectPosition } from '../graph/node/object/concerns/physics';
+import { GraphOperation, GraphObjectVisitFunction } from '../graph/graph-operation';
+import { updateObjectPosition, PhysicalObject } from '../graph/node/object/concerns/physics';
+import { getUpdateRenderStyleFunction, getUpdateObjectBeforeRenderFunction } from '../graph/node/object/concerns/presentation';
 
 export interface GrapicRendererOptions extends ComponentOptions {
     parentDiv: any
@@ -56,13 +54,24 @@ export class GraphicRenderer extends AbstractComponent {
         }
     }
     
+    getUpdateSceneFunction(): GraphObjectVisitFunction {
+        const scene = this.scene;
+        return function(thisNode: GraphNode, prevNode?: GraphNode): void {
+            const thisObject3d = (thisNode as PhysicalObject).object3d;
+            if (!scene.children.includes(thisObject3d)) {
+                scene.add(thisObject3d);
+            }
+        }
+    }
+
     doRender(interpolationPercentage: number): void {
         const graphManager = this.resolve(GraphManager);
         // prepare graph objects for rendering
-        graphManager.accept(new UpdateObjectsBeforeRender(interpolationPercentage));
-        graphManager.accept(new UpdateRenderStyleOperation(this.renderStyle));
         graphManager.accept(new GraphOperation(updateObjectPosition));
-        graphManager.accept(new UpdateSceneOperation(this.scene));
+        graphManager.accept(new GraphOperation(getUpdateObjectBeforeRenderFunction(interpolationPercentage)));
+        graphManager.accept(new GraphOperation(getUpdateRenderStyleFunction(this.renderStyle)));
+        graphManager.accept(new GraphOperation(this.getUpdateSceneFunction()));
+
         const camera = this.resolve(CameraManager).getCamera();
         // render
         if (camera) {

@@ -1,7 +1,8 @@
 import { GraphNode } from "../../graph-node";
-import { RenderStyleProps } from "../../../../rendering/RenderStyle";
+import { RenderStyleProps, RenderStyle } from "../../../../rendering/RenderStyle";
 import { GraphObjectOptions, GraphObjectInitFunction } from "../graph-object";
 import * as THREE from "three";
+import { GraphObjectVisitFunction } from "../../../graph-operation";
 
 
 export type UpdateRenderStyleFunction = (renderStyleProps: RenderStyleProps) => void;
@@ -44,4 +45,20 @@ export const renderableObjectInit: GraphObjectInitFunction = function(simObject:
     if (options.prepareForRender) {
         renderableObject.prepareForRender = options.prepareForRender;
     }
+}
+
+export function getUpdateObjectBeforeRenderFunction(interpolationPercentage: number): GraphObjectVisitFunction {
+    return function(thisNode: GraphNode, prevNode?: GraphNode): void {
+        const renderableObject = (thisNode as RenderableObject);
+        if (renderableObject.prepareForRender) {
+                    renderableObject.prepareForRender(interpolationPercentage);
+        }
+    }
+}
+
+export function getUpdateRenderStyleFunction(renderStyle: RenderStyle): GraphObjectVisitFunction {
+    return function(thisNode: GraphNode, prevNode?: GraphNode): void {
+        const renderableObject = thisNode as RenderableObject;
+        if (renderableObject.updateRenderStyle) renderableObject.updateRenderStyle(renderStyle);
+    }    
 }

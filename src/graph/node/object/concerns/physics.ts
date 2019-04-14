@@ -1,10 +1,10 @@
 import { GraphNode } from "../../graph-node";
-import { G } from "../../../../physics/physics_constants";
 import * as THREE from "three";
 import { GraphObjectOptions, GraphObjectInitFunction, GraphObject } from "../graph-object";
 import { RenderableObject } from "./presentation";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
 
+const G = 6.67E-4;  //  (m/kg)^2 (real one is 6.67E-11)
 
 export interface PhysicalObject extends RenderableObject {
     velocity: THREE.Vector3;            // delta of relativePosition
@@ -60,3 +60,30 @@ export const updateObjectPosition: GraphObjectVisitFunction = function(thisNode:
     }
 }
 
+export function getUpdateObjectPhysicsFunction(simulationTimestepMsec: number): GraphObjectVisitFunction {
+    const timeDeltaSec = simulationTimestepMsec / 1000
+    return function(thisNode: GraphNode, prevNode?: GraphNode): void {
+        // TODO: how to implement child to child collision
+        // TODO: implement re-parenting when gravity from another object is stronger than from parent
+        if (thisNode.parentObject == thisNode) return;
+        const physicalObject = thisNode as PhysicalObject;
+        const parentPhysicalObject = thisNode.parentObject as PhysicalObject;
+        // gravitational force
+        const force = G * parentPhysicalObject.mass * physicalObject.mass / physicalObject.relativePosition.lengthSq();
+        const deltav = physicalObject.relativePosition.clone()     
+                            .normalize()
+                            .multiplyScalar(- force * timeDeltaSec / physicalObject.mass);
+                            physicalObject.velocity.add(deltav); // TODO: to conserve linear momentum have to update parentObject.velocity too        
+        physicalObject.relativePosition.add(physicalObject.velocity.clone().multiplyScalar(timeDeltaSec));
+        // intersection
+       const overlap = physicalObject.relativePosition.length() - parentPhysicalObject.radius - physicalObject.radius;
+       if (overlap < 0) {
+            const normal = physicalObject.relativePosition.clone().normalize();
+            physicalObject.velocity.reflect(normal);
+            // TODO: some energy would be released during reflection
+            // TODO adding velocity below is not accurate
+            physicalObject.relativePosition.add(physicalObject.velocity.clone().multiplyScalar(timeDeltaSec));
+       }
+
+    }
+}
