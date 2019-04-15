@@ -40,7 +40,9 @@
     "@types/bunyan": "^1.8.5",
     "@types/random-js": "^1.0.31",
     "@types/three": "^0.93.13",
+    "bezier-easing": "^2.1.0",
     "bunyan": "^1.8.12",
+    "open-simplex-noise": "^1.6.0",
     "random-js": "^1.0.8",
     "three": "^0.99.0"
   }
