@@ -1,10 +1,5 @@
 import * as THREE from "three";
 import { GraphOperation } from "../graph-operation";
-import { boundingRadiusInit } from "./object/concerns/collision";
-import { physicalObjectInit } from "./object/concerns/physics";
-import { selectableObjectInit } from "./object/concerns/selection";
-import { renderableObjectInit } from "./object/concerns/presentation";
-import { simObjectInit } from "./object/concerns/simulation";
 import { GraphObjectOptions } from "./object/graph-object";
 
 export class GraphNode { 

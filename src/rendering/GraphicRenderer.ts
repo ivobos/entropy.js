@@ -9,8 +9,8 @@ import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { FocusManager } from '../input/FocusManager';
 import { GraphNode } from '../graph/node/graph-node';
 import { GraphOperation, GraphObjectVisitFunction } from '../graph/graph-operation';
-import { updateObjectPosition, PhysicalObject } from '../graph/node/object/concerns/physics';
-import { getUpdateRenderStyleFunction, getUpdateObjectBeforeRenderFunction } from '../graph/node/object/concerns/presentation';
+import { updObjPosVisitor, PhysicalObject } from '../graph/node/object/concerns/physics';
+import { getUpdRenderStyleVisitor, getUpdObjBeforeRenderVisitor } from '../graph/node/object/concerns/presentation';
 
 export interface GrapicRendererOptions extends ComponentOptions {
     parentDiv: any
@@ -54,7 +54,7 @@ export class GraphicRenderer extends AbstractComponent {
         }
     }
     
-    getUpdateSceneFunction(): GraphObjectVisitFunction {
+    getUpdSceneVisitor(): GraphObjectVisitFunction {
         const scene = this.scene;
         return function(thisNode: GraphNode, prevNode?: GraphNode): void {
             const thisObject3d = (thisNode as PhysicalObject).object3d;
@@ -67,10 +67,10 @@ export class GraphicRenderer extends AbstractComponent {
     doRender(interpolationPercentage: number): void {
         const graphManager = this.resolve(GraphManager);
         // prepare graph objects for rendering
-        graphManager.accept(new GraphOperation(updateObjectPosition));
-        graphManager.accept(new GraphOperation(getUpdateObjectBeforeRenderFunction(interpolationPercentage)));
-        graphManager.accept(new GraphOperation(getUpdateRenderStyleFunction(this.renderStyle)));
-        graphManager.accept(new GraphOperation(this.getUpdateSceneFunction()));
+        graphManager.accept(new GraphOperation(updObjPosVisitor));
+        graphManager.accept(new GraphOperation(getUpdObjBeforeRenderVisitor(interpolationPercentage)));
+        graphManager.accept(new GraphOperation(getUpdRenderStyleVisitor(this.renderStyle)));
+        graphManager.accept(new GraphOperation(this.getUpdSceneVisitor()));
 
         const camera = this.resolve(CameraManager).getCamera();
         // render

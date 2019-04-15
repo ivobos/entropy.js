@@ -43,7 +43,7 @@ export const physicalObjectInit: GraphObjectInitFunction = function(simObject: G
     }
 }
 
-export const updateObjectPosition: GraphObjectVisitFunction = function(thisNode: GraphNode, prevNode?: GraphNode): void {
+export const updObjPosVisitor: GraphObjectVisitFunction = function(thisNode: GraphNode, prevNode?: GraphNode): void {
     const graphObject = thisNode as GraphObject;
     if (!prevNode) {
         graphObject.object3d.position.set(0,0,0);
@@ -60,7 +60,7 @@ export const updateObjectPosition: GraphObjectVisitFunction = function(thisNode:
     }
 }
 
-export function getUpdateObjectPhysicsFunction(simulationTimestepMsec: number): GraphObjectVisitFunction {
+export function getUpdObjPhysicsVisitor(simulationTimestepMsec: number): GraphObjectVisitFunction {
     const timeDeltaSec = simulationTimestepMsec / 1000
     return function(thisNode: GraphNode, prevNode?: GraphNode): void {
         // TODO: how to implement child to child collision

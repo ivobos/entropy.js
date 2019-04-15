@@ -47,7 +47,7 @@ export const renderableObjectInit: GraphObjectInitFunction = function(simObject:
     }
 }
 
-export function getUpdateObjectBeforeRenderFunction(interpolationPercentage: number): GraphObjectVisitFunction {
+export function getUpdObjBeforeRenderVisitor(interpolationPercentage: number): GraphObjectVisitFunction {
     return function(thisNode: GraphNode, prevNode?: GraphNode): void {
         const renderableObject = (thisNode as RenderableObject);
         if (renderableObject.prepareForRender) {
@@ -56,7 +56,7 @@ export function getUpdateObjectBeforeRenderFunction(interpolationPercentage: num
     }
 }
 
-export function getUpdateRenderStyleFunction(renderStyle: RenderStyle): GraphObjectVisitFunction {
+export function getUpdRenderStyleVisitor(renderStyle: RenderStyle): GraphObjectVisitFunction {
     return function(thisNode: GraphNode, prevNode?: GraphNode): void {
         const renderableObject = thisNode as RenderableObject;
         if (renderableObject.updateRenderStyle) renderableObject.updateRenderStyle(renderStyle);

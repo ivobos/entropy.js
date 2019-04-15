@@ -4,8 +4,8 @@ import { GraphManager } from "../graph/GraphManager";
 import { ComponentOptions } from "../container/Component";
 import { GraphOperation } from "../graph/graph-operation";
 import { updateBoundingRadius } from "../graph/node/object/concerns/collision";
-import { updateObjectPosition, getUpdateObjectPhysicsFunction } from "../graph/node/object/concerns/physics";
-import { getUpdateSimualtionStepFunction } from "../graph/node/object/concerns/simulation";
+import { updObjPosVisitor, getUpdObjPhysicsVisitor } from "../graph/node/object/concerns/physics";
+import { getUpdSimStepVisitor } from "../graph/node/object/concerns/simulation";
 
 export type SimulationFunction = (simulationTimestepMsec: number) => void;
 
@@ -24,9 +24,9 @@ export class SimulationProcessor extends AbstractComponent {
 
     processSimulationStep(simulationTimestepMsec: number): void {
         const graphManager = this.resolve(GraphManager);
-        graphManager.accept(new GraphOperation(getUpdateSimualtionStepFunction(simulationTimestepMsec)));
-        graphManager.accept(new GraphOperation(updateObjectPosition));
-        graphManager.accept(new GraphOperation(getUpdateObjectPhysicsFunction(simulationTimestepMsec)));
+        graphManager.accept(new GraphOperation(getUpdSimStepVisitor(simulationTimestepMsec)));
+        graphManager.accept(new GraphOperation(updObjPosVisitor));
+        graphManager.accept(new GraphOperation(getUpdObjPhysicsVisitor(simulationTimestepMsec)));
 
         for (const simulationFunction of this.simulationFunctions) {
             simulationFunction(simulationTimestepMsec);

@@ -13,7 +13,7 @@ export const simObjectInit: GraphObjectInitFunction = function(graphNode: GraphN
     if (options.simulationStep) simObject.simulationStep = options.simulationStep;
 }
 
-export function getUpdateSimualtionStepFunction(simulationTimestepMsec: number): GraphObjectVisitFunction {
+export function getUpdSimStepVisitor(simulationTimestepMsec: number): GraphObjectVisitFunction {
     return function(thisNode: GraphNode, prevNode?: GraphNode): void {
         const simObject = (thisNode as any) as SimObject;
         if (simObject.simulationStep) {
