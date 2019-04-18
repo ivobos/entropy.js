@@ -6,7 +6,6 @@ import { AbstractComponent } from "../container/AbstractComponent";
 import { InputProcessor } from "../input/InputProcessor";
 import { SimulationProcessor } from "../simulation/SimulationProcessor";
 import { GraphicRenderer } from "../rendering/GraphicRenderer";
-import { FocusManager } from "../input/FocusManager";
 
 
 /**
@@ -28,7 +27,6 @@ export class MainLoop extends AbstractComponent  {
     private numUpdateSteps = 0; // number of times simulatio needs to update
     private panic: boolean = false; // is simulation too far behind
     private started: boolean = false; // has loop started
-    private running: boolean = false; // once loop has drawn its considered running
     private simPause: boolean = false;
 
     constructor(options: ComponentOptions) {
@@ -106,8 +104,6 @@ export class MainLoop extends AbstractComponent  {
     startCallback(timestamp: number) {
         // Render the initial state before any updates occur.
         this.resolve(GraphicRenderer).doRender(1);
-        // application starts drawing.
-        this.running = true;
         // Reset variables that are used for tracking time so that we
         // don't simulate time passed while the application was paused.
         this.lastFrameTimeMs = timestamp;
@@ -117,7 +113,6 @@ export class MainLoop extends AbstractComponent  {
         this.rafHandle = requestAnimationFrame(this.animate.bind(this));
     }
     stop() {
-        this.running = false;
         this.started = false;
         cancelAnimationFrame(this.rafHandle);
         return this;

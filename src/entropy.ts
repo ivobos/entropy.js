@@ -8,7 +8,7 @@ export * from './utils/time';
 export { GlobalMouseHandler } from './input/GlobalMouseHandler';
 export { GlobalKeyboardHandler } from './input/GlobalKeyboardHandler';
 export { TextureCache } from './textures/TextureCache';
-export { RenderStyle, RenderStyleProps } from './rendering/RenderStyle';
+export { RenderStyle } from './rendering/RenderStyle';
 export { GraphManager } from './graph/GraphManager';
 import { Builder } from './engine/Builder';
 

@@ -48,17 +48,17 @@ export class Builder {
         if (!static_init_done) {
             time.time_init();
         }
-        const monitor = new Monitor({container: this.container});
-        const textureCache = new TextureCache({container: this.container});
-        const globalKeyHandler = new GlobalKeyboardHandler({ container: this.container});
-        const globalMouseHandler = new GlobalMouseHandler({ container: this.container});
+        new Monitor({container: this.container});
+        new TextureCache({container: this.container});
+        new GlobalKeyboardHandler({ container: this.container});
+        new GlobalMouseHandler({ container: this.container});
         const canvas = new HtmlElements({ container: this.container, element: this.parentDiv});
         const mainLoop = new MainLoop({ container: this.container});
-        const focusManager = new FocusManager({container: this.container});
-        const graphManager = new GraphManager({container: this.container});
-        const cameraManager = new CameraManager({container: this.container});
-        const graphicRenderer = new GraphicRenderer({container: this.container, parentDiv: canvas.getRendererDiv()});    
-        const executionController = new ExecutionController({container: this.container});
+        new FocusManager({container: this.container});
+        new GraphManager({container: this.container});
+        new CameraManager({container: this.container});
+        new GraphicRenderer({container: this.container, parentDiv: canvas.getRendererDiv()});    
+        new ExecutionController({container: this.container});
         const simulationProcessor = new SimulationProcessor({container: this.container});
         const inputProcessor = new InputProcessor({container: this.container});
 

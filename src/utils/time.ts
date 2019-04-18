@@ -3,7 +3,7 @@
 const TICKS_PER_SEC = 60;
 export const MSEC_PER_SEC = 1000;
 
-function ticksToMsec(ticks: number) {
+export function ticksToMsec(ticks: number) {
     return ticks *  MSEC_PER_SEC / TICKS_PER_SEC;
 }
 

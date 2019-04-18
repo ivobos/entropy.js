@@ -19,7 +19,7 @@ export interface GrapicRendererOptions extends ComponentOptions {
 export class GraphicRenderer extends AbstractComponent {
     
     private renderer : THREE.Renderer;
-    private renderStyle: RenderStyle = new RenderStyle({});
+    private renderStyle: RenderStyle = new RenderStyle();
     private scene: THREE.Scene;
     private raycaster: THREE.Raycaster;
 
@@ -38,7 +38,9 @@ export class GraphicRenderer extends AbstractComponent {
     init(): void {
         super.init();
         this.resolve(Monitor).addEntry({ observable: this });
-        this.resolve(GlobalKeyboardHandler).registerKey('x', () => this.renderStyle.progress());
+        this.resolve(GlobalKeyboardHandler).registerKey('x', () => this.renderStyle.progressBoolAttributes());
+        this.resolve(GlobalKeyboardHandler).registerKey('c', () => this.renderStyle.updateDetail(-1));
+        this.resolve(GlobalKeyboardHandler).registerKey('v', () => this.renderStyle.updateDetail(1));
     }
 
     monitorText(): string {
@@ -69,7 +71,7 @@ export class GraphicRenderer extends AbstractComponent {
         // prepare graph objects for rendering
         graphManager.accept(new GraphOperation(updObjPosVisitor));
         graphManager.accept(new GraphOperation(getUpdObjBeforeRenderVisitor(interpolationPercentage)));
-        graphManager.accept(new GraphOperation(getUpdRenderStyleVisitor(this.renderStyle)));
+        graphManager.accept(new GraphOperation(getUpdRenderStyleVisitor(this.renderStyle.clone())));
         graphManager.accept(new GraphOperation(this.getUpdSceneVisitor()));
 
         const camera = this.resolve(CameraManager).getCamera();

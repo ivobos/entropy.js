@@ -1,4 +1,3 @@
-import * as THREE from "three";
 import { GraphOperation } from "../graph-operation";
 import { GraphObjectOptions } from "./object/graph-object";
 

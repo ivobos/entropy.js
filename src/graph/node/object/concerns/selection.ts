@@ -1,5 +1,5 @@
 import { GraphNode } from "../../graph-node";
-import { GraphObjectOptions, GraphObject, GraphObjectInitFunction } from "../graph-object";
+import { GraphObjectOptions, GraphObjectInitFunction } from "../graph-object";
 
 
 export interface SelectableObject extends GraphNode {

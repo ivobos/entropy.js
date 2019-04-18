@@ -8,8 +8,6 @@ import { ComponentOptions } from "../container/Component";
 // TODO: should probably add page visibility at some stage https://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active
 export class ExecutionController extends AbstractComponent {
     
-    private focused: boolean = true;
-
     constructor(options: ComponentOptions) {
         super({...options, key: ExecutionController});
         window.addEventListener('blur', (event: FocusEvent) => this.onBlur(event), false);
@@ -22,13 +20,11 @@ export class ExecutionController extends AbstractComponent {
     }
 
     onBlur(event: FocusEvent): void {
-        this.focused = false;
         this.resolve(MainLoop).setMaxAllowedFPS(1);
         this.resolve(HtmlElements).showExecutionModeText("UNFOCUSED");
     }
     
     onFocus(event: FocusEvent): void {
-        this.focused = true;
         this.resolve(MainLoop).setMaxAllowedFPS(undefined);
         this.resolve(HtmlElements).showExecutionModeText(undefined);
     }

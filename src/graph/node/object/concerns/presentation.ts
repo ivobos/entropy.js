@@ -1,11 +1,11 @@
 import { GraphNode } from "../../graph-node";
-import { RenderStyleProps, RenderStyle } from "../../../../rendering/RenderStyle";
+import { RenderStyle } from "../../../../rendering/RenderStyle";
 import { GraphObjectOptions, GraphObjectInitFunction } from "../graph-object";
 import * as THREE from "three";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
 
 
-export type UpdateRenderStyleFunction = (renderStyleProps: RenderStyleProps) => void;
+export type UpdateRenderStyleFunction = (renderStyleProps: RenderStyle) => void;
 export type PrepareForRenderFunction = (interpolationPercentage: number) => void;
 
 // TODO rename as it clashes with THREE.RenderableObject

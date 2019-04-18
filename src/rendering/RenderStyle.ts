@@ -1,25 +1,22 @@
 
-
-export interface RenderStyleProps {
-    wireframe?: boolean;
-    uvmaterial?: boolean;
-}
-
 /**
  * Used to hint to the object how it should render itself, including attributes such as
  * wireframe: boolean
- * detail: number (0-1 where 0 is minimal detail and 1 is maximum details)
+ * detail: number (0,1,2...n 0 is minimal detail, each increment should correspond to doubling of detail)
  * flatshade: boolean
  */
-export class RenderStyle implements RenderStyleProps {
+export class RenderStyle {
     wireframe: boolean = false;
     uvmaterial: boolean = false;
+    detail: number = 3;
 
-    constructor(renderStyleProps: RenderStyleProps) {
-        Object.assign(this, renderStyleProps);
+    clone(): RenderStyle {
+        const clone: RenderStyle = Object.create(this);
+        Object.assign(clone, this);
+        return clone;
     }
 
-    progress(): void {
+    progressBoolAttributes(): void {
         // conver to gray code
         let gray = (this.wireframe ? 1 : 0)
                 + (this.uvmaterial ? 2 : 0); 
@@ -34,15 +31,21 @@ export class RenderStyle implements RenderStyleProps {
         this.uvmaterial = (gray & 2) === 2; 
     }
 
-    equals(renderStyleProps: RenderStyleProps) : boolean {
+    updateDetail(delta: number): void {
+        this.detail = Math.max(0, Math.min(8, this.detail + delta));
+    }
+
+    equals(renderStyleProps: RenderStyle) : boolean {
         return this.wireframe === renderStyleProps.wireframe 
-            && this.uvmaterial === renderStyleProps.uvmaterial;
+            && this.uvmaterial === renderStyleProps.uvmaterial
+            && this.detail === renderStyleProps.detail;
     }
 
     toJSON(key: any): any {
         return { 
             wireframe: this.wireframe,
             uvmaterial: this.uvmaterial,
+            detail: this.detail,
         };
     }
 }
