@@ -1,5 +1,5 @@
 import { GraphNode } from "../graph-node";
-import { UpdateRenderStyleFunction, PrepareForRenderFunction, RenderableObject } from "./concerns/presentation";
+import { PrepareForRenderFunction, RenderableObject } from "./concerns/presentation";
 import { SimulationStepFunction, SimObject } from "./concerns/simulation";
 import { ObjectWithBoundingRadius } from "./concerns/collision";
 import { PhysicalObject } from "./concerns/physics";
@@ -14,7 +14,6 @@ export interface GraphObjectOptions {
     relativePosition?: THREE.Vector3; // position relative to parent
     velocity?: THREE.Vector3;
     radius: number;
-    updateRenderStyle?: UpdateRenderStyleFunction;
     prepareForRender?: PrepareForRenderFunction;
     simulationStep?: SimulationStepFunction;
 }

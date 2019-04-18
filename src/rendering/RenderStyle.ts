@@ -1,14 +1,16 @@
 
 /**
- * Used to hint to the object how it should render itself, including attributes such as
- * wireframe: boolean
- * detail: number (0,1,2...n 0 is minimal detail, each increment should correspond to doubling of detail)
- * flatshade: boolean
+ * Used to hint to the object(s) how it/they should render
+ * wireframe - display wireframe only
+ * uvmaterial - use uvmaterial texture
+ * detail: level of detail complexity, 0 is minimal detail, each increment should correspond to doubling of complexity
+ * highlight: used for object selection
  */
 export class RenderStyle {
     wireframe: boolean = false;
     uvmaterial: boolean = false;
     detail: number = 3;
+    highlight: boolean = false;
 
     clone(): RenderStyle {
         const clone: RenderStyle = Object.create(this);
@@ -32,13 +34,14 @@ export class RenderStyle {
     }
 
     updateDetail(delta: number): void {
-        this.detail = Math.max(0, Math.min(8, this.detail + delta));
+        this.detail = Math.max(0, Math.min(6, this.detail + delta));
     }
 
     equals(renderStyleProps: RenderStyle) : boolean {
         return this.wireframe === renderStyleProps.wireframe 
             && this.uvmaterial === renderStyleProps.uvmaterial
-            && this.detail === renderStyleProps.detail;
+            && this.detail === renderStyleProps.detail
+            && this.highlight === renderStyleProps.highlight;
     }
 
     toJSON(key: any): any {
@@ -46,6 +49,7 @@ export class RenderStyle {
             wireframe: this.wireframe,
             uvmaterial: this.uvmaterial,
             detail: this.detail,
+            highlight: this.highlight,
         };
     }
 }

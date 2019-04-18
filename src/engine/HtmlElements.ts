@@ -11,6 +11,7 @@ export class HtmlElements extends ComponentMixin(Object)  {
     private rendererDiv: HTMLElement;
     private debugConsoleDiv: HTMLElement;
     private executionModeTextDiv: HTMLElement;
+    private crosshair: HTMLElement;
 
     constructor(options: HtmlElementsOptions) {
         super({...options, key: HtmlElements});
@@ -49,6 +50,22 @@ export class HtmlElements extends ComponentMixin(Object)  {
         this.executionModeTextDiv.style.webkitTextStrokeColor = "black";
         this.executionModeTextDiv.style.display = "none";
         this.element.appendChild(this.executionModeTextDiv);   
+
+        this.crosshair = document.createElement('div');
+        this.crosshair.innerHTML = "+";
+        // center it as per https://stackoverflow.com/a/36957305
+        this.crosshair.style.position = "fixed";
+        this.crosshair.style.top = "50%";
+        this.crosshair.style.left = "50%";
+        this.crosshair.style.transform = "translate(-50%, -50%)";
+        this.crosshair.style.color = "gray";
+        this.crosshair.style.fontFamily = "Impact";
+        this.crosshair.style.fontSize = "16px";
+        this.crosshair.style.webkitTextStrokeWidth = "1px";
+        this.crosshair.style.webkitTextStrokeColor = "black";
+        this.crosshair.style.display = "block";
+        this.element.appendChild(this.crosshair);   
+
     }
 
     getRendererDiv() : HTMLElement {
