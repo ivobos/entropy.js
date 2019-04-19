@@ -11,7 +11,7 @@ export class HtmlElements extends ComponentMixin(Object)  {
     private rendererDiv: HTMLElement;
     private debugConsoleDiv: HTMLElement;
     private executionModeTextDiv: HTMLElement;
-    private crosshair: HTMLElement;
+    private crosshairDiv: HTMLElement;
 
     constructor(options: HtmlElementsOptions) {
         super({...options, key: HtmlElements});
@@ -51,20 +51,20 @@ export class HtmlElements extends ComponentMixin(Object)  {
         this.executionModeTextDiv.style.display = "none";
         this.element.appendChild(this.executionModeTextDiv);   
 
-        this.crosshair = document.createElement('div');
-        this.crosshair.innerHTML = "+";
+        this.crosshairDiv = document.createElement('div');
+        this.crosshairDiv.innerHTML = "+";
         // center it as per https://stackoverflow.com/a/36957305
-        this.crosshair.style.position = "fixed";
-        this.crosshair.style.top = "50%";
-        this.crosshair.style.left = "50%";
-        this.crosshair.style.transform = "translate(-50%, -50%)";
-        this.crosshair.style.color = "gray";
-        this.crosshair.style.fontFamily = "Impact";
-        this.crosshair.style.fontSize = "16px";
-        this.crosshair.style.webkitTextStrokeWidth = "1px";
-        this.crosshair.style.webkitTextStrokeColor = "black";
-        this.crosshair.style.display = "block";
-        this.element.appendChild(this.crosshair);   
+        this.crosshairDiv.style.position = "fixed";
+        this.crosshairDiv.style.top = "50%";
+        this.crosshairDiv.style.left = "50%";
+        this.crosshairDiv.style.transform = "translate(-50%, -50%)";
+        this.crosshairDiv.style.color = "gray";
+        this.crosshairDiv.style.fontFamily = "Impact";
+        this.crosshairDiv.style.fontSize = "16px";
+        this.crosshairDiv.style.webkitTextStrokeWidth = "1px";
+        this.crosshairDiv.style.webkitTextStrokeColor = "black";
+        this.crosshairDiv.style.display = "block";
+        this.element.appendChild(this.crosshairDiv);   
 
     }
 
@@ -79,9 +79,11 @@ export class HtmlElements extends ComponentMixin(Object)  {
     showExecutionModeText(text?: string) {
         if (text === undefined) {
             this.executionModeTextDiv.style.display = "none";
+            this.crosshairDiv.style.display = "block";
         } else {
             this.executionModeTextDiv.innerHTML = text;           
             this.executionModeTextDiv.style.display = "block";
+            this.crosshairDiv.style.display = "none";
         }
     }
 

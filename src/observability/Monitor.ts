@@ -41,12 +41,14 @@ export class Monitor extends AbstractComponent {
 
     toggleDebugConsole(): void {
         if (this.debugConsoleDiv) {
-            // disable it
-            // TODO make it invisible using style display:none
+            // disable debug
             this.debugConsoleDiv.innerHTML = "";
+            this.debugConsoleDiv.style.display = "none";
             this.debugConsoleDiv = undefined;
         } else {
+            // enable debug
             this.debugConsoleDiv = this.resolve(HtmlElements).getDebugConsoleDiv();
+            this.debugConsoleDiv.style.display = "block";
             this.nextUpdateTimeMsec = 0;    
         }
     }

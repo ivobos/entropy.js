@@ -31,13 +31,12 @@ export class GraphicRenderer extends AbstractComponent {
         options.parentDiv.appendChild( this.renderer.domElement );
         this.scene = new THREE.Scene();
         this.scene.add( new THREE.AmbientLight( 0x888888 ) );
-        this.resolve(Monitor).addEntry({ observable: this, additionalText: () => this.monitorText() });
         this.raycaster = new THREE.Raycaster();
     }
 
     init(): void {
         super.init();
-        this.resolve(Monitor).addEntry({ observable: this });
+        this.resolve(Monitor).addEntry({ observable: this, additionalText: () => this.monitorText() });
         this.resolve(GlobalKeyboardHandler).registerKey('x', () => this.globalRenderStyle.progressBoolAttributes());
         this.resolve(GlobalKeyboardHandler).registerKey('c', () => this.globalRenderStyle.updateDetail(-1));
         this.resolve(GlobalKeyboardHandler).registerKey('v', () => this.globalRenderStyle.updateDetail(1));

@@ -1,5 +1,4 @@
 import { ComponentOptions } from "../container/Component";
-import { GlobalKeyboardHandler } from "../input/GlobalKeyboardHandler";
 import { Monitor } from "../observability/Monitor";
 import { HtmlElements } from "./HtmlElements";
 import { AbstractComponent } from "../container/AbstractComponent";
@@ -36,12 +35,6 @@ export class MainLoop extends AbstractComponent  {
     init(): void {
         super.init();
         this.resolve(Monitor).addEntry({ observable: this , additionalText: () => this.monitorText() });
-        const mainLoop = this.resolve(MainLoop);
-        const keyboard = this.resolve(GlobalKeyboardHandler);
-        // TODO: these shuld move to ExecutionController
-        keyboard.registerKey('9', () => mainLoop.updateClockMultiplier(.5));
-        keyboard.registerKey('0', () => mainLoop.updateClockMultiplier(2.));
-        keyboard.registerKey('p', () => mainLoop.togglePauseSimulation());
     }
 
     togglePauseSimulation(): void {
