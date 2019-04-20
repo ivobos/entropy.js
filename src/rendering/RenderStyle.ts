@@ -34,7 +34,11 @@ export class RenderStyle {
     }
 
     updateDetail(delta: number): void {
-        this.detail = Math.max(0, Math.min(6, this.detail + delta));
+        this.setDetail(this.detail + delta);
+    }
+
+    setDetail(detail: number): void {
+        this.detail = Math.max(0, Math.min(6, Math.round(detail)));
     }
 
     equals(renderStyleProps: RenderStyle) : boolean {
