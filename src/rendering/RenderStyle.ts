@@ -3,13 +3,13 @@
  * Used to hint to the object(s) how it/they should render
  * wireframe - display wireframe only
  * uvmaterial - use uvmaterial texture
- * detail: level of detail complexity, 0 is minimal detail, each increment should correspond to doubling of complexity
+ * polygonSize: ideal polygon size that should be used, has to be > 0
  * highlight: used for object selection
  */
 export class RenderStyle {
     wireframe: boolean = false;
     uvmaterial: boolean = false;
-    detail: number = 3;
+    polygonSize: number = 10;
     highlight: boolean = false;
 
     clone(): RenderStyle {
@@ -33,18 +33,14 @@ export class RenderStyle {
         this.uvmaterial = (gray & 2) === 2; 
     }
 
-    updateDetail(delta: number): void {
-        this.setDetail(this.detail + delta);
-    }
-
-    setDetail(detail: number): void {
-        this.detail = Math.max(0, Math.min(6, Math.round(detail)));
+    polygonSizeMultiplyScalar(multiplier: number): void {
+        this.polygonSize = Math.max(1, Math.min(100, Math.round(this.polygonSize * multiplier)))
     }
 
     equals(renderStyleProps: RenderStyle) : boolean {
         return this.wireframe === renderStyleProps.wireframe 
             && this.uvmaterial === renderStyleProps.uvmaterial
-            && this.detail === renderStyleProps.detail
+            && this.polygonSize === renderStyleProps.polygonSize
             && this.highlight === renderStyleProps.highlight;
     }
 
@@ -52,7 +48,7 @@ export class RenderStyle {
         return { 
             wireframe: this.wireframe,
             uvmaterial: this.uvmaterial,
-            detail: this.detail,
+            polygonSize: this.polygonSize,
             highlight: this.highlight,
         };
     }

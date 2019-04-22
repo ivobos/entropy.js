@@ -19,7 +19,7 @@ export interface GrapicRendererOptions extends ComponentOptions {
 export class GraphicRenderer extends AbstractComponent {
     
     private renderer : THREE.Renderer;
-    private globalRenderStyle: RenderStyle = new RenderStyle();
+    private renderStyle: RenderStyle = new RenderStyle();
     private scene: THREE.Scene;
     private raycaster: THREE.Raycaster;
 
@@ -37,13 +37,13 @@ export class GraphicRenderer extends AbstractComponent {
     init(): void {
         super.init();
         this.resolve(Monitor).addEntry({ observable: this, additionalText: () => this.monitorText() });
-        this.resolve(GlobalKeyboardHandler).registerKey('x', () => this.globalRenderStyle.progressBoolAttributes());
-        this.resolve(GlobalKeyboardHandler).registerKey('c', () => this.globalRenderStyle.updateDetail(-1));
-        this.resolve(GlobalKeyboardHandler).registerKey('v', () => this.globalRenderStyle.updateDetail(1));
+        this.resolve(GlobalKeyboardHandler).registerKey('x', () => this.renderStyle.progressBoolAttributes());
+        this.resolve(GlobalKeyboardHandler).registerKey('c', () => this.renderStyle.polygonSizeMultiplyScalar(.9));
+        this.resolve(GlobalKeyboardHandler).registerKey('v', () => this.renderStyle.polygonSizeMultiplyScalar(1.1));
     }
 
     monitorText(): string {
-        return "scene.children="+this.scene.children.length+" globalRenderStyle="+JSON.stringify(this.globalRenderStyle);
+        return "scene.children="+this.scene.children.length+" renderStyle="+JSON.stringify(this.renderStyle);
     }
 
     onWindowResize(event: any): void {
@@ -69,7 +69,7 @@ export class GraphicRenderer extends AbstractComponent {
         const graphManager = this.resolve(GraphManager);
         // prepare graph objects for rendering
         graphManager.accept(new GraphOperation(updObjPosVisitor));
-        graphManager.accept(new GraphOperation(getUpdObjBeforeRenderVisitor(this.globalRenderStyle)));
+        graphManager.accept(new GraphOperation(getUpdObjBeforeRenderVisitor(this.renderStyle)));
         graphManager.accept(new GraphOperation(this.getUpdSceneVisitor()));
 
         const camera = this.resolve(CameraManager).getCamera();
