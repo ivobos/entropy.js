@@ -9,7 +9,7 @@
 export class RenderStyle {
     wireframe: boolean = false;
     uvmaterial: boolean = false;
-    polygonSize: number = 10;
+    polygonSize: number = 30;
     highlight: boolean = false;
 
     clone(): RenderStyle {
@@ -22,15 +22,17 @@ export class RenderStyle {
         // conver to gray code
         let gray = (this.wireframe ? 1 : 0)
                 + (this.uvmaterial ? 2 : 0); 
+                + (this.highlight ? 4 : 0); 
         // gray to number
         let n = gray ^ (gray >> 1) ^ ( gray >> 2);
         // increment
-        n = (n + 1) % 4;
+        n = (n + 1) % 8;
         // number to gray
         gray = n  ^ (n >> 1);
         // gray to attributes
         this.wireframe = (gray & 1) === 1; 
         this.uvmaterial = (gray & 2) === 2; 
+        this.highlight = (gray & 4) === 4; 
     }
 
     polygonSizeMultiplyScalar(multiplier: number): void {

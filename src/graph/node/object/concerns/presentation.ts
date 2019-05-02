@@ -44,7 +44,7 @@ export function getUpdObjBeforeRenderVisitor(globalRenderStyle: RenderStyle): Gr
         const graphObject = (thisNode as GraphObject);
         if (graphObject.prepareForRender) {
             const renderStyle = globalRenderStyle.clone();
-            renderStyle.highlight = renderStyle.highlight || graphObject.isSelected(); 
+            renderStyle.highlight = renderStyle.highlight && graphObject.isSelected(); 
             graphObject.prepareForRender(renderStyle);
         }
     }
