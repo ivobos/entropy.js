@@ -8,7 +8,7 @@ export class GlobalMouseHandler extends AbstractComponent {
 
     init(): void {
         super.init();
-        this.resolve(Monitor).addEntry({ observable: this});
+        this.resolve(Monitor).addMonitorEntry({ object: this});
     }
 
     constructor(options: ComponentOptions) {

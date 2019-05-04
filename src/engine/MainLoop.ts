@@ -34,7 +34,12 @@ export class MainLoop extends AbstractComponent  {
     
     init(): void {
         super.init();
-        this.resolve(Monitor).addEntry({ observable: this , additionalText: () => this.monitorText() });
+        this.resolve(Monitor).addMonitorEntry({ 
+            object: this , 
+            initiallySelected: true, 
+            showAdditionalText: true, 
+            additionalText: () => this.monitorText() 
+        });
     }
 
     togglePauseSimulation(): void {

@@ -7,28 +7,26 @@ import { ComponentOptions } from "../container/Component";
 
 const UPDATE_PERIOD_MSEC = 1000;
 
-export interface Observable {
-    getMonitorText() : string;
-}
-
-
 export interface MonitorEntry {
-    name?: string,
+    initiallySelected?: boolean,
     jsonable?: any,
-    observable?: any,
-    observableDeprecated?: Observable,
+    showJsonable?: boolean,
+    object?: any,
+    showObject?: boolean,
     additionalText?: () => string,
+    showAdditionalText?: boolean,
 }
 
 export class Monitor extends AbstractComponent {
 
-    private observables : Array<Observable> = [];
     private entries: Array<MonitorEntry> = [];
+    private selectedEntryIndex: number = 1;
     private nextUpdateTimeMsec: number = 0;
     private debugConsoleDiv?: HTMLElement = undefined;
 
     constructor(options: ComponentOptions) {
         super({...options, key: Monitor});
+        this.addMonitorEntry({object: this}); // add entry for self
     }    
 
     init(): void {
@@ -37,6 +35,9 @@ export class Monitor extends AbstractComponent {
             //this.toggleDebugConsole(); // in dev mode default to console on
         }
         this.resolve(GlobalKeyboardHandler).registerKey('z' /*'F3'*/, () => this.toggleDebugConsole());
+        this.resolve(GlobalKeyboardHandler).registerKey('n', () => this.selectNextMonitorEntry());
+        this.resolve(GlobalKeyboardHandler).registerKey('m', () => this.toggleDisplayModeOfSelectedEntry());
+        this.toggleDebugConsole();
     }
 
     toggleDebugConsole(): void {
@@ -53,22 +54,54 @@ export class Monitor extends AbstractComponent {
         }
     }
 
+    selectNextMonitorEntry(): void {
+        this.selectedEntryIndex = (this.selectedEntryIndex + 1) % (this.entries.length);
+        this.nextUpdateTimeMsec = 0; // for redraw immediatelly
+    }
+
+    toggleDisplayModeOfSelectedEntry(): void {
+        const selectedEntry = this.entries[this.selectedEntryIndex];
+        this.progressModeOfEntry(selectedEntry);
+        this.nextUpdateTimeMsec = 0; // for redraw immediatelly
+    }
+
+    progressModeOfEntry(entry: MonitorEntry): void {
+        // conver to gray code
+        let numBits = 0;
+        let gray = 0;
+        if (entry.object) gray = gray + ((entry.showObject ? 1 : 0) << numBits++);
+        if (entry.additionalText) gray = gray + ((entry.showAdditionalText ? 1 : 0) << numBits++);
+        // gray to number
+        let n = gray ^ (gray >> 1) ^ ( gray >> 2);
+        // increment
+        n = (n + 1) % (2 ** numBits);
+        // number to gray
+        gray = n  ^ (n >> 1);
+        // gray to attributes
+        numBits = 0;
+        if (entry.object) entry.showObject = ((gray >> numBits++) & 1) === 1;
+        if (entry.additionalText) entry.showAdditionalText = ((gray >> numBits++) & 1) === 1;
+    }
+
     updateMonitor(fps: number, panic: boolean): void {
         if (this.debugConsoleDiv) {
             const currentTimeMsec = time.getMsecTimestamp();
             if (this.nextUpdateTimeMsec === 0 || currentTimeMsec > this.nextUpdateTimeMsec) {
                 this.nextUpdateTimeMsec = currentTimeMsec + UPDATE_PERIOD_MSEC;
                 let content = "";
-                for (const observable of this.observables) {
-                    content += observable.getMonitorText() + "<br>";
-                }
                 for (const entry of this.entries) {
-                    if (entry.name) content += entry.name + " ";
-                    if (entry.jsonable) content += JSON.stringify(entry.jsonable) + " ";
-                    if (entry.observable) content += this.getMonitorTextFor(entry.observable) + " ";
-                    if (entry.observableDeprecated) content += entry.observableDeprecated.getMonitorText() + " ";
-                    if (entry.additionalText) content += entry.additionalText() + " ";
-                    content += "<br>";
+                    const visible = entry.showAdditionalText === true || entry.showJsonable === true || entry.showObject === true;
+                    const selectedEntry = this.entries[this.selectedEntryIndex];
+                    // if (visible && this.entries[this.selectedEntryIndex] !== entry) continue; // nothing to show
+                    if (selectedEntry === entry) {
+                        content += "<b>>";
+                        if (!visible) content += this.getEntryName(entry)+" component is selected but has nothing to show, press [m] to toggle display mode of this line, [n] to select next component"; // name of entry only
+                    }
+                    if (entry.showJsonable && entry.jsonable) content += JSON.stringify(entry.jsonable) + " ";
+                    if (entry.showObject && entry.object) content += this.getMonitorTextFor(entry.object) + " ";
+                    if (entry.showAdditionalText && entry.additionalText) content += entry.additionalText() + " ";
+                    if (selectedEntry === entry) content += "</b>";
+                    content += "<br><br>";
                 }
                 this.debugConsoleDiv.innerHTML = content;
             }
@@ -86,18 +119,16 @@ export class Monitor extends AbstractComponent {
         return result;        
     }
 
-    register(observable: Observable) {
-        if (this.observables.includes(observable)) {
-            throw new Error("component already registered with monitor");
-        }
-        this.observables.push(observable);
-    }
-
-    addEntry(entry: MonitorEntry) {
-        if (this.entries.includes(entry)) {
+    addMonitorEntry(monitorEntry: MonitorEntry) {
+        if (this.entries.includes(monitorEntry)) {
             throw new Error("monitor entry already registered with monitor");
         }
-        this.entries.push(entry);
+        this.entries.push(monitorEntry);
+        if (monitorEntry.initiallySelected === true) this.selectedEntryIndex = this.entries.length - 1;
     }
 
+    getEntryName(entry: MonitorEntry): string {
+        if (entry.object === undefined) throw Error("don't know how to get name");
+        return entry.object.constructor.name;
+    }
 }

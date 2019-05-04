@@ -21,7 +21,7 @@ export class CameraManager extends AbstractComponent {
 
     init(): void {
         super.init();
-        this.resolve(Monitor).addEntry({ observable: this, additionalText: () => this.monitorText() });
+        this.resolve(Monitor).addMonitorEntry({ object: this, additionalText: () => this.monitorText() });
         this.resolve(GlobalKeyboardHandler).registerKey('u', () => this.updateFov(0.99));
         this.resolve(GlobalKeyboardHandler).registerKey('i', () => this.updateFov(1.01));
     }

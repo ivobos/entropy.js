@@ -30,6 +30,7 @@ export class GraphicRenderer extends AbstractComponent {
         this.onWindowResize(undefined);    
         options.parentDiv.appendChild( this.renderer.domElement );
         this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x000000);
         this.scene.add( new THREE.AmbientLight( 0x222222 ) );
         // const pl = new THREE.PointLight( 0xff00ff, 1, 10 );
         // pl.position.set(0,0,0);
@@ -39,7 +40,7 @@ export class GraphicRenderer extends AbstractComponent {
 
     init(): void {
         super.init();
-        this.resolve(Monitor).addEntry({ observable: this, additionalText: () => this.monitorText() });
+        this.resolve(Monitor).addMonitorEntry({ object: this, additionalText: () => this.monitorText() });
         this.resolve(GlobalKeyboardHandler).registerKey('x', () => this.renderStyle.progressBoolAttributes());
         this.resolve(GlobalKeyboardHandler).registerKey('c', () => this.renderStyle.polygonSizeMultiplyScalar(.9));
         this.resolve(GlobalKeyboardHandler).registerKey('v', () => this.renderStyle.polygonSizeMultiplyScalar(1.1));

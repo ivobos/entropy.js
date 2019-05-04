@@ -15,7 +15,7 @@ export class GlobalKeyboardHandler extends AbstractComponent {
 
     init(): void {
         super.init();
-        this.resolve(Monitor).addEntry({ observable: this, additionalText: () => this.monitorText() });
+        this.resolve(Monitor).addMonitorEntry({ object: this, additionalText: () => this.monitorText() });
     }
 
     monitorText(): string {

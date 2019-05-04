@@ -22,7 +22,7 @@ export class ExecutionController extends AbstractComponent {
         keyboard.registerKey('9', () => mainLoop.updateClockMultiplier(.5));
         keyboard.registerKey('0', () => mainLoop.updateClockMultiplier(2.));
         keyboard.registerKey('p', () => mainLoop.togglePauseSimulation());
-        this.resolve(Monitor).addEntry({ observable: this });
+        this.resolve(Monitor).addMonitorEntry({ object: this });
     }
 
     onBlur(event: FocusEvent): void {
