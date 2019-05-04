@@ -11,8 +11,8 @@ export type GraphObjectInitFunction = (simObject: GraphNode, options: GraphObjec
 export interface GraphObjectOptions {
     mass: number;
     parent?: GraphNode;
-    relativePosition?: THREE.Vector3; // position relative to parent
-    velocity?: THREE.Vector3;
+    initialRelativePosition?: THREE.Vector3; // position relative to parent
+    initialVelocity?: THREE.Vector3;
     radius: number;
     prepareForRender?: PrepareForRenderFunction;
     simulationStep?: SimulationStepFunction;

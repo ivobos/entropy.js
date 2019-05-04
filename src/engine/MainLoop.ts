@@ -38,7 +38,8 @@ export class MainLoop extends AbstractComponent  {
             object: this , 
             initiallySelected: true, 
             showAdditionalText: true, 
-            additionalText: () => this.monitorText() 
+            additionalText: () => this.monitorText(),
+            weight: 10,
         });
     }
 

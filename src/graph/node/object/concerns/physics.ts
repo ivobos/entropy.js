@@ -18,10 +18,10 @@ export interface PhysicalObject extends RenderableObject {
 
 export const physicalObjectInit: GraphObjectInitFunction = function(simObject: GraphNode, options: GraphObjectOptions): void {
     const physicalObject = simObject as PhysicalObject;
-    physicalObject.relativePosition = options.relativePosition || new THREE.Vector3();
+    physicalObject.relativePosition = options.initialRelativePosition || new THREE.Vector3();
     physicalObject.mass = options.mass;
     physicalObject.radius = options.radius;
-    physicalObject.velocity = options.velocity || new THREE.Vector3(0,0,0);
+    physicalObject.velocity = options.initialVelocity || new THREE.Vector3(0,0,0);
 
     physicalObject.move = function(deltav: THREE.Vector3, deltar: THREE.Vector2): void {
         if (deltav.length() !== 0 || deltar.length() !== 0) {

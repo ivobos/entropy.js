@@ -29,3 +29,18 @@ export class GraphNode {
         };
     }
 }
+
+export function graphNodeInit(seed: GraphObjectOptions): GraphNode {
+    const graphNode = seed as unknown as GraphNode;
+    graphNode.parentObject = seed.parent || graphNode;
+    graphNode.childObjects = [];
+    graphNode.addChildObject = function(child: GraphNode): void {
+        this.childObjects.push(child);
+    }
+    graphNode.accept = function<T extends GraphOperation>(graphNodeVisitor: T, prevNode?: GraphNode): T {
+        graphNodeVisitor.visit(this, prevNode);
+        graphNodeVisitor.traverse(this, this.parentObject, this.childObjects, prevNode);
+        return graphNodeVisitor;
+    } 
+    return graphNode;
+}

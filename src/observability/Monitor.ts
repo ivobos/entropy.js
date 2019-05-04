@@ -15,18 +15,20 @@ export interface MonitorEntry {
     showObject?: boolean,
     additionalText?: () => string,
     showAdditionalText?: boolean,
+    weight?: number,
 }
 
 export class Monitor extends AbstractComponent {
 
     private entries: Array<MonitorEntry> = [];
-    private selectedEntryIndex: number = 1;
+    private selectedEntry: MonitorEntry;
     private nextUpdateTimeMsec: number = 0;
     private debugConsoleDiv?: HTMLElement = undefined;
 
     constructor(options: ComponentOptions) {
         super({...options, key: Monitor});
-        this.addMonitorEntry({object: this}); // add entry for self
+        this.selectedEntry = {object: this};
+        this.addMonitorEntry(this.selectedEntry); // add entry for self
     }    
 
     init(): void {
@@ -55,13 +57,12 @@ export class Monitor extends AbstractComponent {
     }
 
     selectNextMonitorEntry(): void {
-        this.selectedEntryIndex = (this.selectedEntryIndex + 1) % (this.entries.length);
+        this.selectedEntry = this.entries[(this.entries.indexOf(this.selectedEntry) + 1) % this.entries.length];
         this.nextUpdateTimeMsec = 0; // for redraw immediatelly
     }
 
     toggleDisplayModeOfSelectedEntry(): void {
-        const selectedEntry = this.entries[this.selectedEntryIndex];
-        this.progressModeOfEntry(selectedEntry);
+        this.progressModeOfEntry(this.selectedEntry);
         this.nextUpdateTimeMsec = 0; // for redraw immediatelly
     }
 
@@ -91,16 +92,15 @@ export class Monitor extends AbstractComponent {
                 let content = "";
                 for (const entry of this.entries) {
                     const visible = entry.showAdditionalText === true || entry.showJsonable === true || entry.showObject === true;
-                    const selectedEntry = this.entries[this.selectedEntryIndex];
                     // if (visible && this.entries[this.selectedEntryIndex] !== entry) continue; // nothing to show
-                    if (selectedEntry === entry) {
+                    if (this.selectedEntry === entry) {
                         content += "<b>>";
                         if (!visible) content += this.getEntryName(entry)+" component is selected but has nothing to show, press [m] to toggle display mode of this line, [n] to select next component"; // name of entry only
                     }
                     if (entry.showJsonable && entry.jsonable) content += JSON.stringify(entry.jsonable) + " ";
                     if (entry.showObject && entry.object) content += this.getMonitorTextFor(entry.object) + " ";
                     if (entry.showAdditionalText && entry.additionalText) content += entry.additionalText() + " ";
-                    if (selectedEntry === entry) content += "</b>";
+                    if (this.selectedEntry === entry) content += "</b>";
                     content += "<br><br>";
                 }
                 this.debugConsoleDiv.innerHTML = content;
@@ -124,7 +124,11 @@ export class Monitor extends AbstractComponent {
             throw new Error("monitor entry already registered with monitor");
         }
         this.entries.push(monitorEntry);
-        if (monitorEntry.initiallySelected === true) this.selectedEntryIndex = this.entries.length - 1;
+        if (monitorEntry.initiallySelected === true) this.selectedEntry = monitorEntry;
+        this.entries.sort(function(a,b) {
+            return (a.weight === undefined ? Number.MAX_VALUE : a.weight) - 
+                    (b.weight === undefined ? Number.MAX_VALUE : b.weight);
+        });
     }
 
     getEntryName(entry: MonitorEntry): string {

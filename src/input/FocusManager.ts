@@ -15,12 +15,17 @@ export class FocusManager extends AbstractComponent {
 
     init(): void {
         super.init();
-        this.resolve(Monitor).addMonitorEntry({ object: this, additionalText: () => this.monitorText() });
+        this.resolve(Monitor).addMonitorEntry({ 
+            object: this, 
+            additionalText: () => this.monitorText(),
+            showAdditionalText: true,
+            weight: 20, 
+        });
     }
 
     monitorText(): string {
-        if (!this.focusedObject) return "not focused";
-        return this.focusedObject.constructor.name+" "+JSON.stringify(this.focusedObject);
+        if (!this.focusedObject) return "Looking at: empty space";
+        return "Looking at: "+JSON.stringify(this.focusedObject);
     }
 
     setFocusOn(graphNode?: GraphNode) {

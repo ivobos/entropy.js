@@ -32,8 +32,11 @@ export class HtmlElements extends ComponentMixin(Object)  {
         this.debugConsoleDiv = document.createElement('div');
         this.debugConsoleDiv.id = "debug_info_content";
         this.debugConsoleDiv.style.color = "white";
-        this.debugConsoleDiv.style.opacity = "0.5";
+        this.debugConsoleDiv.style.opacity = "1";
         this.debugConsoleDiv.style.fontSize = "10px";
+        this.debugConsoleDiv.style.fontFamily = "Courier";
+        // this.debugConsoleDiv.style.webkitTextStrokeWidth = "1px";
+        // this.debugConsoleDiv.style.webkitTextStrokeColor = "black";
         obsDiv.appendChild(this.debugConsoleDiv);
 
         this.executionModeTextDiv = document.createElement('div');
