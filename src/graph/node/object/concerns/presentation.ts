@@ -9,7 +9,7 @@ export type PrepareForRenderFunction = (renderStyleProps: RenderStyle) => void;
 // TODO rename as it clashes with THREE.RenderableObject
 export interface RenderableObject extends GraphNode {
     object3d: THREE.Group;
-    prepareForRender?: PrepareForRenderFunction;
+    prepareForRender: PrepareForRenderFunction;
 }
 
 export const renderableObjectInit: GraphObjectInitFunction = function(simObject: GraphNode, options: GraphObjectOptions): void {
@@ -34,8 +34,8 @@ export const renderableObjectInit: GraphObjectInitFunction = function(simObject:
     renderableObject.object3d.userData.graphNode = renderableObject;
     
     // some objects have a custom prepareForRender function
-    if (options.prepareForRender) {
-        renderableObject.prepareForRender = options.prepareForRender;
+    if (options.overridePrepareForRender) {
+        renderableObject.prepareForRender = options.overridePrepareForRender;
     }
 }
 

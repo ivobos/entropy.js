@@ -14,7 +14,7 @@ export interface GraphObjectOptions {
     initialRelativePosition?: THREE.Vector3; // position relative to parent
     initialVelocity?: THREE.Vector3;
     radius: number;
-    prepareForRender?: PrepareForRenderFunction;
+    overridePrepareForRender?: PrepareForRenderFunction;
     simulationStep?: SimulationStepFunction;
 }
 

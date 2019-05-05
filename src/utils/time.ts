@@ -76,3 +76,34 @@ export function msecToNextTickChangeDivisibleBy(divider: number): number {
 export function secToMsec(sec: number): number {
     return sec * 1000;
 }
+
+// converted to ts from : https://stackoverflow.com/questions/8211744/convert-time-interval-given-in-seconds-into-more-human-readable-form
+export function msecDurationToStr(milliseconds: number): string {
+    function numberEnding (n: number) {
+        return (n > 1) ? 's' : '';
+    }
+
+    var temp = Math.floor(milliseconds / 1000);
+    var years = Math.floor(temp / 31536000);
+    if (years) {
+        return years + 'year' + numberEnding(years);
+    }
+    //TODO: Months! Maybe weeks? 
+    var days = Math.floor((temp %= 31536000) / 86400);
+    if (days) {
+        return days + 'day' + numberEnding(days);
+    }
+    var hours = Math.floor((temp %= 86400) / 3600);
+    if (hours) {
+        return hours + 'hour' + numberEnding(hours);
+    }
+    var minutes = Math.floor((temp %= 3600) / 60);
+    if (minutes) {
+        return minutes + 'min' + numberEnding(minutes);
+    }
+    var seconds = temp % 60;
+    if (seconds) {
+        return seconds + 'sec' + numberEnding(seconds);
+    }
+    return 'now'; //'just now' //or other string you like;
+}

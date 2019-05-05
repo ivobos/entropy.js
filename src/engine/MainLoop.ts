@@ -5,6 +5,7 @@ import { AbstractComponent } from "../container/AbstractComponent";
 import { InputProcessor } from "../input/InputProcessor";
 import { SimulationProcessor } from "../simulation/SimulationProcessor";
 import { GraphicRenderer } from "../rendering/GraphicRenderer";
+import { msecDurationToStr } from "../utils/time";
 
 
 /**
@@ -49,7 +50,7 @@ export class MainLoop extends AbstractComponent  {
     }
 
     monitorText(): string {
-        return "FPS: "+this.getFPS().toFixed(1);
+        return "FPS:"+this.getFPS().toFixed(1)+ " Playtime:"+msecDurationToStr(window.performance.now());
     }
             
     // how many milliseconds to simulate by execution of update
@@ -162,4 +163,5 @@ export class MainLoop extends AbstractComponent  {
         this.resolve(Monitor).updateMonitor(this.fps, this.panic);
         this.panic = false;
     }
+
 }

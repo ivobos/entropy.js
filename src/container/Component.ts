@@ -1,5 +1,5 @@
 import { Container } from './Container';
-import { MixinConstructor } from '../utils/MixinConstructor';
+import { MixinConstructor } from '../utils/mixin-utils';
 
 export interface ComponentOptions {
     container: Container,   // container that holds everything

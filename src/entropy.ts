@@ -10,6 +10,7 @@ export { GlobalKeyboardHandler } from './input/GlobalKeyboardHandler';
 export { TextureCache } from './textures/TextureCache';
 export { RenderStyle } from './rendering/RenderStyle';
 export { GraphManager } from './graph/GraphManager';
+export { includeMixin } from './utils/mixin-utils';
 import { Builder } from './engine/Builder';
 
 export function builder(): Builder {
