@@ -18,7 +18,7 @@ export interface GrapicRendererOptions extends ComponentOptions {
 
 export class GraphicRenderer extends AbstractComponent {
     
-    private renderer : THREE.Renderer;
+    private renderer: THREE.WebGLRenderer;
     private renderStyle: RenderStyle = new RenderStyle();
     private scene: THREE.Scene;
     private raycaster: THREE.Raycaster;
@@ -26,6 +26,7 @@ export class GraphicRenderer extends AbstractComponent {
     constructor(options: GrapicRendererOptions) {
         super({...options, key: GraphicRenderer});
         this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+        this.renderer.sortObjects = false;
         window.addEventListener('resize', (event: UIEvent) => this.onWindowResize(event), false);
         this.onWindowResize(undefined);    
         options.parentDiv.appendChild( this.renderer.domElement );
@@ -75,7 +76,9 @@ export class GraphicRenderer extends AbstractComponent {
         graphManager.accept(new GraphOperation(updObjPosVisitor));
         graphManager.accept(new GraphOperation(getUpdObjBeforeRenderVisitor(this.renderStyle)));
         graphManager.accept(new GraphOperation(this.getUpdSceneVisitor()));
-
+        this.scene.children.sort(function(a: THREE.Object3D,b: THREE.Object3D) {
+            return b.position.lengthSq() - a.position.lengthSq();
+        });
         const camera = this.resolve(CameraManager).getCamera();
         // render
         if (camera) {
