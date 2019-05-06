@@ -15,7 +15,7 @@ export interface GraphObjectOptions {
     initialVelocity?: THREE.Vector3;
     radius: number;
     overridePrepareForRender?: PrepareForRenderFunction;
-    simulationStep?: SimulationStepFunction;
+    overrideSimulationStep?: SimulationStepFunction;
 }
 
 export interface GraphObject extends GraphNode, ObjectWithBoundingRadius, PhysicalObject, 

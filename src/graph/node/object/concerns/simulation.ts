@@ -5,12 +5,12 @@ import { GraphObjectVisitFunction } from "../../../graph-operation";
 export type SimulationStepFunction = (simulationTimestep: number) => void;
 
 export interface SimObject extends GraphNode {
-    simulationStep?: SimulationStepFunction;
+    simulationStep: SimulationStepFunction;
 }
 
 export const simObjectInit: GraphObjectInitFunction = function(graphNode: GraphNode, options: GraphObjectOptions): void {
     const simObject = graphNode as SimObject;
-    if (options.simulationStep) simObject.simulationStep = options.simulationStep;
+    if (options.overrideSimulationStep) simObject.simulationStep = options.overrideSimulationStep;
 }
 
 export function getUpdSimStepVisitor(simulationTimestepMsec: number): GraphObjectVisitFunction {
