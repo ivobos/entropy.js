@@ -5,6 +5,7 @@ export { Container } from './container/Container';
 export { GraphObjectOptions, GraphObject } from './graph/node/object/graph-object';
 export * from './utils/random';
 export * from './utils/time';
+export * from './utils/line-sphere-intercept';
 export { GlobalMouseHandler } from './input/GlobalMouseHandler';
 export { GlobalKeyboardHandler } from './input/GlobalKeyboardHandler';
 export { TextureCache } from './textures/TextureCache';

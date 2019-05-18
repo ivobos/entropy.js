@@ -36,21 +36,16 @@ export class MainLoop extends AbstractComponent  {
     init(): void {
         super.init();
         this.resolve(Monitor).addMonitorEntry({ 
-            object: this , 
-            initiallySelected: true, 
-            showAdditionalText: true, 
-            additionalText: () => this.monitorText(),
+            name: this.constructor.name, 
             weight: 10,
+            visible: true, 
+            content: () => "FPS:"+this.getFPS().toFixed(1)+ " Playtime:"+msecDurationToStr(window.performance.now()), 
         });
     }
 
     togglePauseSimulation(): void {
         this.simPause = !this.simPause;
         this.resolve(HtmlElements).showExecutionModeText(this.simPause ? "PAUSED" : undefined);
-    }
-
-    monitorText(): string {
-        return "FPS:"+this.getFPS().toFixed(1)+ " Playtime:"+msecDurationToStr(window.performance.now());
     }
             
     // how many milliseconds to simulate by execution of update

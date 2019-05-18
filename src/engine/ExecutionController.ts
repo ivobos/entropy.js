@@ -22,7 +22,8 @@ export class ExecutionController extends AbstractComponent {
         keyboard.registerKey('9', () => mainLoop.updateClockMultiplier(.5));
         keyboard.registerKey('0', () => mainLoop.updateClockMultiplier(2.));
         keyboard.registerKey('p', () => mainLoop.togglePauseSimulation());
-        this.resolve(Monitor).addMonitorEntry({ object: this });
+        this.resolve(Monitor).addMonitorEntry({ name: this.constructor.name, 
+            shortcuts: "[p]-pause, [9]-speedup clock, [0]-slower clock" });
     }
 
     onBlur(event: FocusEvent): void {

@@ -43,7 +43,7 @@ export const physicalObjectInit: GraphObjectInitFunction = function(simObject: G
     }
 }
 
-export const updObjPosVisitor: GraphObjectVisitFunction = function(thisNode: GraphNode, prevNode?: GraphNode): void {
+export const updatePositionVisitor: GraphObjectVisitFunction = function(thisNode: GraphNode, prevNode?: GraphNode): void {
     const graphObject = thisNode as GraphObject;
     if (!prevNode) {
         graphObject.object3d.position.set(0,0,0);
@@ -73,7 +73,7 @@ export function getUpdObjPhysicsVisitor(simulationTimestepMsec: number): GraphOb
         const deltav = physicalObject.relativePosition.clone()     
                             .normalize()
                             .multiplyScalar(- force * timeDeltaSec / physicalObject.mass);
-                            physicalObject.velocity.add(deltav); // TODO: to conserve linear momentum have to update parentObject.velocity too        
+        physicalObject.velocity.add(deltav); // TODO: to conserve linear momentum have to update parentObject.velocity too        
         physicalObject.relativePosition.add(physicalObject.velocity.clone().multiplyScalar(timeDeltaSec));
         // intersection
        const overlap = physicalObject.relativePosition.length() - parentPhysicalObject.radius - physicalObject.radius;

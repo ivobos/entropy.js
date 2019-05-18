@@ -9,8 +9,8 @@ import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { FocusManager } from '../input/FocusManager';
 import { GraphNode } from '../graph/node/graph-node';
 import { GraphOperation, GraphObjectVisitFunction } from '../graph/graph-operation';
-import { updObjPosVisitor, PhysicalObject } from '../graph/node/object/concerns/physics';
-import { getUpdObjBeforeRenderVisitor } from '../graph/node/object/concerns/presentation';
+import { updatePositionVisitor, PhysicalObject } from '../graph/node/object/concerns/physics';
+import { getPrepareForRenderVisitor } from '../graph/node/object/concerns/presentation';
 
 export interface GrapicRendererOptions extends ComponentOptions {
     parentDiv: any
@@ -41,8 +41,11 @@ export class GraphicRenderer extends AbstractComponent {
 
     init(): void {
         super.init();
-        this.resolve(Monitor).addMonitorEntry({ object: this, additionalText: () => this.monitorText() });
-        this.resolve(GlobalKeyboardHandler).registerKey('x', () => this.renderStyle.progressBoolAttributes());
+        this.resolve(Monitor).addMonitorEntry({ name: this.constructor.name, 
+            content: () => this.monitorText(),
+            shortcuts: "[c]/[v]-decrease/increase detail",
+        });
+        this.resolve(GlobalKeyboardHandler).registerKey('b', () => this.renderStyle.progressBoolAttributes());
         this.resolve(GlobalKeyboardHandler).registerKey('c', () => this.renderStyle.polygonSizeMultiplyScalar(.9));
         this.resolve(GlobalKeyboardHandler).registerKey('v', () => this.renderStyle.polygonSizeMultiplyScalar(1.1));
     }
@@ -60,7 +63,7 @@ export class GraphicRenderer extends AbstractComponent {
         }
     }
     
-    getUpdSceneVisitor(): GraphObjectVisitFunction {
+    getUpdateSceneVisitor(): GraphObjectVisitFunction {
         const scene = this.scene;
         return function(thisNode: GraphNode, prevNode?: GraphNode): void {
             const thisObject3d = (thisNode as PhysicalObject).object3d;
@@ -73,9 +76,9 @@ export class GraphicRenderer extends AbstractComponent {
     doRender(interpolationPercentage: number): void {
         const graphManager = this.resolve(GraphManager);
         // prepare graph objects for rendering
-        graphManager.accept(new GraphOperation(updObjPosVisitor));
-        graphManager.accept(new GraphOperation(getUpdObjBeforeRenderVisitor(this.renderStyle)));
-        graphManager.accept(new GraphOperation(this.getUpdSceneVisitor()));
+        graphManager.accept(new GraphOperation(updatePositionVisitor));
+        graphManager.accept(new GraphOperation(getPrepareForRenderVisitor(this.renderStyle)));
+        graphManager.accept(new GraphOperation(this.getUpdateSceneVisitor()));
         this.scene.children.sort(function(a: THREE.Object3D,b: THREE.Object3D) {
             return b.position.lengthSq() - a.position.lengthSq();
         });

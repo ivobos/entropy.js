@@ -17,11 +17,12 @@ export class TextureCache extends AbstractComponent {
 
     init(): void {
         super.init();
-        this.resolve(Monitor).addMonitorEntry({ object: this, additionalText: () => this.monitorText() });
+        this.resolve(Monitor).addMonitorEntry({ name: this.constructor.name, 
+            content: () => this.monitorText() });
     }
 
     monitorText(): string {
-        let debug = TextureCache.name+" cache entries="+this.textureByUrl.size;
+        let debug = "Cache entries="+this.textureByUrl.size;
         for (const key of this.textureByUrl.keys()) {
             debug += ","+key;
         }

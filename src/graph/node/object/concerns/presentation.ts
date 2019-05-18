@@ -39,7 +39,7 @@ export const renderableObjectInit: GraphObjectInitFunction = function(simObject:
     }
 }
 
-export function getUpdObjBeforeRenderVisitor(globalRenderStyle: RenderStyle): GraphObjectVisitFunction {
+export function getPrepareForRenderVisitor(globalRenderStyle: RenderStyle): GraphObjectVisitFunction {
     return function(thisNode: GraphNode, prevNode?: GraphNode): void {
         const graphObject = (thisNode as GraphObject);
         if (graphObject.prepareForRender) {

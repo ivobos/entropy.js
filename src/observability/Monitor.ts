@@ -8,27 +8,23 @@ import { ComponentOptions } from "../container/Component";
 const UPDATE_PERIOD_MSEC = 1000;
 
 export interface MonitorEntry {
-    initiallySelected?: boolean,
-    jsonable?: any,
-    showJsonable?: boolean,
-    object?: any,
-    showObject?: boolean,
-    additionalText?: () => string,
-    showAdditionalText?: boolean,
+    name: string,
     weight?: number,
+    visible?: boolean,
+    content?: (() => string) | string | object,
+    shortcuts?: string,
 }
 
 export class Monitor extends AbstractComponent {
 
     private entries: Array<MonitorEntry> = [];
-    private selectedEntry: MonitorEntry;
+    private selectedEntry?: MonitorEntry;
     private nextUpdateTimeMsec: number = 0;
     private debugConsoleDiv?: HTMLElement = undefined;
+    private showShortucts = false;
 
     constructor(options: ComponentOptions) {
         super({...options, key: Monitor});
-        this.selectedEntry = {object: this};
-        this.addMonitorEntry(this.selectedEntry); // add entry for self
     }    
 
     init(): void {
@@ -36,9 +32,15 @@ export class Monitor extends AbstractComponent {
         if (process.env.NODE_ENV === "development") {
             //this.toggleDebugConsole(); // in dev mode default to console on
         }
+        this.addMonitorEntry({name: this.constructor.name, weight: 0, visible: true, 
+            content: "[h]-show help/shortcuts",
+            shortcuts: "[z]-show/hide overlay [j][k]-next/prev item [x]-toggle visibility of item"
+        });
         this.resolve(GlobalKeyboardHandler).registerKey('z' /*'F3'*/, () => this.toggleDebugConsole());
-        this.resolve(GlobalKeyboardHandler).registerKey('n', () => this.selectNextMonitorEntry());
-        this.resolve(GlobalKeyboardHandler).registerKey('m', () => this.toggleDisplayModeOfSelectedEntry());
+        this.resolve(GlobalKeyboardHandler).registerKey('j', () => this.selectNextMonitorEntry(+1));
+        this.resolve(GlobalKeyboardHandler).registerKey('k', () => this.selectNextMonitorEntry(-1));
+        this.resolve(GlobalKeyboardHandler).registerKey('x', () => this.showHideSelectedEntry());
+        this.resolve(GlobalKeyboardHandler).registerKey('h', () => this.toggleShortcutsDisplay());
         this.toggleDebugConsole();
     }
 
@@ -56,32 +58,27 @@ export class Monitor extends AbstractComponent {
         }
     }
 
-    selectNextMonitorEntry(): void {
-        this.selectedEntry = this.entries[(this.entries.indexOf(this.selectedEntry) + 1) % this.entries.length];
+    toggleShortcutsDisplay(): void {
+        this.showShortucts = !this.showShortucts;
+        this.nextUpdateTimeMsec = 0;    
+    }
+
+    selectNextMonitorEntry(offset: number): void {
+        let selectedEntryIndex = this.selectedEntry ? this.entries.indexOf(this.selectedEntry) + offset : 
+                offset > 0 ? 0 : this.entries.length - 1;
+        if (selectedEntryIndex < 0 || selectedEntryIndex >= this.entries.length) {
+            this.selectedEntry = undefined;
+        } else {
+            this.selectedEntry = this.entries[selectedEntryIndex];
+        }
         this.nextUpdateTimeMsec = 0; // for redraw immediatelly
     }
 
-    toggleDisplayModeOfSelectedEntry(): void {
-        this.progressModeOfEntry(this.selectedEntry);
-        this.nextUpdateTimeMsec = 0; // for redraw immediatelly
-    }
-
-    progressModeOfEntry(entry: MonitorEntry): void {
-        // conver to gray code
-        let numBits = 0;
-        let gray = 0;
-        if (entry.object) gray = gray + ((entry.showObject ? 1 : 0) << numBits++);
-        if (entry.additionalText) gray = gray + ((entry.showAdditionalText ? 1 : 0) << numBits++);
-        // gray to number
-        let n = gray ^ (gray >> 1) ^ ( gray >> 2);
-        // increment
-        n = (n + 1) % (2 ** numBits);
-        // number to gray
-        gray = n  ^ (n >> 1);
-        // gray to attributes
-        numBits = 0;
-        if (entry.object) entry.showObject = ((gray >> numBits++) & 1) === 1;
-        if (entry.additionalText) entry.showAdditionalText = ((gray >> numBits++) & 1) === 1;
+    showHideSelectedEntry(): void {
+        if (this.selectedEntry) {
+            this.selectedEntry.visible = !this.selectedEntry.visible;
+            this.nextUpdateTimeMsec = 0; // for redraw immediatelly
+        }
     }
 
     updateMonitor(fps: number, panic: boolean): void {
@@ -91,21 +88,27 @@ export class Monitor extends AbstractComponent {
                 this.nextUpdateTimeMsec = currentTimeMsec + UPDATE_PERIOD_MSEC;
                 let content = "";
                 for (const entry of this.entries) {
-                    const visible = entry.showAdditionalText === true || entry.showJsonable === true || entry.showObject === true;
-                    // if (visible && this.entries[this.selectedEntryIndex] !== entry) continue; // nothing to show
-                    if (this.selectedEntry === entry) {
-                        content += "<b>>";
-                        if (!visible) content += this.getEntryName(entry)+" component is selected but has nothing to show, press [m] to toggle display mode of this line, [n] to select next component"; // name of entry only
-                    }
-                    if (entry.showJsonable && entry.jsonable) content += JSON.stringify(entry.jsonable) + " ";
-                    if (entry.showObject && entry.object) content += this.getMonitorTextFor(entry.object) + " ";
-                    if (entry.showAdditionalText && entry.additionalText) content += entry.additionalText() + " ";
-                    if (this.selectedEntry === entry) content += "</b>";
+                    const visible = entry.visible;
+                    const selected = (this.selectedEntry === entry);
+                    if (selected) content += "<b>>";
+                    if (selected || (this.showShortucts && entry.shortcuts)) content += entry.name;
+                    if (selected && !visible) content += " hidden";
+                    if (visible && entry.content) content += " "+this.contentToString(entry.content) + " ";
+                    if (selected && visible) content += " [x]-hide";
+                    if (selected && !visible) content += " [x]-show";
+                    if (this.showShortucts && entry.shortcuts) content += " "+entry.shortcuts;
+                    if (selected) content += "</b>";
                     content += "<br><br>";
                 }
                 this.debugConsoleDiv.innerHTML = content;
             }
         }
+    }
+
+    contentToString(content: (() => string) | string | object): string {
+        if (typeof content === "string") return content;
+        if (typeof content === "function") return content();
+        return this.getMonitorTextFor(content);
     }
 
     getMonitorTextFor(object: any): string {
@@ -124,7 +127,6 @@ export class Monitor extends AbstractComponent {
             throw new Error("monitor entry already registered with monitor");
         }
         this.entries.push(monitorEntry);
-        if (monitorEntry.initiallySelected === true) this.selectedEntry = monitorEntry;
         this.entries.sort(function(a,b) {
             return (a.weight === undefined ? Number.MAX_VALUE : a.weight) - 
                     (b.weight === undefined ? Number.MAX_VALUE : b.weight);
@@ -132,7 +134,8 @@ export class Monitor extends AbstractComponent {
     }
 
     getEntryName(entry: MonitorEntry): string {
-        if (entry.object === undefined) throw Error("don't know how to get name");
-        return entry.object.constructor.name;
+        if (entry.content === "string" || entry.content === "function") return "don't know how to get name";
+        const obj = entry.content as object;
+        return obj.constructor.name;
     }
 }

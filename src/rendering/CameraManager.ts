@@ -21,7 +21,11 @@ export class CameraManager extends AbstractComponent {
 
     init(): void {
         super.init();
-        this.resolve(Monitor).addMonitorEntry({ object: this, additionalText: () => this.monitorText() });
+        this.resolve(Monitor).addMonitorEntry({ 
+            name: this.constructor.name, 
+            content:  () => this.monitorContent(),
+            shortcuts: "[i]/[u]-increase/decrease field of view",
+        });
         this.resolve(GlobalKeyboardHandler).registerKey('u', () => this.updateFov(0.99));
         this.resolve(GlobalKeyboardHandler).registerKey('i', () => this.updateFov(1.01));
     }
@@ -34,13 +38,14 @@ export class CameraManager extends AbstractComponent {
         }
     }
 
-    monitorText(): string {
+    monitorContent(): string {
         let result = "";
         const camera = this.getCamera();
         if (camera) {
             const monitor = this.resolve(Monitor);
             result += " "+monitor.getMonitorTextFor(camera);
         }
+        result += " [u]"
         return result;
     }
 
