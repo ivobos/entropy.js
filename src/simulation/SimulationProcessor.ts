@@ -4,7 +4,7 @@ import { GraphManager } from "../graph/GraphManager";
 import { ComponentOptions } from "../container/Component";
 import { GraphOperation } from "../graph/graph-operation";
 import { updateBoundingRadius } from "../graph/node/object/concerns/collision";
-import { updatePositionVisitor, getUpdObjPhysicsVisitor } from "../graph/node/object/concerns/physics";
+import { updatePositionVisitor, resetForceVector, addGravityForce, getUpdateVelocityAndPositionVisitor, addCollisionForces } from "../graph/node/object/concerns/physics";
 import { getUpdSimStepVisitor } from "../graph/node/object/concerns/simulation";
 
 export type SimulationFunction = (simulationTimestepMsec: number) => void;
@@ -26,8 +26,10 @@ export class SimulationProcessor extends AbstractComponent {
         const graphManager = this.resolve(GraphManager);
         graphManager.accept(new GraphOperation(getUpdSimStepVisitor(simulationTimestepMsec)));
         graphManager.accept(new GraphOperation(updatePositionVisitor));
-        graphManager.accept(new GraphOperation(getUpdObjPhysicsVisitor(simulationTimestepMsec)));
-
+        graphManager.accept(new GraphOperation(resetForceVector));
+        graphManager.accept(new GraphOperation(addGravityForce));
+        graphManager.accept(new GraphOperation(addCollisionForces));
+        graphManager.accept(new GraphOperation(getUpdateVelocityAndPositionVisitor(simulationTimestepMsec)));
         for (const simulationFunction of this.simulationFunctions) {
             simulationFunction(simulationTimestepMsec);
         }

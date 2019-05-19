@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { GraphNode } from '../graph/node/graph-node';
 import { Monitor } from '../observability/Monitor';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { AbstractComponent } from '../container/AbstractComponent';
@@ -7,7 +6,7 @@ import { ComponentOptions } from '../container/Component';
 import { GraphManager } from '../graph/GraphManager';
 
 // TODO move interface into concerns/camera-holder.ts
-export interface CameraHolder extends GraphNode {
+export interface CameraHolder {
 
     getCamera() : THREE.PerspectiveCamera;
 

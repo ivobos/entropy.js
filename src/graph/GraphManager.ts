@@ -37,7 +37,9 @@ export class GraphManager extends AbstractComponent {
     }
 
     accept(visitor: GraphOperation) {
-        const node = this.getCameraHolder();
-        if (node) node.accept(visitor);
+        const cameraHolder = this.getCameraHolder() as GraphObject;
+        if (cameraHolder) {
+            cameraHolder.accept(visitor);
+        }
     }
 }
