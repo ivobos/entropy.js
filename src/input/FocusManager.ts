@@ -18,7 +18,7 @@ export class FocusManager extends AbstractComponent {
         this.resolve(Monitor).addMonitorEntry({ 
             name: this.constructor.name,
             weight: 20, 
-            content: () => this.monitorText(), 
+            infoContent: () => this.monitorText(), 
         });
     }
 

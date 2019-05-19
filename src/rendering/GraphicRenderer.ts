@@ -16,6 +16,9 @@ export interface GrapicRendererOptions extends ComponentOptions {
     parentDiv: any
 }
 
+const DECREASE_DETAIL_KEY = 'v';
+const INCREASE_DETAIL_KEY = 'b';
+
 export class GraphicRenderer extends AbstractComponent {
     
     private renderer: THREE.WebGLRenderer;
@@ -42,12 +45,11 @@ export class GraphicRenderer extends AbstractComponent {
     init(): void {
         super.init();
         this.resolve(Monitor).addMonitorEntry({ name: this.constructor.name, 
-            content: () => this.monitorText(),
-            shortcuts: "[c]/[v]-decrease/increase detail",
+            infoContent: () => this.monitorText(),
+            shortcuts: "["+DECREASE_DETAIL_KEY+"]/["+INCREASE_DETAIL_KEY+"]-decrease/increase detail",
         });
-        this.resolve(GlobalKeyboardHandler).registerKey('b', () => this.renderStyle.progressBoolAttributes());
-        this.resolve(GlobalKeyboardHandler).registerKey('c', () => this.renderStyle.polygonSizeMultiplyScalar(.9));
-        this.resolve(GlobalKeyboardHandler).registerKey('v', () => this.renderStyle.polygonSizeMultiplyScalar(1.1));
+        this.resolve(GlobalKeyboardHandler).registerKey(DECREASE_DETAIL_KEY, () => this.renderStyle.polygonSizeMultiplyScalar(.9));
+        this.resolve(GlobalKeyboardHandler).registerKey(INCREASE_DETAIL_KEY, () => this.renderStyle.polygonSizeMultiplyScalar(1.1));
     }
 
     monitorText(): string {

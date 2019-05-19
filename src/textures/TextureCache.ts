@@ -18,7 +18,7 @@ export class TextureCache extends AbstractComponent {
     init(): void {
         super.init();
         this.resolve(Monitor).addMonitorEntry({ name: this.constructor.name, 
-            content: () => this.monitorText() });
+            infoContent: () => this.monitorText() });
     }
 
     monitorText(): string {

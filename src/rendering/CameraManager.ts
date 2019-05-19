@@ -13,6 +13,9 @@ export interface CameraHolder extends GraphNode {
 
 }
 
+const DEC_FOV_KEY = 'n';
+const INC_FOV_KEY = 'm';
+
 export class CameraManager extends AbstractComponent {
     
     constructor(options: ComponentOptions) {
@@ -23,11 +26,11 @@ export class CameraManager extends AbstractComponent {
         super.init();
         this.resolve(Monitor).addMonitorEntry({ 
             name: this.constructor.name, 
-            content:  () => this.monitorContent(),
-            shortcuts: "[i]/[u]-increase/decrease field of view",
+            infoContent:  () => this.monitorContent(),
+            shortcuts: "["+DEC_FOV_KEY+"]/["+INC_FOV_KEY+"]-increase/decrease field of view",
         });
-        this.resolve(GlobalKeyboardHandler).registerKey('u', () => this.updateFov(0.99));
-        this.resolve(GlobalKeyboardHandler).registerKey('i', () => this.updateFov(1.01));
+        this.resolve(GlobalKeyboardHandler).registerKey(DEC_FOV_KEY, () => this.updateFov(0.99));
+        this.resolve(GlobalKeyboardHandler).registerKey(INC_FOV_KEY, () => this.updateFov(1.01));
     }
 
     updateFov(multiplier: number): void {
@@ -45,7 +48,6 @@ export class CameraManager extends AbstractComponent {
             const monitor = this.resolve(Monitor);
             result += " "+monitor.getMonitorTextFor(camera);
         }
-        result += " [u]"
         return result;
     }
 

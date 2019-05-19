@@ -10,10 +10,15 @@ const UPDATE_PERIOD_MSEC = 1000;
 export interface MonitorEntry {
     name: string,
     weight?: number,
-    visible?: boolean,
-    content?: (() => string) | string | object,
+    opacity?: number,
+    infoContent?: (() => string) | string | object,
+    debugContent?: (() => string) | string | object,
     shortcuts?: string,
 }
+
+const DECREASE_ENTRY_OPACITY_KEY = 'u';
+const INCREASE_ENTRY_OPACITY_KEY = 'i';
+const REMOVE_SELECTION_KEY = 'h';
 
 export class Monitor extends AbstractComponent {
 
@@ -21,7 +26,6 @@ export class Monitor extends AbstractComponent {
     private selectedEntry?: MonitorEntry;
     private nextUpdateTimeMsec: number = 0;
     private debugConsoleDiv?: HTMLElement = undefined;
-    private showShortucts = false;
 
     constructor(options: ComponentOptions) {
         super({...options, key: Monitor});
@@ -32,15 +36,17 @@ export class Monitor extends AbstractComponent {
         if (process.env.NODE_ENV === "development") {
             //this.toggleDebugConsole(); // in dev mode default to console on
         }
-        this.addMonitorEntry({name: this.constructor.name, weight: 0, visible: true, 
-            content: "[h]-show help/shortcuts",
-            shortcuts: "[z]-show/hide overlay [j][k]-next/prev item [x]-toggle visibility of item"
+        this.addMonitorEntry({name: this.constructor.name, weight: 0, opacity: .5, 
+            infoContent: "[j][k]-next/prev monitor item",
+            debugContent: () => "selected:"+(this.selectedEntry === undefined ? "none" : this.selectedEntry.name),
+            shortcuts: "["+REMOVE_SELECTION_KEY+"]-unselect monitor item [z]-show/hide overlay"
         });
         this.resolve(GlobalKeyboardHandler).registerKey('z' /*'F3'*/, () => this.toggleDebugConsole());
         this.resolve(GlobalKeyboardHandler).registerKey('j', () => this.selectNextMonitorEntry(+1));
         this.resolve(GlobalKeyboardHandler).registerKey('k', () => this.selectNextMonitorEntry(-1));
-        this.resolve(GlobalKeyboardHandler).registerKey('x', () => this.showHideSelectedEntry());
-        this.resolve(GlobalKeyboardHandler).registerKey('h', () => this.toggleShortcutsDisplay());
+        this.resolve(GlobalKeyboardHandler).registerKey(DECREASE_ENTRY_OPACITY_KEY, () => this.changeEntryOpacity(-.2));
+        this.resolve(GlobalKeyboardHandler).registerKey(INCREASE_ENTRY_OPACITY_KEY, () => this.changeEntryOpacity(.2));
+        this.resolve(GlobalKeyboardHandler).registerKey(REMOVE_SELECTION_KEY, () => this.removeItemSelection());
         this.toggleDebugConsole();
     }
 
@@ -58,8 +64,8 @@ export class Monitor extends AbstractComponent {
         }
     }
 
-    toggleShortcutsDisplay(): void {
-        this.showShortucts = !this.showShortucts;
+    removeItemSelection(): void {
+        this.selectedEntry = undefined;
         this.nextUpdateTimeMsec = 0;    
     }
 
@@ -74,9 +80,11 @@ export class Monitor extends AbstractComponent {
         this.nextUpdateTimeMsec = 0; // for redraw immediatelly
     }
 
-    showHideSelectedEntry(): void {
+    changeEntryOpacity(delta: number): void {
         if (this.selectedEntry) {
-            this.selectedEntry.visible = !this.selectedEntry.visible;
+            if (this.selectedEntry.opacity === undefined) this.selectedEntry.opacity = 0;
+            this.selectedEntry.opacity = this.selectedEntry.opacity + delta;
+            this.selectedEntry.opacity = Math.max(0, Math.min(1, this.selectedEntry.opacity));
             this.nextUpdateTimeMsec = 0; // for redraw immediatelly
         }
     }
@@ -88,16 +96,17 @@ export class Monitor extends AbstractComponent {
                 this.nextUpdateTimeMsec = currentTimeMsec + UPDATE_PERIOD_MSEC;
                 let content = "";
                 for (const entry of this.entries) {
-                    const visible = entry.visible;
                     const selected = (this.selectedEntry === entry);
+                    const opacity = (entry.opacity ? entry.opacity : 0) + (this.selectedEntry !== undefined ? .1 : 0) + (selected ? .4 : 0);
+                    content += "<div style=\"opacity: "+opacity+"\">";
                     if (selected) content += "<b>>";
-                    if (selected || (this.showShortucts && entry.shortcuts)) content += entry.name;
-                    if (selected && !visible) content += " hidden";
-                    if (visible && entry.content) content += " "+this.contentToString(entry.content) + " ";
-                    if (selected && visible) content += " [x]-hide";
-                    if (selected && !visible) content += " [x]-show";
-                    if (this.showShortucts && entry.shortcuts) content += " "+entry.shortcuts;
+                    content += entry.name;
+                    if (entry.infoContent) content += " "+this.contentToString(entry.infoContent) + " ";
+                    if (this.selectedEntry !== undefined && entry.debugContent) content += " "+this.contentToString(entry.debugContent) + " ";
+                    if (this.selectedEntry !== undefined && entry.shortcuts) content += " "+entry.shortcuts;
+                    if (selected) content += " opacity:"+entry.opacity+" ["+DECREASE_ENTRY_OPACITY_KEY+"]/["+INCREASE_ENTRY_OPACITY_KEY+"]-dec/inc opacity";
                     if (selected) content += "</b>";
+                    content += "</div>";
                     content += "<br><br>";
                 }
                 this.debugConsoleDiv.innerHTML = content;
@@ -134,8 +143,8 @@ export class Monitor extends AbstractComponent {
     }
 
     getEntryName(entry: MonitorEntry): string {
-        if (entry.content === "string" || entry.content === "function") return "don't know how to get name";
-        const obj = entry.content as object;
+        if (entry.infoContent === "string" || entry.infoContent === "function") return "don't know how to get name";
+        const obj = entry.infoContent as object;
         return obj.constructor.name;
     }
 }

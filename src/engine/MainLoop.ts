@@ -38,8 +38,8 @@ export class MainLoop extends AbstractComponent  {
         this.resolve(Monitor).addMonitorEntry({ 
             name: this.constructor.name, 
             weight: 10,
-            visible: true, 
-            content: () => "FPS:"+this.getFPS().toFixed(1)+ " Playtime:"+msecDurationToStr(window.performance.now()), 
+            opacity: 1, 
+            infoContent: () => "FPS:"+this.getFPS().toFixed(1)+ " Playtime:"+msecDurationToStr(window.performance.now()), 
         });
     }
 

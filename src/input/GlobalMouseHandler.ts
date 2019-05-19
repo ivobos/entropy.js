@@ -10,7 +10,7 @@ export class GlobalMouseHandler extends AbstractComponent {
         super.init();
         this.resolve(Monitor).addMonitorEntry({ 
             name: this.constructor.name, 
-            content: () => "mouseMove="+JSON.stringify(this.mouseMoveVector)});
+            infoContent: () => "mouseMove="+JSON.stringify(this.mouseMoveVector)});
     }
 
     constructor(options: ComponentOptions) {
