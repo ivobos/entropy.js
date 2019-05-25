@@ -4,10 +4,12 @@ import { GraphObjectOptions, GraphObjectInitFunction, GraphObject } from "../gra
 import { RenderableObject } from "./presentation";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
 import { includeMixin } from "../../../../utils/mixin-utils";
+import { GraphManager } from "../../../GraphManager";
 
 const G = 6.67E-4;  //  (m/kg)^2 (real one is 6.67E-11)
 
 export interface PhysicalObject extends RenderableObject {
+    name: string,
     velocity: THREE.Vector3;            // delta of relativePosition
     relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
     mass: number;
@@ -42,6 +44,7 @@ class PhysicalObjectMixin {
 
 export const physicalObjectInit: GraphObjectInitFunction = function(simObject: GraphNode, options: GraphObjectOptions): void {
     const physicalObject = simObject as PhysicalObject;
+    physicalObject.name = options.name;
     physicalObject.relativePosition = options.initialRelativePosition || new THREE.Vector3();
     physicalObject.mass = options.mass;
     physicalObject.radius = options.radius;
@@ -100,4 +103,68 @@ export const addCollisionForces: GraphObjectVisitFunction = function(thisNode: G
         const force = physicalObject.relativePosition.clone().normalize().multiplyScalar(overlap * overlap);
         physicalObject.force.add(force);
     }        
+}
+
+/** 
+ * The purpose of this class is to re-balance the graph in such a way that it eventually conforms to the following rules:
+ * - all parents should have higher mass than their children
+ * - gravitational force exerted on a node by its parent is higher then any other potential parent that node could have
+ * 
+ * It operates in 3 phases
+ * 1. identify an object to balance
+ * 2. calculate forces on that object by its potential parents
+ * 3. move the object to a new parent as needed
+ */
+export class GravityGraphBalancer {
+
+    objectBalanceCandidates: GraphObject[] = [];
+    rebalanceCandidate?: GraphObject;
+    potentialParentForces:Map<GraphObject,number> = new Map();
+
+    balanceOne(graphManager: GraphManager): void {
+        // find candidate to balance
+        graphManager.visit(this.updateObjectBalanceCandidatesVisitor.bind(this));
+        this.rebalanceCandidate = this.objectBalanceCandidates.shift();
+        if (this.rebalanceCandidate === undefined) return;
+        // calculate gravity forces
+        this.potentialParentForces.clear();
+        graphManager.visit(updatePositionVisitor);
+        graphManager.visit(this.updatePotentialParentForcesVisitor.bind(this));
+        // find the most appropriate parent
+        const entries = Array.from(this.potentialParentForces.entries());
+        if (entries.length > 0) {
+            const bestParent = entries.reduce((bestParentEntry, currentParentEntry) => bestParentEntry[1] > currentParentEntry[1] ? bestParentEntry : currentParentEntry)[0];
+            this.moveObjectToParent(this.rebalanceCandidate, bestParent);
+        }
+    }
+
+    updateObjectBalanceCandidatesVisitor(thisNode: GraphNode, prevNode?: GraphNode): void {
+        const graphObject = thisNode as GraphObject;
+        if (!this.objectBalanceCandidates.includes(graphObject)) {
+            this.objectBalanceCandidates.push(graphObject);
+        }
+    }
+
+    updatePotentialParentForcesVisitor(thisNode: GraphNode, prevNode?: GraphNode): void {
+        const potentialParent = thisNode as GraphObject;
+        if (potentialParent.mass > this.rebalanceCandidate!.mass) {
+            const force = this.calculateGravityForce(potentialParent, this.rebalanceCandidate!);
+            this.potentialParentForces.set(potentialParent, force);
+        }
+    }
+
+    calculateGravityForce(a: PhysicalObject, b: PhysicalObject): number {
+        const delta = a.object3d.position.clone().sub(b.object3d.position);
+        return G * a.mass * b.mass / delta.lengthSq();
+    }
+
+    moveObjectToParent(childObject: PhysicalObject, newParent: PhysicalObject) {
+        if (childObject.parentObject !== newParent) {
+            // console.log("reparenting "+childObject.name+" to "+newParent.name);
+            childObject.parentObject.removeChildObject(childObject);
+            newParent.addChildObject(childObject);
+            childObject.parentObject = newParent;
+            childObject.relativePosition = childObject.object3d.position.clone().sub(newParent.object3d.position);
+        }
+    }
 }

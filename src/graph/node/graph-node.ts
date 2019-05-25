@@ -10,6 +10,8 @@ export interface GraphNode {
 
     addChildObject(child: GraphNode): void;
 
+    removeChildObject(child: GraphNode): void;
+
     // GraphManager calls this to start graph traversal
     // GraphOperation calls this to continue graph traversal
     accept<T extends GraphOperation>(graphNodeVisitor: T, prevNode?: GraphNode): T;
@@ -22,6 +24,10 @@ export class GraphNodeMixin {
 
     addChildObject(this: GraphNode, child: GraphNode): void {
         this.childObjects.push(child);
+    }
+
+    removeChildObject(this: GraphNode, child: GraphNode): void {
+        this.childObjects.splice(this.childObjects.indexOf(child), 1);
     }
 
     // GraphManager calls this to start graph traversal

@@ -9,6 +9,7 @@ import { CameraHolder } from "../../../rendering/CameraManager";
 export type GraphObjectInitFunction = (simObject: GraphNode, options: GraphObjectOptions) => void;
 
 export interface GraphObjectOptions {
+    name: string,
     mass: number;
     parent?: GraphNode;
     initialRelativePosition?: THREE.Vector3; // position relative to parent
