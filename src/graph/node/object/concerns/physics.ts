@@ -6,7 +6,7 @@ import { GraphObjectVisitFunction } from "../../../graph-operation";
 import { includeMixin } from "../../../../utils/mixin-utils";
 import { GraphManager } from "../../../GraphManager";
 
-const G = 6.67E-4;  //  (m/kg)^2 (real one is 6.67E-11)
+const G = 6.67E-1;  //  (m/kg)^2 (real one is 6.67E-11)
 
 export interface PhysicalObject extends RenderableObject {
     name: string,
@@ -100,8 +100,9 @@ export const addCollisionForces: GraphObjectVisitFunction = function(thisNode: G
     const parentPhysicalObject = thisNode.parentObject as PhysicalObject;
     const overlap = parentPhysicalObject.radius + physicalObject.radius - physicalObject.relativePosition.length();
     if (overlap > 0) {
-        const force = physicalObject.relativePosition.clone().normalize().multiplyScalar(overlap * overlap);
+        const force = physicalObject.relativePosition.clone().normalize().multiplyScalar(1000 * overlap * overlap);
         physicalObject.force.add(force);
+        // console.log("overlap of "+overlap);
     }        
 }
 

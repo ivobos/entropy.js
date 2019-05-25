@@ -1,4 +1,4 @@
-import { GraphOperation } from "../graph-operation";
+import { FunctionGraphOperation, GraphOperation } from "../graph-operation";
 import { GraphObjectOptions } from "./object/graph-object";
 import { includeMixin } from "../../utils/mixin-utils";
 
@@ -32,7 +32,7 @@ export class GraphNodeMixin {
 
     // GraphManager calls this to start graph traversal
     // GraphOperation calls this to continue graph traversal
-    accept<T extends GraphOperation>(this: GraphNode, graphNodeVisitor: T, prevNode?: GraphNode): T {
+    accept<T extends FunctionGraphOperation>(this: GraphNode, graphNodeVisitor: T, prevNode?: GraphNode): T {
         graphNodeVisitor.visit(this, prevNode);
         graphNodeVisitor.traverse(this, this.parentObject, this.childObjects, prevNode);
         return graphNodeVisitor;
@@ -46,6 +46,7 @@ export class GraphNodeMixin {
 export function graphNodeInit(seed: GraphObjectOptions): GraphNode {
     const graphNode = seed as unknown as GraphNode;
     graphNode.parentObject = seed.parent || graphNode;
+    if (seed.parent) seed.parent.addChildObject(graphNode);
     graphNode.childObjects = [];
     includeMixin(seed as any, GraphNodeMixin);
     return graphNode;

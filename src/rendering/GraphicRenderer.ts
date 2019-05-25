@@ -8,9 +8,10 @@ import { RenderStyle } from './RenderStyle';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { FocusManager } from '../input/FocusManager';
 import { GraphNode } from '../graph/node/graph-node';
-import { GraphOperation, GraphObjectVisitFunction } from '../graph/graph-operation';
+import { FunctionGraphOperation, GraphObjectVisitFunction, AbstractGraphOperation } from '../graph/graph-operation';
 import { updatePositionVisitor, PhysicalObject } from '../graph/node/object/concerns/physics';
 import { getPrepareForRenderVisitor } from '../graph/node/object/concerns/presentation';
+import { GraphObject } from '../graph/node/object/graph-object';
 
 export interface GrapicRendererOptions extends ComponentOptions {
     parentDiv: any
@@ -18,6 +19,41 @@ export interface GrapicRendererOptions extends ComponentOptions {
 
 const DECREASE_DETAIL_KEY = 'v';
 const INCREASE_DETAIL_KEY = 'b';
+
+
+/**
+ * Add/remove object3d to scene.
+ * 1. Walk three and if new objects are detect then insert them in scene.
+ * 2. Remove from scene object3d not seen during walk.
+ */
+
+class UpdateSceneObjects extends AbstractGraphOperation {
+    
+    private maybeRemove: THREE.Object3D[];
+    private scene: THREE.Scene
+
+    constructor(scene: THREE.Scene) {
+        super();
+        this.scene = scene;
+        this.maybeRemove = [...this.scene.children];
+    }
+
+    visit(currentNode: GraphNode, prevNode?: GraphNode | undefined): void {
+        const graphObject = currentNode as GraphObject;
+        if (this.maybeRemove.includes(graphObject.object3d)) {
+            this.maybeRemove.splice(this.maybeRemove.indexOf(graphObject.object3d), 1);
+        } else {
+            console.log("adding object3d");
+            this.scene.add(graphObject.object3d);
+        }
+    }    
+    
+    end(): void {
+        this.maybeRemove.forEach(object => this.scene.remove(object)); 
+    }
+
+
+}
 
 export class GraphicRenderer extends AbstractComponent {
     
@@ -65,22 +101,12 @@ export class GraphicRenderer extends AbstractComponent {
         }
     }
     
-    getUpdateSceneVisitor(): GraphObjectVisitFunction {
-        const scene = this.scene;
-        return function(thisNode: GraphNode, prevNode?: GraphNode): void {
-            const thisObject3d = (thisNode as PhysicalObject).object3d;
-            if (!scene.children.includes(thisObject3d)) {
-                scene.add(thisObject3d);
-            }
-        }
-    }
-
     doRender(interpolationPercentage: number): void {
         const graphManager = this.resolve(GraphManager);
         // prepare graph objects for rendering
-        graphManager.accept(new GraphOperation(updatePositionVisitor));
-        graphManager.accept(new GraphOperation(getPrepareForRenderVisitor(this.renderStyle)));
-        graphManager.accept(new GraphOperation(this.getUpdateSceneVisitor()));
+        graphManager.accept(new FunctionGraphOperation(updatePositionVisitor));
+        graphManager.accept(new FunctionGraphOperation(getPrepareForRenderVisitor(this.renderStyle)));
+        graphManager.exec(new UpdateSceneObjects(this.scene));
         this.scene.children.sort(function(a: THREE.Object3D,b: THREE.Object3D) {
             return b.position.lengthSq() - a.position.lengthSq();
         });

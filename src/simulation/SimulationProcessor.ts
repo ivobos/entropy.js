@@ -2,7 +2,7 @@
 import { AbstractComponent } from "../container/AbstractComponent";
 import { GraphManager } from "../graph/GraphManager";
 import { ComponentOptions } from "../container/Component";
-import { GraphOperation } from "../graph/graph-operation";
+import { FunctionGraphOperation } from "../graph/graph-operation";
 import { updateBoundingRadius } from "../graph/node/object/concerns/collision";
 import { updatePositionVisitor, resetForceVector, addGravityForce, getUpdateVelocityAndPositionVisitor, addCollisionForces, GravityGraphBalancer } from "../graph/node/object/concerns/physics";
 import { getUpdSimStepVisitor } from "../graph/node/object/concerns/simulation";
@@ -34,12 +34,12 @@ export class SimulationProcessor extends AbstractComponent {
 
     processSimulationStep(simulationTimestepMsec: number): void {
         const graphManager = this.resolve(GraphManager);
-        graphManager.accept(new GraphOperation(getUpdSimStepVisitor(simulationTimestepMsec)));
-        graphManager.accept(new GraphOperation(updatePositionVisitor));
-        graphManager.accept(new GraphOperation(resetForceVector));
-        graphManager.accept(new GraphOperation(addGravityForce));
-        graphManager.accept(new GraphOperation(addCollisionForces));
-        graphManager.accept(new GraphOperation(getUpdateVelocityAndPositionVisitor(simulationTimestepMsec)));
+        graphManager.accept(new FunctionGraphOperation(getUpdSimStepVisitor(simulationTimestepMsec)));
+        graphManager.accept(new FunctionGraphOperation(updatePositionVisitor));
+        graphManager.accept(new FunctionGraphOperation(resetForceVector));
+        graphManager.accept(new FunctionGraphOperation(addGravityForce));
+        graphManager.accept(new FunctionGraphOperation(addCollisionForces));
+        graphManager.accept(new FunctionGraphOperation(getUpdateVelocityAndPositionVisitor(simulationTimestepMsec)));
 
         // restructure graph such that parents are always the heavier objects with the most gravitational influence on objects
         this.gravityGraphBalancer.balanceOne(graphManager);
@@ -49,7 +49,9 @@ export class SimulationProcessor extends AbstractComponent {
         }
         // TODO: traversin this way will not update bounding radius correcly, we have to update it for all'
         // children first and then parents
-        this.resolve(GraphManager).accept(new GraphOperation(updateBoundingRadius));
+        this.resolve(GraphManager).accept(new FunctionGraphOperation(updateBoundingRadius));
+
+        graphManager.removeScheduledEntities();
     }
 
 }
