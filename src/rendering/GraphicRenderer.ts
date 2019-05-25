@@ -8,8 +8,8 @@ import { RenderStyle } from './RenderStyle';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { FocusManager } from '../input/FocusManager';
 import { GraphNode } from '../graph/node/graph-node';
-import { FunctionGraphOperation, GraphObjectVisitFunction, AbstractGraphOperation } from '../graph/graph-operation';
-import { updatePositionVisitor, PhysicalObject } from '../graph/node/object/concerns/physics';
+import { FunctionGraphOperation, AbstractGraphOperation } from '../graph/graph-operation';
+import { updatePositionVisitor } from '../graph/node/object/concerns/physics';
 import { getPrepareForRenderVisitor } from '../graph/node/object/concerns/presentation';
 import { GraphObject } from '../graph/node/object/graph-object';
 
