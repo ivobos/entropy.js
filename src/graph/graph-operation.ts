@@ -18,7 +18,7 @@ export abstract class AbstractGraphOperation implements GraphOperation {
                 child.accept(this, current);
             }
         }
-        if (parent !== current && parent !== prevNode) {
+        if (parent !== undefined && parent !== prevNode) {
             parent.accept(this, current);
         }
     }
@@ -45,13 +45,13 @@ export class FunctionGraphOperation extends AbstractGraphOperation {
     }
     
     // GraphNode calls this method to continue traversal
-    traverse(current: GraphNode, parent: GraphNode, children: GraphNode[], prevNode?: GraphNode): void {
+    traverse(current: GraphNode, parent: GraphNode | undefined, children: GraphNode[], prevNode?: GraphNode): void {
         for (const child of children) {
             if (child !== prevNode) {
                 child.accept(this, current);
             }
         }
-        if (parent !== current && parent !== prevNode) {
+        if (parent !== undefined && parent !== prevNode) {
             parent.accept(this, current);
         }
     }

@@ -4,8 +4,7 @@ import { includeMixin } from "../../utils/mixin-utils";
 
 export interface GraphNode { 
 
-    // TODO: no-parent should use undefined
-    parentObject: GraphNode;       // points to itself if there is no parent
+    parentObject?: GraphNode;       // root entity doesn't have a parent
     childObjects: GraphNode[];
 
     addChildObject(child: GraphNode): void;
@@ -45,7 +44,7 @@ export class GraphNodeMixin {
 
 export function graphNodeInit(seed: GraphObjectOptions): GraphNode {
     const graphNode = seed as unknown as GraphNode;
-    graphNode.parentObject = seed.parent || graphNode;
+    graphNode.parentObject = seed.parent || undefined;
     if (seed.parent) seed.parent.addChildObject(graphNode);
     graphNode.childObjects = [];
     includeMixin(seed as any, GraphNodeMixin);

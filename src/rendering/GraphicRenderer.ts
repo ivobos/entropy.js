@@ -26,7 +26,6 @@ const INCREASE_DETAIL_KEY = 'b';
  * 1. Walk three and if new objects are detect then insert them in scene.
  * 2. Remove from scene object3d not seen during walk.
  */
-
 class UpdateSceneObjects extends AbstractGraphOperation {
     
     private maybeRemove: THREE.Object3D[];
@@ -43,7 +42,6 @@ class UpdateSceneObjects extends AbstractGraphOperation {
         if (this.maybeRemove.includes(graphObject.object3d)) {
             this.maybeRemove.splice(this.maybeRemove.indexOf(graphObject.object3d), 1);
         } else {
-            console.log("adding object3d");
             this.scene.add(graphObject.object3d);
         }
     }    

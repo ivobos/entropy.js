@@ -35,6 +35,7 @@ class PhysicalObjectMixin {
      * @param direction if the length < 1 then the velocity will be sub-orbit, if > 1 then it will be exit velocity
      */
     setOrbitVelocity(this: PhysicalObject, direction: THREE.Vector3): void {
+        if (this.parentObject === undefined) throw new Error("can't set orbital velicity when there is no parent");
         const parentPhysicalObject = this.parentObject as PhysicalObject;
         this.velocity.copy(direction.clone().multiplyScalar(
             Math.sqrt(G * parentPhysicalObject.mass / this.relativePosition.length()))
@@ -57,7 +58,7 @@ export const updatePositionVisitor: GraphObjectVisitFunction = function(thisNode
     const graphObject = thisNode as GraphObject;
     if (!prevNode) {
         graphObject.object3d.position.set(0,0,0);
-    } else if (thisNode.parentObject === prevNode) {
+    } else if (thisNode.parentObject === prevNode) { // TODO: not clear if this is correct
         const prevObject3d = (prevNode as PhysicalObject).object3d;
         graphObject.object3d.position.copy(prevObject3d.position)
             .add(graphObject.relativePosition);
@@ -77,7 +78,7 @@ export const resetForceVector: GraphObjectVisitFunction = function(thisNode: Gra
 
 export const addGravityForce: GraphObjectVisitFunction = function(thisNode: GraphNode, prevNode?: GraphNode): void {
     const graphObject = thisNode as PhysicalObject;
-    if (thisNode.parentObject == thisNode) return;
+    if (thisNode.parentObject === undefined) return;    // nothing to do for root graph object
     const physicalObject = thisNode as PhysicalObject;
     const parentPhysicalObject = thisNode.parentObject as PhysicalObject;
     // gravitational force
@@ -95,7 +96,7 @@ export function getUpdateVelocityAndPositionVisitor(simulationTimestepMsec: numb
 }
 
 export const addCollisionForces: GraphObjectVisitFunction = function(thisNode: GraphNode, prevNode?: GraphNode): void {
-    if (thisNode.parentObject == thisNode) return;
+    if (thisNode.parentObject === undefined) return;    // nothing to do for root parent object?
     const physicalObject = thisNode as PhysicalObject;
     const parentPhysicalObject = thisNode.parentObject as PhysicalObject;
     const overlap = parentPhysicalObject.radius + physicalObject.radius - physicalObject.relativePosition.length();
@@ -162,7 +163,7 @@ export class GravityGraphBalancer {
     moveObjectToParent(childObject: PhysicalObject, newParent: PhysicalObject) {
         if (childObject.parentObject !== newParent) {
             // console.log("reparenting "+childObject.name+" to "+newParent.name);
-            childObject.parentObject.removeChildObject(childObject);
+            if (childObject.parentObject !== undefined) childObject.parentObject.removeChildObject(childObject);
             newParent.addChildObject(childObject);
             childObject.parentObject = newParent;
             childObject.relativePosition = childObject.object3d.position.clone().sub(newParent.object3d.position);

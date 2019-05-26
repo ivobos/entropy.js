@@ -41,9 +41,14 @@ export class GraphManager extends AbstractComponent {
         this.scheduledForRemoval.push(graphObject);
     }
 
+    /**
+     * Iterate through this.scheduledForRemoval and remove the entity from the graph.
+     * Objects that nave no parent (root entity) or have no children can not be removed.
+     */
     removeScheduledEntities(): void {
         this.scheduledForRemoval.forEach(element => {
-           if (element.childObjects.length > 0) throw Error("has child objects"); 
+           if (element.childObjects.length > 0) throw new Error("has child objects"); 
+           if (element.parentObject === undefined) throw new Error("can't remove root entity");
            element.parentObject.removeChildObject(element);
         });
         this.scheduledForRemoval = [];
