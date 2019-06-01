@@ -9,14 +9,20 @@ import { boundingRadiusInit } from "./node/object/concerns/collision";
 import { selectableObjectInit } from "./node/object/concerns/selection";
 import { renderableObjectInit } from "./node/object/concerns/presentation";
 import { simObjectInit } from "./node/object/concerns/simulation";
+import { generatableObjectInit } from "./node/object/concerns/generation";
 
+export interface GraphManagerOptions extends ComponentOptions {
+    seed: number;
+}
 export class GraphManager extends AbstractComponent {
 
     private cameraHolder?: CameraHolder;
     private scheduledForRemoval: GraphObject[] = [];
+    private seed: number;
 
-    constructor(options: ComponentOptions) {
+    constructor(options: GraphManagerOptions) {
         super({...options, key: GraphManager});
+        this.seed = options.seed;
     }   
 
     setCameraHolder(cameraHolder: CameraHolder) {
@@ -28,12 +34,14 @@ export class GraphManager extends AbstractComponent {
     }
 
     createEntity(options: GraphObjectOptions): GraphObject {
+        options.seed = this.seed;
         const graphObject = graphNodeInit(options);
         physicalObjectInit(graphObject, options);
         boundingRadiusInit(graphObject, options);        
         selectableObjectInit(graphObject, options);
         renderableObjectInit(graphObject, options);
         simObjectInit(graphObject, options);
+        generatableObjectInit(graphObject as any as GraphObjectOptions);
         return graphObject as GraphObject;
     }
 

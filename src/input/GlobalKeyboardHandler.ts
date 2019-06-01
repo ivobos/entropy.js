@@ -32,6 +32,7 @@ export class GlobalKeyboardHandler extends AbstractComponent {
         return key in this.keyMap;
     }
 
+    // TODO: keyboard shortcuts as per https://forum.unity.com/threads/most-common-keyboard-mouse-inputs-for-pc-games.380594/
     registerKey(key: any, handler: any) {
         if (key in this.keyHandlers) {
             throw Error("key "+key+" already registered");

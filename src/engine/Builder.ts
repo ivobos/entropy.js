@@ -55,7 +55,7 @@ export class Builder {
         const canvas = new HtmlElements({ container: this.container, element: this.parentDiv});
         const mainLoop = new MainLoop({ container: this.container});
         new FocusManager({container: this.container});
-        new GraphManager({container: this.container});
+        new GraphManager({container: this.container, seed: 1234567});
         new CameraManager({container: this.container});
         new GraphicRenderer({container: this.container, parentDiv: canvas.getRendererDiv()});    
         new ExecutionController({container: this.container});

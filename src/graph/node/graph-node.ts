@@ -42,11 +42,11 @@ export class GraphNodeMixin {
     }
 }
 
-export function graphNodeInit(seed: GraphObjectOptions): GraphNode {
-    const graphNode = seed as unknown as GraphNode;
-    graphNode.parentObject = seed.parent || undefined;
-    if (seed.parent) seed.parent.addChildObject(graphNode);
+export function graphNodeInit(base: GraphObjectOptions): GraphNode {
+    const graphNode = base as unknown as GraphNode;
+    graphNode.parentObject = base.parent || undefined;
+    if (base.parent) base.parent.addChildObject(graphNode);
     graphNode.childObjects = [];
-    includeMixin(seed as any, GraphNodeMixin);
+    includeMixin(base as any, GraphNodeMixin);
     return graphNode;
 }

@@ -8,6 +8,8 @@ import { CameraHolder } from "../../../rendering/CameraManager";
 
 export type GraphObjectInitFunction = (simObject: GraphNode, options: GraphObjectOptions) => void;
 
+export type GraphObjectInitFunction2 = (object: GraphObjectOptions) => void;
+
 export interface GraphObjectOptions {
     name: string,
     mass: number;
@@ -17,6 +19,7 @@ export interface GraphObjectOptions {
     radius: number;
     overridePrepareForRender?: PrepareForRenderFunction;
     overrideSimulationStep?: SimulationStepFunction;
+    seed?: number
 }
 
 export interface GraphObject extends GraphNode, ObjectWithBoundingRadius, PhysicalObject, 
