@@ -1,5 +1,5 @@
 import { FunctionGraphOperation, GraphOperation } from "../graph-operation";
-import { GraphObjectOptions } from "./object/graph-object";
+import { GraphObjectProps } from "./object/graph-object";
 import { includeMixin } from "../../utils/mixin-utils";
 
 export interface GraphNode { 
@@ -42,7 +42,7 @@ export class GraphNodeMixin {
     }
 }
 
-export function graphNodeInit(base: GraphObjectOptions): GraphNode {
+export function graphNodeInit(base: GraphObjectProps): GraphNode {
     const graphNode = base as unknown as GraphNode;
     graphNode.parentObject = base.parent || undefined;
     if (base.parent) base.parent.addChildObject(graphNode);

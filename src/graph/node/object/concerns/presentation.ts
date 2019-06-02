@@ -1,6 +1,6 @@
 import { GraphNode } from "../../graph-node";
 import { RenderStyle } from "../../../../rendering/RenderStyle";
-import { GraphObjectOptions, GraphObjectInitFunction, GraphObject } from "../graph-object";
+import { GraphObjectProps, GraphObjectInitFunction, GraphObject } from "../graph-object";
 import * as THREE from "three";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
 
@@ -12,7 +12,7 @@ export interface RenderableObject extends GraphNode {
     prepareForRender: PrepareForRenderFunction;
 }
 
-export const renderableObjectInit: GraphObjectInitFunction = function(simObject: GraphNode, options: GraphObjectOptions): void {
+export const renderableObjectInit: GraphObjectInitFunction = function(simObject: GraphNode, options: GraphObjectProps): void {
     const renderableObject = simObject as RenderableObject;
 
     // object is a THREE.GROUP

@@ -2,18 +2,19 @@ import { AbstractComponent } from "../container/AbstractComponent";
 import { ComponentOptions } from "../container/Component";
 import { CameraHolder } from "../rendering/CameraManager";
 import { FunctionGraphOperation, GraphObjectVisitFunction, GraphOperation } from "./graph-operation";
-import { graphNodeInit } from "./node/graph-node";
-import { GraphObject, GraphObjectOptions } from "./node/object/graph-object";
+import { graphNodeInit, GraphNode } from "./node/graph-node";
+import { GraphObject, GraphObjectProps, GraphObjProps } from "./node/object/graph-object";
 import { physicalObjectInit } from "./node/object/concerns/physics";
-import { boundingRadiusInit } from "./node/object/concerns/collision";
+import { CollisionProps, collisionInit } from "./node/object/concerns/collision";
 import { selectableObjectInit } from "./node/object/concerns/selection";
 import { renderableObjectInit } from "./node/object/concerns/presentation";
 import { simObjectInit } from "./node/object/concerns/simulation";
-import { generatableObjectInit } from "./node/object/concerns/generation";
+import { procGenInit, ProcGenProps } from "./node/object/concerns/procgen";
 
 export interface GraphManagerOptions extends ComponentOptions {
     seed: number;
 }
+
 export class GraphManager extends AbstractComponent {
 
     private cameraHolder?: CameraHolder;
@@ -33,16 +34,37 @@ export class GraphManager extends AbstractComponent {
         return this.cameraHolder;
     }
 
-    createEntity(options: GraphObjectOptions): GraphObject {
-        options.seed = this.seed;
-        const graphObject = graphNodeInit(options);
-        physicalObjectInit(graphObject, options);
-        boundingRadiusInit(graphObject, options);        
-        selectableObjectInit(graphObject, options);
-        renderableObjectInit(graphObject, options);
-        simObjectInit(graphObject, options);
-        generatableObjectInit(graphObject as any as GraphObjectOptions);
-        return graphObject as GraphObject;
+    createEntity(...propsArgs: Array<GraphObjProps>): GraphObject {
+        let graphNode = {} as any as GraphNode;
+        for (const props of propsArgs) {
+            if (this.isGraphObjectProps(props)) {
+                graphNode = graphNodeInit(props);
+                physicalObjectInit(graphNode, props);                    
+                selectableObjectInit(graphNode, props);
+                renderableObjectInit(graphNode, props);
+                simObjectInit(graphNode, props);
+            } else if (this.isCollisionProps(props)) {
+                collisionInit(graphNode, props); 
+            } else if (this.isProcGenProps(props)) {
+                procGenInit(graphNode, 
+                    Object.assign({}, 
+                        { seed: this.seed }, // defaults
+                        props));
+            }
+        }    
+        return graphNode as GraphObject;
+    }
+
+    isGraphObjectProps(prop: GraphObjProps): prop is GraphObjectProps {
+        return (<GraphObjectProps>prop).graphObject !== undefined;
+    }
+
+    isCollisionProps(prop: GraphObjProps): prop is CollisionProps {
+        return (<CollisionProps>prop).collision !== undefined;
+    }
+
+    isProcGenProps(prop: GraphObjProps): prop is ProcGenProps {
+        return (<ProcGenProps>prop).procGen !== undefined;
     }
 
     removeEntity(graphObject: GraphObject): void {

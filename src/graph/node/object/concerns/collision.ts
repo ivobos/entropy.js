@@ -1,22 +1,27 @@
 import { GraphNode } from "../../graph-node";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
-import { GraphObjectInitFunction } from "../graph-object";
 
-export interface ObjectWithBoundingRadius {
+export interface CollisionProps {
+    collision: boolean
+}
+
+export interface CollisionObject extends CollisionProps {
     boundingRadius: number;
     object3d: THREE.Group;
     radius: number;
 }
 
-export const boundingRadiusInit: GraphObjectInitFunction = function(simObject: GraphNode): void {
-    (simObject as unknown as ObjectWithBoundingRadius).boundingRadius = 0;
+export const collisionInit = function(obj: GraphNode, props: CollisionProps): void {
+    const collisionObj: CollisionObject = obj as any as CollisionObject;
+    Object.assign(collisionObj, props);
+    collisionObj.boundingRadius = 0;
 }
 
 export const updateBoundingRadius: GraphObjectVisitFunction = function(currentNode: GraphNode, prevNode?: GraphNode): void {
-    const thisObject = currentNode as unknown as ObjectWithBoundingRadius;
+    const thisObject = currentNode as unknown as CollisionObject;
     thisObject.boundingRadius = thisObject.radius;
     for (const childNode of currentNode.childObjects) {
-        const childObject = childNode as unknown as ObjectWithBoundingRadius;
+        const childObject = childNode as unknown as CollisionObject;
         const maxDistance = thisObject.object3d.position.distanceTo(childObject.object3d.position) + childObject.boundingRadius;
         thisObject.boundingRadius = Math.max(thisObject.boundingRadius, maxDistance);
     }

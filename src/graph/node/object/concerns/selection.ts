@@ -1,5 +1,5 @@
 import { GraphNode } from "../../graph-node";
-import { GraphObjectOptions, GraphObjectInitFunction } from "../graph-object";
+import { GraphObjectProps, GraphObjectInitFunction } from "../graph-object";
 
 
 export interface SelectableObject extends GraphNode {
@@ -8,7 +8,7 @@ export interface SelectableObject extends GraphNode {
     isSelected(): boolean;
 }
 
-export const selectableObjectInit: GraphObjectInitFunction = function(graphNode: GraphNode, options: GraphObjectOptions): void {
+export const selectableObjectInit: GraphObjectInitFunction = function(graphNode: GraphNode, options: GraphObjectProps): void {
     const selectableObject = graphNode as SelectableObject;
     selectableObject.selected = false;
 

@@ -1,6 +1,6 @@
 import { GraphNode } from "../../graph-node";
 import * as THREE from "three";
-import { GraphObjectOptions, GraphObjectInitFunction, GraphObject } from "../graph-object";
+import { GraphObjectProps, GraphObjectInitFunction, GraphObject } from "../graph-object";
 import { RenderableObject } from "./presentation";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
 import { includeMixin } from "../../../../utils/mixin-utils";
@@ -43,7 +43,7 @@ class PhysicalObjectMixin {
     }
 }
 
-export const physicalObjectInit: GraphObjectInitFunction = function(simObject: GraphNode, options: GraphObjectOptions): void {
+export const physicalObjectInit: GraphObjectInitFunction = function(simObject: GraphNode, options: GraphObjectProps): void {
     const physicalObject = simObject as PhysicalObject;
     physicalObject.name = options.name;
     physicalObject.relativePosition = options.initialRelativePosition || new THREE.Vector3();
