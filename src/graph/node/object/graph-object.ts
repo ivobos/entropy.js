@@ -1,4 +1,4 @@
-import { GraphNode } from "../graph-node";
+import { NodeWithEdges, EdgeProps, isEdgeProps } from "../node-edges";
 import { RenderableObj, RenderableProps } from "./concerns/presentation";
 import { SimulationStepFunction, SimObject } from "./concerns/simulation";
 import { CollisionObject, CollisionProps } from "./concerns/collision";
@@ -7,9 +7,9 @@ import { SelectableObject } from "./concerns/selection";
 import { CameraHolder } from "../../../rendering/CameraManager";
 import { ProcGenProps, ProcGenObj } from "./concerns/procgen";
 
-export type GraphObjectInitFunction = (simObject: GraphNode, options: GraphObjectProps) => void;
+export type GraphObjectInitFunction = (simObject: NodeWithEdges, options: GraphObjectProps) => void;
 
-export type GraphObjProps = ProcGenProps | CollisionProps | GraphObjectProps | RenderableProps;
+export type GraphObjProps = ProcGenProps | CollisionProps | GraphObjectProps | RenderableProps | EdgeProps;
 
 export function isGraphObjectProps(prop: GraphObjProps): prop is GraphObjectProps {
     return (<GraphObjectProps>prop).graphObject !== undefined;
@@ -28,13 +28,14 @@ export function isRenderableProps(prop: GraphObjProps): prop is RenderableProps 
 }
 
 export function isGraphObjProps(props: any): props is GraphObjProps {
-    return isGraphObjectProps(props) || isCollisionProps(props) || isProcGenProps(props) || isRenderableProps(props);
+    return isGraphObjectProps(props) || isCollisionProps(props) || isProcGenProps(props) || isRenderableProps(props)
+        || isEdgeProps(props);
 }
 export interface GraphObjectProps {
     graphObject: boolean,
     name: string,
     mass: number;
-    parent?: GraphNode;
+    parent?: NodeWithEdges;
     initialRelativePosition?: THREE.Vector3; // position relative to parent
     initialVelocity?: THREE.Vector3;
     radius: number;
@@ -42,7 +43,7 @@ export interface GraphObjectProps {
     seed?: number
 }
 
-export interface GraphObject extends GraphNode, CollisionObject, PhysicalObject, 
+export interface GraphObject extends NodeWithEdges, CollisionObject, PhysicalObject, 
     RenderableObj, SelectableObject, SimObject, CameraHolder, ProcGenObj {
 
 }

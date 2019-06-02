@@ -1,4 +1,4 @@
-import { GraphNode } from "../../graph-node";
+import { NodeWithEdges } from "../../node-edges";
 import { RenderStyle } from "../../../../rendering/RenderStyle";
 import { GraphObject } from "../graph-object";
 import * as THREE from "three";
@@ -10,12 +10,12 @@ export interface RenderableProps {
     renderable: boolean;
 }
 
-export interface RenderableObj extends GraphNode, RenderableProps {
+export interface RenderableObj extends NodeWithEdges, RenderableProps {
     object3d: THREE.Group;
     prepareForRender: PrepareForRenderFunction;
 }
 
-export function renderableObjectInit(simObject: GraphNode, options: RenderableProps): void {
+export function renderableObjectInit(simObject: NodeWithEdges, options: RenderableProps): void {
     Object.assign(simObject, options);
     const renderableObject = simObject as RenderableObj;
 
@@ -40,7 +40,7 @@ export function renderableObjectInit(simObject: GraphNode, options: RenderablePr
 }
 
 export function getPrepareForRenderVisitor(globalRenderStyle: RenderStyle): GraphObjectVisitFunction {
-    return function(thisNode: GraphNode, prevNode?: GraphNode): void {
+    return function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
         const graphObject = (thisNode as GraphObject);
         if (graphObject.prepareForRender) {
             const renderStyle = globalRenderStyle.clone();

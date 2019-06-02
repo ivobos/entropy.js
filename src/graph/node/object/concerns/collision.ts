@@ -1,4 +1,4 @@
-import { GraphNode } from "../../graph-node";
+import { NodeWithEdges } from "../../node-edges";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
 
 export interface CollisionProps {
@@ -11,13 +11,13 @@ export interface CollisionObject extends CollisionProps {
     radius: number;
 }
 
-export const collisionInit = function(obj: GraphNode, props: CollisionProps): void {
+export const collisionInit = function(obj: NodeWithEdges, props: CollisionProps): void {
     const collisionObj: CollisionObject = obj as any as CollisionObject;
     Object.assign(collisionObj, props);
     collisionObj.boundingRadius = 0;
 }
 
-export const updateBoundingRadius: GraphObjectVisitFunction = function(currentNode: GraphNode, prevNode?: GraphNode): void {
+export const updateBoundingRadius: GraphObjectVisitFunction = function(currentNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
     const thisObject = currentNode as unknown as CollisionObject;
     thisObject.boundingRadius = thisObject.radius;
     for (const childNode of currentNode.childObjects) {

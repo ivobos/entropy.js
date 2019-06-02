@@ -2,7 +2,7 @@ import { AbstractComponent } from "../container/AbstractComponent";
 import { ComponentOptions } from "../container/Component";
 import { CameraHolder } from "../rendering/CameraManager";
 import { FunctionGraphOperation, GraphObjectVisitFunction, GraphOperation } from "./graph-operation";
-import { graphNodeInit, GraphNode } from "./node/graph-node";
+import { graphNodeInit, NodeWithEdges, isEdgeProps } from "./node/node-edges";
 import { GraphObject, GraphObjProps, isGraphObjectProps, isRenderableProps, isCollisionProps, isProcGenProps } from "./node/object/graph-object";
 import { physicalObjectInit } from "./node/object/concerns/physics";
 import { collisionInit } from "./node/object/concerns/collision";
@@ -35,10 +35,11 @@ export class GraphManager extends AbstractComponent {
     }
 
     createEntity(...propsArgs: Array<GraphObjProps>): GraphObject {
-        let graphNode = {} as any as GraphNode;
+        let graphNode = {} as any as NodeWithEdges;
         for (const props of propsArgs) {
-            if (isGraphObjectProps(props)) {
-                graphNode = graphNodeInit(props);
+            if (isEdgeProps(props)) {
+                graphNodeInit(graphNode, props);
+            } else if (isGraphObjectProps(props)) {
                 physicalObjectInit(graphNode, props);                    
                 selectableObjectInit(graphNode, props);
                 simObjectInit(graphNode, props);
@@ -67,8 +68,8 @@ export class GraphManager extends AbstractComponent {
     removeScheduledEntities(): void {
         this.scheduledForRemoval.forEach(element => {
            if (element.childObjects.length > 0) throw new Error("has child objects"); 
-           if (element.parentObject === undefined) throw new Error("can't remove root entity");
-           element.parentObject.removeChildObject(element);
+           if (element.parent === undefined) throw new Error("can't remove root entity");
+           element.parent.removeChildObject(element);
         });
         this.scheduledForRemoval = [];
     }

@@ -1,4 +1,4 @@
-import { GraphNode } from "../graph/node/graph-node";
+import { NodeWithEdges } from "../graph/node/node-edges";
 import { Monitor } from "../observability/Monitor";
 import { AbstractComponent } from "../container/AbstractComponent";
 import { ComponentOptions } from "../container/Component";
@@ -6,7 +6,7 @@ import { SelectableObject } from "../graph/node/object/concerns/selection";
 
 
 export class FocusManager extends AbstractComponent {
-    private focusedObject: GraphNode | undefined;
+    private focusedObject: NodeWithEdges | undefined;
 
     constructor(options: ComponentOptions) {
         super({...options, key: FocusManager});
@@ -27,7 +27,7 @@ export class FocusManager extends AbstractComponent {
         return "Looking at: "+JSON.stringify(this.focusedObject);
     }
 
-    setFocusOn(graphNode?: GraphNode) {
+    setFocusOn(graphNode?: NodeWithEdges) {
         if (this.focusedObject !== graphNode) {
             if (this.focusedObject) (this.focusedObject as SelectableObject).setSelected(false);
             this.focusedObject = graphNode;

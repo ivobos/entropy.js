@@ -1,27 +1,16 @@
-import { GraphNode } from "./node/graph-node";
+import { NodeWithEdges } from "./node/node-edges";
 
-export type GraphObjectVisitFunction = (currentNode: GraphNode, prevNode?: GraphNode) => void;
+export type GraphObjectVisitFunction = (currentNode: NodeWithEdges, prevNode?: NodeWithEdges) => void;
+export type GraphWalkEndFunction = () => void;
 
 export interface GraphOperation {
-    visit(currentNode: GraphNode, prevNode?: GraphNode): void;
-    traverse(current: GraphNode, parent: GraphNode, children: GraphNode[], prevNode?: GraphNode): void;
+    visit(currentNode: NodeWithEdges, prevNode?: NodeWithEdges): void;
     end(): void;
 }
 
 export abstract class AbstractGraphOperation implements GraphOperation {
 
-    abstract visit(currentNode: GraphNode, prevNode?: GraphNode): void;
-
-    traverse(current: GraphNode, parent: GraphNode, children: GraphNode[], prevNode?: GraphNode): void {
-        for (const child of children) {
-            if (child !== prevNode) {
-                child.accept(this, current);
-            }
-        }
-        if (parent !== undefined && parent !== prevNode) {
-            parent.accept(this, current);
-        }
-    }
+    abstract visit(currentNode: NodeWithEdges, prevNode?: NodeWithEdges): void;
 
     abstract end(): void;
 
@@ -29,39 +18,23 @@ export abstract class AbstractGraphOperation implements GraphOperation {
 
 export class FunctionGraphOperation extends AbstractGraphOperation {
 
-    private readonly visitedNodes: GraphNode[];
     private readonly visitFunction?: GraphObjectVisitFunction;
+    private readonly endFunction?: GraphWalkEndFunction;
 
-    constructor(visitFunction?: GraphObjectVisitFunction) {
+    constructor(visitFunction?: GraphObjectVisitFunction, endFunction?: GraphWalkEndFunction) {
         super();
-        this.visitedNodes = [];
         this.visitFunction = visitFunction;
+        this.endFunction = endFunction;
     }
 
     // GraphNode calls this method when visited
-    visit(currentNode: GraphNode, prevNode?: GraphNode): void {
+    visit(currentNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
         if (this.visitFunction) this.visitFunction(currentNode, prevNode);
-        this.visitedNodes.push(currentNode);
     }
     
-    // GraphNode calls this method to continue traversal
-    traverse(current: GraphNode, parent: GraphNode | undefined, children: GraphNode[], prevNode?: GraphNode): void {
-        for (const child of children) {
-            if (child !== prevNode) {
-                child.accept(this, current);
-            }
-        }
-        if (parent !== undefined && parent !== prevNode) {
-            parent.accept(this, current);
-        }
-    }
-
-    getVisitedNodes(): GraphNode[] {
-        return this.visitedNodes;
-    }
-
+    // GraphManager calls this when operation finishes
     end(): void {
-        
+        if (this.endFunction) this.endFunction();
     }
 }
 

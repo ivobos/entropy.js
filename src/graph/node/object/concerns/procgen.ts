@@ -1,4 +1,4 @@
-import { GraphNode } from "../../graph-node";
+import { NodeWithEdges } from "../../node-edges";
 
 export interface ProcGenProps {
     procGen: boolean;
@@ -9,6 +9,6 @@ export interface ProcGenObj extends ProcGenProps {
     seed?: number;
 }
 
-export function procGenInit(obj: GraphNode, props: ProcGenProps): void {
+export function procGenInit(obj: NodeWithEdges, props: ProcGenProps): void {
     Object.assign(obj, props);
 }
