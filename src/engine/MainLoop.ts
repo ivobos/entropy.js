@@ -3,9 +3,10 @@ import { Monitor } from "../observability/Monitor";
 import { HtmlElements } from "./HtmlElements";
 import { AbstractComponent } from "../container/AbstractComponent";
 import { InputProcessor } from "../input/InputProcessor";
-import { SimulationProcessor } from "../simulation/SimulationProcessor";
+import { SimulationProcessor } from "../graph/SimulationProcessor";
 import { GraphicRenderer } from "../rendering/GraphicRenderer";
 import { msecDurationToStr } from "../utils/time";
+import { ProcGen } from "../graph/ProcGen";
 
 
 /**
@@ -154,6 +155,8 @@ export class MainLoop extends AbstractComponent  {
         }
         // render screen
         this.resolve(GraphicRenderer).doRender(this.frameDelta / this.simulationTimestep);
+        // procedural generation
+        this.resolve(ProcGen).generate();
         // end of main loop
         this.resolve(Monitor).updateMonitor(this.fps, this.panic);
         this.panic = false;

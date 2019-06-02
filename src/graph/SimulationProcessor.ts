@@ -1,11 +1,11 @@
 
 import { AbstractComponent } from "../container/AbstractComponent";
-import { GraphManager } from "../graph/GraphManager";
+import { GraphManager } from "./GraphManager";
 import { ComponentOptions } from "../container/Component";
-import { FunctionGraphOperation } from "../graph/graph-operation";
-import { updateBoundingRadius } from "../graph/node/object/concerns/collision";
-import { updatePositionVisitor, resetForceVector, addGravityForce, getUpdateVelocityAndPositionVisitor, addCollisionForces, GravityGraphBalancer } from "../graph/node/object/concerns/physics";
-import { getUpdSimStepVisitor } from "../graph/node/object/concerns/simulation";
+import { FunctionGraphOperation } from "./graph-operation";
+import { updateBoundingRadius } from "./node/object/concerns/collision";
+import { updatePositionVisitor, resetForceVector, addGravityForce, getUpdateVelocityAndPositionVisitor, addCollisionForces, GravityGraphBalancer } from "./node/object/concerns/physics";
+import { getUpdSimStepVisitor } from "./node/object/concerns/simulation";
 import { Monitor } from "../observability/Monitor";
 
 export type SimulationFunction = (simulationTimestepMsec: number) => void;

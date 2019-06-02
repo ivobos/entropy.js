@@ -11,8 +11,9 @@ import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { GlobalMouseHandler } from '../input/GlobalMouseHandler';
 import { ExecutionController } from './ExecutionController';
 import { GraphManager } from '../graph/GraphManager';
-import { SimulationProcessor, SimulationFunction } from '../simulation/SimulationProcessor';
+import { SimulationProcessor, SimulationFunction } from '../graph/SimulationProcessor';
 import { InputProcessor, InputHandlerFunction } from '../input/InputProcessor';
+import { ProcGen } from '../graph/ProcGen';
 
 let static_init_done = false;
 
@@ -57,7 +58,8 @@ export class Builder {
         new FocusManager({container: this.container});
         new GraphManager({container: this.container, seed: 1234567});
         new CameraManager({container: this.container});
-        new GraphicRenderer({container: this.container, parentDiv: canvas.getRendererDiv()});    
+        new GraphicRenderer({container: this.container, parentDiv: canvas.getRendererDiv()}); 
+        new ProcGen({container: this.container});
         new ExecutionController({container: this.container});
         const simulationProcessor = new SimulationProcessor({container: this.container});
         const inputProcessor = new InputProcessor({container: this.container});
