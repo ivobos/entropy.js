@@ -1,14 +1,18 @@
 import { GraphNode } from "../../graph-node";
 import * as THREE from "three";
 import { GraphObjectProps, GraphObjectInitFunction, GraphObject } from "../graph-object";
-import { RenderableObject } from "./presentation";
+import { RenderableObj } from "./presentation";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
 import { includeMixin } from "../../../../utils/mixin-utils";
 import { GraphManager } from "../../../GraphManager";
 
 const G = 6.67E-1;  //  (m/kg)^2 (real one is 6.67E-11)
 
-export interface PhysicalObject extends RenderableObject {
+export interface PhysicalObjProps {
+
+}
+
+export interface PhysicalObject extends RenderableObj {
     name: string,
     velocity: THREE.Vector3;            // delta of relativePosition
     relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame

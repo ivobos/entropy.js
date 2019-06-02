@@ -1,19 +1,23 @@
 import { GraphNode } from "../../graph-node";
 import { RenderStyle } from "../../../../rendering/RenderStyle";
-import { GraphObjectProps, GraphObjectInitFunction, GraphObject } from "../graph-object";
+import { GraphObject } from "../graph-object";
 import * as THREE from "three";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
 
 export type PrepareForRenderFunction = (renderStyleProps: RenderStyle) => void;
 
-// TODO rename as it clashes with THREE.RenderableObject
-export interface RenderableObject extends GraphNode {
+export interface RenderableProps {
+    renderable: boolean;
+}
+
+export interface RenderableObj extends GraphNode, RenderableProps {
     object3d: THREE.Group;
     prepareForRender: PrepareForRenderFunction;
 }
 
-export const renderableObjectInit: GraphObjectInitFunction = function(simObject: GraphNode, options: GraphObjectProps): void {
-    const renderableObject = simObject as RenderableObject;
+export function renderableObjectInit(simObject: GraphNode, options: RenderableProps): void {
+    Object.assign(simObject, options);
+    const renderableObject = simObject as RenderableObj;
 
     // object is a THREE.GROUP
     renderableObject.object3d = new THREE.Group();
@@ -33,10 +37,6 @@ export const renderableObjectInit: GraphObjectInitFunction = function(simObject:
     // keep a link from object3d to graph object for use during intersection checks
     renderableObject.object3d.userData.graphNode = renderableObject;
     
-    // some objects have a custom prepareForRender function
-    if (options.overridePrepareForRender) {
-        renderableObject.prepareForRender = options.overridePrepareForRender;
-    }
 }
 
 export function getPrepareForRenderVisitor(globalRenderStyle: RenderStyle): GraphObjectVisitFunction {
