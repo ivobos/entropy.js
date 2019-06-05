@@ -21,7 +21,6 @@ export interface PhysicalObject extends RenderableObj {
     force: THREE.Vector3;
 
     move(deltav: THREE.Vector3, deltar: THREE.Vector2): void;
-    setOrbitVelocity(direction: THREE.Vector3): void;
 }
 
 class PhysicalObjectMixin {
@@ -35,16 +34,6 @@ class PhysicalObjectMixin {
         }
     }
 
-    /**
-     * @param direction if the length < 1 then the velocity will be sub-orbit, if > 1 then it will be exit velocity
-     */
-    setOrbitVelocity(this: PhysicalObject, direction: THREE.Vector3): void {
-        if (this.parent === undefined) throw new Error("can't set orbital velicity when there is no parent");
-        const parentPhysicalObject = this.parent as PhysicalObject;
-        this.velocity.copy(direction.clone().multiplyScalar(
-            Math.sqrt(G * parentPhysicalObject.mass / this.relativePosition.length()))
-        );
-    }
 }
 
 export const physicalObjectInit: GraphObjectInitFunction = function(simObject: NodeWithEdges, options: GraphObjectProps): void {
@@ -56,6 +45,13 @@ export const physicalObjectInit: GraphObjectInitFunction = function(simObject: N
     physicalObject.velocity = options.initialVelocity || new THREE.Vector3(0,0,0);
     physicalObject.force = new THREE.Vector3();
     includeMixin(physicalObject, PhysicalObjectMixin);
+    if (physicalObject.parent !== undefined) {
+        const direction = physicalObject.relativePosition.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
+        const parentPhysicalObject = physicalObject.parent as PhysicalObject;
+        physicalObject.velocity.copy(direction.clone().multiplyScalar(
+            Math.sqrt(G * parentPhysicalObject.mass / physicalObject.relativePosition.length()))
+        );
+    }
 }
 
 export const updatePositionVisitor: GraphObjectVisitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {

@@ -19,6 +19,7 @@ export class FocusManager extends AbstractComponent {
             name: this.constructor.name,
             weight: 20, 
             infoContent: () => this.monitorText(), 
+            opacity: 1,
         });
     }
 

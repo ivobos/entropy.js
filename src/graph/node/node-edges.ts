@@ -54,8 +54,12 @@ export class EdgestMixin {
         return graphOperation;
     } 
 
-    toJSON(key: any): any {
-        return { };
+    toJSON(this: NodeWithEdges, key: any): any {
+        if (this.parent) {
+            return { name: (this as any).name, "parent.name": (this.parent as any).name };
+        } else {
+            return { name: (this as any).name };
+        }
     }
 }
 
