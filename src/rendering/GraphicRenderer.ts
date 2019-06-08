@@ -62,7 +62,7 @@ export class GraphicRenderer extends AbstractComponent {
 
     constructor(options: GrapicRendererOptions) {
         super({...options, key: GraphicRenderer});
-        this.renderer = new THREE.WebGLRenderer( { antialias: true, logarithmicDepthBuffer:true } );
+        this.renderer = new THREE.WebGLRenderer( { antialias: true, logarithmicDepthBuffer:false } );
         this.renderer.sortObjects = false;
         window.addEventListener('resize', (event: UIEvent) => this.onWindowResize(event), false);
         this.onWindowResize(undefined);    
