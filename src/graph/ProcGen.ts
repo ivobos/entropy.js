@@ -13,6 +13,6 @@ export class ProcGen extends AbstractComponent {
 
     generate() {
         const graphManager = this.resolve(GraphManager);
-        graphManager.accept(new FunctionGraphOperation(createProcGenVisitor(this.container)));
+        graphManager.rootAccept(new FunctionGraphOperation(createProcGenVisitor(this.container)));
     }
 }

@@ -20,6 +20,7 @@ export class GraphManager extends AbstractComponent {
     private cameraHolder?: CameraHolder;
     private scheduledForRemoval: GraphObject[] = [];
     private seed: number;
+    private root?: GraphObject;
 
     constructor(options: GraphManagerOptions) {
         super({...options, key: GraphManager});
@@ -32,6 +33,14 @@ export class GraphManager extends AbstractComponent {
 
     getCameraHolder() : CameraHolder | undefined {
         return this.cameraHolder;
+    }
+
+    setRoot(root: GraphObject) {
+        this.root = root;
+    }
+
+    getRoot() : GraphObject | undefined {
+        return this.root;
     }
 
     createEntity(...propsArgs: Array<GraphObjProps>): GraphObject {
@@ -83,6 +92,17 @@ export class GraphManager extends AbstractComponent {
 
     visit(visitFunction: GraphObjectVisitFunction): void {
         this.accept(new FunctionGraphOperation(visitFunction));
+    }
+
+    rootAccept(visitor: GraphOperation): void {
+        const root = this.getRoot();
+        if (root) {
+            root.accept(visitor);
+        }
+    }
+
+    rootVisit(visitFunction: GraphObjectVisitFunction): void {
+        this.rootAccept(new FunctionGraphOperation(visitFunction));
     }
 
     exec<T extends GraphOperation>(operation: T): T {
