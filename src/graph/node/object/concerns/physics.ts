@@ -1,6 +1,6 @@
 import { NodeWithEdges } from "../../node-edges";
 import * as THREE from "three";
-import { GraphObjectProps, GraphObjectInitFunction, GraphObject } from "../graph-object";
+import { GraphObjectProps, GraphObjectInitFunction, GraphObject, GraphObjProps } from "../graph-object";
 import { RenderableObj } from "./presentation";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
 import { includeMixin } from "../../../../utils/mixin-utils";
@@ -9,18 +9,22 @@ import { GraphManager } from "../../../GraphManager";
 const G = 6.67E-1;  //  (m/kg)^2 (real one is 6.67E-11)
 
 export interface PhysicalObjProps {
-
+    physicsProps: boolean
+    velocity?: THREE.Vector3             // delta of relativePosition
+    onSurface?: boolean
 }
 
-export interface PhysicalObject extends RenderableObj {
+export function isPhysicsProps(prop: GraphObjProps): prop is PhysicalObjProps {
+    return (<PhysicalObjProps>prop).physicsProps === true;
+}
+
+export interface PhysicalObject extends RenderableObj, PhysicalObjectMixin {
     name: string,
-    velocity: THREE.Vector3;            // delta of relativePosition
+    velocity: THREE.Vector3             // delta of relativePosition
     relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
     mass: number;
     radius: number;
     force: THREE.Vector3;
-
-    move(deltav: THREE.Vector3, deltar: THREE.Vector2): void;
 }
 
 class PhysicalObjectMixin {
@@ -34,6 +38,23 @@ class PhysicalObjectMixin {
         }
     }
 
+    rotate(this: PhysicalObject, deltar: THREE.Vector2): void {
+
+    }
+
+}
+
+export function physicsInit(simObject: NodeWithEdges, physicalObjProps: PhysicalObjProps): void {
+    const physicalObject = simObject as PhysicalObject;
+    physicalObject.velocity = physicalObjProps.velocity ? physicalObjProps.velocity : new THREE.Vector3(0,0,0);
+    if (physicalObject.parent !== undefined && !physicalObjProps.onSurface) {
+        const direction = physicalObject.relativePosition.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
+        if (direction.length() === 0) direction.set(-1,0,0);
+        const parentPhysicalObject = physicalObject.parent as PhysicalObject;
+        physicalObject.velocity.copy(direction.clone().multiplyScalar(
+            Math.sqrt(G * parentPhysicalObject.mass / physicalObject.relativePosition.length()))
+        );
+    }
 }
 
 export const physicalObjectInit: GraphObjectInitFunction = function(simObject: NodeWithEdges, options: GraphObjectProps): void {
@@ -42,16 +63,8 @@ export const physicalObjectInit: GraphObjectInitFunction = function(simObject: N
     physicalObject.relativePosition = options.initialRelativePosition || new THREE.Vector3();
     physicalObject.mass = options.mass;
     physicalObject.radius = options.radius;
-    physicalObject.velocity = options.initialVelocity || new THREE.Vector3(0,0,0);
     physicalObject.force = new THREE.Vector3();
     includeMixin(physicalObject, PhysicalObjectMixin);
-    if (physicalObject.parent !== undefined) {
-        const direction = physicalObject.relativePosition.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
-        const parentPhysicalObject = physicalObject.parent as PhysicalObject;
-        physicalObject.velocity.copy(direction.clone().multiplyScalar(
-            Math.sqrt(G * parentPhysicalObject.mass / physicalObject.relativePosition.length()))
-        );
-    }
 }
 
 export const updatePositionVisitor: GraphObjectVisitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
@@ -162,7 +175,7 @@ export class GravityGraphBalancer {
 
     moveObjectToParent(childObject: PhysicalObject, newParent: PhysicalObject) {
         if (childObject.parent !== newParent) {
-            // console.log("reparenting "+childObject.name+" to "+newParent.name);
+//            console.log("reparenting "+childObject.name+" to "+newParent.name);
             if (childObject.parent !== undefined) childObject.parent.removeChildObject(childObject);
             newParent.addChildObject(childObject);
             childObject.parent = newParent;

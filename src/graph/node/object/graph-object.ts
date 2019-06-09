@@ -2,14 +2,14 @@ import { NodeWithEdges, EdgeProps, isEdgeProps } from "../node-edges";
 import { RenderableObj, RenderableProps } from "./concerns/presentation";
 import { SimulationStepFunction, SimObject } from "./concerns/simulation";
 import { CollisionObject, CollisionProps } from "./concerns/collision";
-import { PhysicalObject } from "./concerns/physics";
+import { PhysicalObject, PhysicalObjProps, isPhysicsProps } from "./concerns/physics";
 import { SelectableObject } from "./concerns/selection";
 import { CameraHolder } from "../../../rendering/CameraManager";
 import { ProcGenProps, ProcGenObj } from "./concerns/procgen";
 
 export type GraphObjectInitFunction = (simObject: NodeWithEdges, options: GraphObjectProps) => void;
 
-export type GraphObjProps = ProcGenProps | CollisionProps | GraphObjectProps | RenderableProps | EdgeProps;
+export type GraphObjProps = ProcGenProps | CollisionProps | GraphObjectProps | RenderableProps | EdgeProps | PhysicalObjProps;
 
 export function isGraphObjectProps(prop: GraphObjProps): prop is GraphObjectProps {
     return (<GraphObjectProps>prop).graphObject !== undefined;
@@ -29,7 +29,7 @@ export function isRenderableProps(prop: GraphObjProps): prop is RenderableProps 
 
 export function isGraphObjProps(props: any): props is GraphObjProps {
     return isGraphObjectProps(props) || isCollisionProps(props) || isProcGenProps(props) || isRenderableProps(props)
-        || isEdgeProps(props);
+        || isEdgeProps(props) || isPhysicsProps(props);
 }
 export interface GraphObjectProps {
     graphObject: boolean,
@@ -37,7 +37,6 @@ export interface GraphObjectProps {
     mass: number;
     parent?: NodeWithEdges;
     initialRelativePosition?: THREE.Vector3; // position relative to parent
-    initialVelocity?: THREE.Vector3;
     radius: number;
     overrideSimulationStep?: SimulationStepFunction;
     seed?: number

@@ -4,7 +4,7 @@ import { CameraHolder } from "../rendering/CameraManager";
 import { FunctionGraphOperation, GraphObjectVisitFunction, GraphOperation } from "./graph-operation";
 import { graphNodeInit, NodeWithEdges, isEdgeProps } from "./node/node-edges";
 import { GraphObject, GraphObjProps, isGraphObjectProps, isRenderableProps, isCollisionProps, isProcGenProps } from "./node/object/graph-object";
-import { physicalObjectInit } from "./node/object/concerns/physics";
+import { physicalObjectInit, isPhysicsProps, physicsInit } from "./node/object/concerns/physics";
 import { collisionInit } from "./node/object/concerns/collision";
 import { selectableObjectInit } from "./node/object/concerns/selection";
 import { renderableObjectInit } from "./node/object/concerns/presentation";
@@ -52,6 +52,8 @@ export class GraphManager extends AbstractComponent {
                 physicalObjectInit(graphNode, props);                    
                 selectableObjectInit(graphNode, props);
                 simObjectInit(graphNode, props);
+            } else if (isPhysicsProps(props)) {
+                physicsInit(graphNode, props);        
             } else if (isRenderableProps(props)) {
                 renderableObjectInit(graphNode, props);
             } else if (isCollisionProps(props)) {
