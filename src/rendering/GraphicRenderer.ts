@@ -47,7 +47,11 @@ class UpdateSceneObjects extends AbstractGraphOperation {
     }    
     
     end(): void {
-        this.maybeRemove.forEach(object => this.scene.remove(object)); 
+        this.maybeRemove.forEach(object => {
+            if (object.type !== 'AmbientLight') {
+                this.scene.remove(object)
+            }
+        }); 
     }
 
 
