@@ -6,6 +6,7 @@ export { GraphObjProps, GraphObject, isGraphObjProps } from './graph/node/object
 export * from './utils/random';
 export * from './utils/time';
 export * from './utils/line-sphere-intercept';
+export * from './utils/math';
 export { GlobalMouseHandler } from './input/GlobalMouseHandler';
 export { GlobalKeyboardHandler } from './input/GlobalKeyboardHandler';
 export { TextureCache } from './textures/TextureCache';
