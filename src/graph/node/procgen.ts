@@ -6,13 +6,13 @@ import { Container } from "../../container/Container";
 export type ProcGenFunction = (container: Container, obj: GraphNode) => void;
 
 export interface ProcGenProps {
-    procGen: boolean;
+    procGen: true;
     seed?: number;
     procGenFunction?: ProcGenFunction;
 }
 
 export function isProcGenProps(prop: GraphNodeProps): prop is ProcGenProps {
-    return (<ProcGenProps>prop).procGen !== undefined;
+    return (<ProcGenProps>prop).procGen === true;
 }
 
 export interface ProcGenObj extends ProcGenProps {

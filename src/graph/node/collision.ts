@@ -1,13 +1,14 @@
 import { NodeWithEdges } from "./node-edges";
 import { GraphObjectVisitFunction } from "../graph-operation";
-import { GraphNodeProps } from "./graph-node";
+import { GraphNodeProps, NodeAspect, GraphNode } from "./graph-node";
+import { PhysicsAspect } from "./physics";
 
 export interface CollisionProps {
-    collision: boolean
+    collision: true
 }
 
 export function isCollisionProps(prop: GraphNodeProps): prop is CollisionProps {
-    return (<CollisionProps>prop).collision !== undefined;
+    return (<CollisionProps>prop).collision === true;
 }
 
 export interface CollisionObject extends CollisionProps {
@@ -30,4 +31,21 @@ export const updateBoundingRadius: GraphObjectVisitFunction = function(currentNo
         const maxDistance = thisObject.object3d.position.distanceTo(childObject.object3d.position) + childObject.boundingRadius;
         thisObject.boundingRadius = Math.max(thisObject.boundingRadius, maxDistance);
     }
+}
+
+
+export class CollisionAspect implements NodeAspect {
+
+    isAspectProps(props: GraphNodeProps): boolean {
+        return isCollisionProps(props);
+    }
+
+    initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
+        collisionInit(node, props as CollisionProps);
+    }
+
+    dependencies(): Function[] {
+        return [PhysicsAspect];
+    }
+    
 }

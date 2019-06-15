@@ -1,7 +1,7 @@
 import { NodeWithEdges } from "./node-edges";
 
 export interface SelectableObjectProps {
-    selectable: boolean,
+    selectable: true,
 }
 
 export function isSelectableObjectProps(prop: any): prop is SelectableObjectProps {

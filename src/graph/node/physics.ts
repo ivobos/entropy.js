@@ -1,6 +1,6 @@
 import { NodeWithEdges } from "./node-edges";
 import * as THREE from "three";
-import { GraphNode, GraphNodeProps } from "./graph-node";
+import { GraphNode, GraphNodeProps, NodeAspect } from "./graph-node";
 import { RenderableObj } from "./presentation";
 import { GraphObjectVisitFunction } from "../graph-operation";
 import { includeMixin } from "../../utils/mixin-utils";
@@ -9,8 +9,8 @@ import { GraphManager } from "../GraphManager";
 const G = 6.67E-1;  //  (m/kg)^2 (real one is 6.67E-11)
 
 export interface PhysicalObjProps {
+    physics: true
     name: string
-    physicsProps: boolean
     velocity?: THREE.Vector3             // delta of relativePosition
     onSurface?: boolean
     mass: number;
@@ -19,7 +19,7 @@ export interface PhysicalObjProps {
 }
 
 export function isPhysicsProps(prop: GraphNodeProps): prop is PhysicalObjProps {
-    return (<PhysicalObjProps>prop).physicsProps === true;
+    return (<PhysicalObjProps>prop).physics === true;
 }
 
 export interface PhysicalObject extends RenderableObj, PhysicalObjectMixin, PhysicalObjProps {
@@ -181,4 +181,21 @@ export class GravityGraphBalancer {
             childObject.relativePosition = childObject.object3d.position.clone().sub(newParent.object3d.position);
         }
     }
+}
+
+
+export class PhysicsAspect implements NodeAspect {
+
+    isAspectProps(props: GraphNodeProps): boolean {
+        throw new Error("Method not implemented.");
+    }
+    
+    initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
+        throw new Error("Method not implemented.");
+    }
+
+    dependencies(): Function[] {
+        throw new Error("Method not implemented.");
+    }
+    
 }

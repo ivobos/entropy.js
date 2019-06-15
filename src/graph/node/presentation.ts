@@ -7,11 +7,11 @@ import { GraphObjectVisitFunction } from "../graph-operation";
 export type PrepareForRenderFunction = (renderStyleProps: RenderStyle) => void;
 
 export interface RenderableProps {
-    renderable: boolean;
+    renderable: true;
 }
 
 export function isRenderableProps(prop: GraphNodeProps): prop is RenderableProps {
-    return (<RenderableProps>prop).renderable !== undefined;
+    return (<RenderableProps>prop).renderable === true;
 }
 
 export interface RenderableObj extends NodeWithEdges, RenderableProps {

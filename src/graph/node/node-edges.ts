@@ -5,12 +5,12 @@ import { includeMixin } from "../../utils/mixin-utils";
 
 
 export interface EdgeProps {
-    edgeProps: boolean,
+    edgeProps: true,
     parent?: NodeWithEdges, // root entity doesn't have a parent
 }
 
 export function isEdgeProps(prop: GraphNodeProps): prop is EdgeProps {
-    return (<EdgeProps>prop).edgeProps !== undefined;
+    return (<EdgeProps>prop).edgeProps === true;
 }
 
 

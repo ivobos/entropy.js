@@ -18,3 +18,14 @@ export interface GraphNode extends NodeWithEdges, CollisionObject, PhysicalObjec
     RenderableObj, SelectableObject, SimObject, CameraHolder, ProcGenObj {
 
 }
+
+export interface NodeAspect {
+
+    isAspectProps(props: GraphNodeProps): boolean;
+
+    initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void;    
+
+    dependencies(): Function[];
+
+}
+
