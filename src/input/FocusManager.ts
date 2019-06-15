@@ -2,7 +2,7 @@ import { NodeWithEdges } from "../graph/node/node-edges";
 import { Monitor } from "../observability/Monitor";
 import { AbstractComponent } from "../container/AbstractComponent";
 import { ComponentOptions } from "../container/Component";
-import { SelectableObject } from "../graph/node/object/concerns/selection";
+import { SelectableObject } from "../graph/node/selection";
 
 
 export class FocusManager extends AbstractComponent {

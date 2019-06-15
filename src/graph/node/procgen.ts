@@ -1,9 +1,9 @@
-import { NodeWithEdges } from "../../node-edges";
-import { GraphObject, GraphObjProps } from "../graph-object";
-import { GraphObjectVisitFunction } from "../../../graph-operation";
-import { Container } from "../../../../container/Container";
+import { NodeWithEdges } from "./node-edges";
+import { GraphNode, GraphNodeProps } from "./graph-node";
+import { GraphObjectVisitFunction } from "../graph-operation";
+import { Container } from "../../container/Container";
 
-export type ProcGenFunction = (container: Container, obj: GraphObject) => void;
+export type ProcGenFunction = (container: Container, obj: GraphNode) => void;
 
 export interface ProcGenProps {
     procGen: boolean;
@@ -11,7 +11,7 @@ export interface ProcGenProps {
     procGenFunction?: ProcGenFunction;
 }
 
-export function isProcGenProps(prop: GraphObjProps): prop is ProcGenProps {
+export function isProcGenProps(prop: GraphNodeProps): prop is ProcGenProps {
     return (<ProcGenProps>prop).procGen !== undefined;
 }
 
@@ -29,7 +29,7 @@ export function createProcGenVisitor(container: Container): GraphObjectVisitFunc
     return function(currentNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
         const obj = currentNode as any as ProcGenObj;
         if (!obj.generated && obj.procGenFunction !== undefined) {
-            obj.procGenFunction(container, obj as GraphObject);
+            obj.procGenFunction(container, obj as GraphNode);
             obj.generated = true;
         }
     };

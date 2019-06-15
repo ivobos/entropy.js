@@ -1,4 +1,4 @@
-import { NodeWithEdges } from "../../node-edges";
+import { NodeWithEdges } from "./node-edges";
 
 export interface SelectableObjectProps {
     selectable: boolean,

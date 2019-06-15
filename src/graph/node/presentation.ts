@@ -1,8 +1,8 @@
-import { NodeWithEdges } from "../../node-edges";
-import { RenderStyle } from "../../../../rendering/RenderStyle";
-import { GraphObject, GraphObjProps } from "../graph-object";
+import { NodeWithEdges } from "./node-edges";
+import { RenderStyle } from "../../rendering/RenderStyle";
+import { GraphNode, GraphNodeProps } from "./graph-node";
 import * as THREE from "three";
-import { GraphObjectVisitFunction } from "../../../graph-operation";
+import { GraphObjectVisitFunction } from "../graph-operation";
 
 export type PrepareForRenderFunction = (renderStyleProps: RenderStyle) => void;
 
@@ -10,7 +10,7 @@ export interface RenderableProps {
     renderable: boolean;
 }
 
-export function isRenderableProps(prop: GraphObjProps): prop is RenderableProps {
+export function isRenderableProps(prop: GraphNodeProps): prop is RenderableProps {
     return (<RenderableProps>prop).renderable !== undefined;
 }
 
@@ -45,7 +45,7 @@ export function renderableObjectInit(simObject: NodeWithEdges, options: Renderab
 
 export function getPrepareForRenderVisitor(globalRenderStyle: RenderStyle): GraphObjectVisitFunction {
     return function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
-        const graphObject = (thisNode as GraphObject);
+        const graphObject = (thisNode as GraphNode);
         if (graphObject.prepareForRender) {
             const renderStyle = globalRenderStyle.clone();
             renderStyle.highlight = renderStyle.highlight && graphObject.isSelected(); 

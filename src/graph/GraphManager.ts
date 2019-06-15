@@ -3,12 +3,12 @@ import { ComponentOptions } from "../container/Component";
 import { CameraHolder } from "../rendering/CameraManager";
 import { FunctionGraphOperation, GraphObjectVisitFunction, GraphOperation } from "./graph-operation";
 import { graphNodeInit, NodeWithEdges, isEdgeProps } from "./node/node-edges";
-import { GraphObject, GraphObjProps } from "./node/object/graph-object";
-import { isPhysicsProps, physicsInit } from "./node/object/concerns/physics";
-import { collisionInit, isCollisionProps } from "./node/object/concerns/collision";
-import { selectableObjectInit, isSelectableObjectProps } from "./node/object/concerns/selection";
-import { renderableObjectInit, isRenderableProps } from "./node/object/concerns/presentation";
-import { procGenInit, isProcGenProps } from "./node/object/concerns/procgen";
+import { GraphNode, GraphNodeProps } from "./node/graph-node";
+import { isPhysicsProps, physicsInit } from "./node/physics";
+import { collisionInit, isCollisionProps } from "./node/collision";
+import { selectableObjectInit, isSelectableObjectProps } from "./node/selection";
+import { renderableObjectInit, isRenderableProps } from "./node/presentation";
+import { procGenInit, isProcGenProps } from "./node/procgen";
 
 export interface GraphManagerOptions extends ComponentOptions {
     seed: number;
@@ -17,9 +17,9 @@ export interface GraphManagerOptions extends ComponentOptions {
 export class GraphManager extends AbstractComponent {
 
     private cameraHolder?: CameraHolder;
-    private scheduledForRemoval: GraphObject[] = [];
+    private scheduledForRemoval: GraphNode[] = [];
     private seed: number;
-    private root?: GraphObject;
+    private root?: GraphNode;
 
     constructor(options: GraphManagerOptions) {
         super({...options, key: GraphManager});
@@ -34,15 +34,15 @@ export class GraphManager extends AbstractComponent {
         return this.cameraHolder;
     }
 
-    setRoot(root: GraphObject) {
+    setRoot(root: GraphNode) {
         this.root = root;
     }
 
-    getRoot() : GraphObject | undefined {
+    getRoot() : GraphNode | undefined {
         return this.root;
     }
 
-    createEntity(...propsArgs: Array<GraphObjProps>): GraphObject {
+    createEntity(...propsArgs: Array<GraphNodeProps>): GraphNode {
         let graphNode = {} as any as NodeWithEdges;
         for (const props of propsArgs) {
             if (isEdgeProps(props)) {
@@ -62,10 +62,10 @@ export class GraphManager extends AbstractComponent {
                         props));
             }
         }    
-        return graphNode as GraphObject;
+        return graphNode as GraphNode;
     }
 
-    removeEntity(graphObject: GraphObject): void {
+    removeEntity(graphObject: GraphNode): void {
         this.scheduledForRemoval.push(graphObject);
     }
 
@@ -83,7 +83,7 @@ export class GraphManager extends AbstractComponent {
     }
 
     accept(visitor: GraphOperation): void {
-        const cameraHolder = this.getCameraHolder() as GraphObject;
+        const cameraHolder = this.getCameraHolder() as GraphNode;
         if (cameraHolder) {
             cameraHolder.accept(visitor);
         }

@@ -1,12 +1,12 @@
-import { NodeWithEdges } from "../../node-edges";
-import { GraphObjectVisitFunction } from "../../../graph-operation";
-import { GraphObjProps } from "../graph-object";
+import { NodeWithEdges } from "./node-edges";
+import { GraphObjectVisitFunction } from "../graph-operation";
+import { GraphNodeProps } from "./graph-node";
 
 export interface CollisionProps {
     collision: boolean
 }
 
-export function isCollisionProps(prop: GraphObjProps): prop is CollisionProps {
+export function isCollisionProps(prop: GraphNodeProps): prop is CollisionProps {
     return (<CollisionProps>prop).collision !== undefined;
 }
 

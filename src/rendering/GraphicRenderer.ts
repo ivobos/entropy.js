@@ -9,9 +9,9 @@ import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { FocusManager } from '../input/FocusManager';
 import { NodeWithEdges } from '../graph/node/node-edges';
 import { FunctionGraphOperation, AbstractGraphOperation } from '../graph/graph-operation';
-import { updatePositionVisitor } from '../graph/node/object/concerns/physics';
-import { getPrepareForRenderVisitor } from '../graph/node/object/concerns/presentation';
-import { GraphObject } from '../graph/node/object/graph-object';
+import { updatePositionVisitor } from '../graph/node/physics';
+import { getPrepareForRenderVisitor } from '../graph/node/presentation';
+import { GraphNode } from '../graph/node/graph-node';
 
 export interface GrapicRendererOptions extends ComponentOptions {
     parentDiv: any
@@ -38,7 +38,7 @@ class UpdateSceneObjects extends AbstractGraphOperation {
     }
 
     visit(currentNode: NodeWithEdges, prevNode?: NodeWithEdges | undefined): void {
-        const graphObject = currentNode as GraphObject;
+        const graphObject = currentNode as GraphNode;
         if (this.maybeRemove.includes(graphObject.object3d)) {
             this.maybeRemove.splice(this.maybeRemove.indexOf(graphObject.object3d), 1);
         } else {

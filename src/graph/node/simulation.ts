@@ -1,5 +1,5 @@
-import { NodeWithEdges } from "../../node-edges";
-import { GraphObjectVisitFunction } from "../../../graph-operation";
+import { NodeWithEdges } from "./node-edges";
+import { GraphObjectVisitFunction } from "../graph-operation";
 
 export type SimulationStepFunction = (simulationTimestep: number) => void;
 

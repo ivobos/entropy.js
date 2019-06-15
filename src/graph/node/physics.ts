@@ -1,10 +1,10 @@
-import { NodeWithEdges } from "../../node-edges";
+import { NodeWithEdges } from "./node-edges";
 import * as THREE from "three";
-import { GraphObject, GraphObjProps } from "../graph-object";
+import { GraphNode, GraphNodeProps } from "./graph-node";
 import { RenderableObj } from "./presentation";
-import { GraphObjectVisitFunction } from "../../../graph-operation";
-import { includeMixin } from "../../../../utils/mixin-utils";
-import { GraphManager } from "../../../GraphManager";
+import { GraphObjectVisitFunction } from "../graph-operation";
+import { includeMixin } from "../../utils/mixin-utils";
+import { GraphManager } from "../GraphManager";
 
 const G = 6.67E-1;  //  (m/kg)^2 (real one is 6.67E-11)
 
@@ -18,7 +18,7 @@ export interface PhysicalObjProps {
     relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
 }
 
-export function isPhysicsProps(prop: GraphObjProps): prop is PhysicalObjProps {
+export function isPhysicsProps(prop: GraphNodeProps): prop is PhysicalObjProps {
     return (<PhysicalObjProps>prop).physicsProps === true;
 }
 
@@ -67,7 +67,7 @@ export function physicsInit(simObject: NodeWithEdges, physicalObjProps: Physical
 }
 
 export const updatePositionVisitor: GraphObjectVisitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
-    const graphObject = thisNode as GraphObject;
+    const graphObject = thisNode as GraphNode;
     if (!prevNode) {
         graphObject.object3d.position.set(0,0,0);
     } else if (thisNode.parent === prevNode) { // TODO: not clear if this is correct
@@ -75,7 +75,7 @@ export const updatePositionVisitor: GraphObjectVisitFunction = function(thisNode
         graphObject.object3d.position.copy(prevObject3d.position)
             .add(graphObject.relativePosition);
     } else {
-        const prevGraphObject = prevNode as GraphObject;
+        const prevGraphObject = prevNode as GraphNode;
         graphObject.object3d.position
             .copy(prevGraphObject.relativePosition)
             .negate()
@@ -131,9 +131,9 @@ export const addCollisionForces: GraphObjectVisitFunction = function(thisNode: N
  */
 export class GravityGraphBalancer {
 
-    objectBalanceCandidates: GraphObject[] = [];
-    rebalanceCandidate?: GraphObject;
-    potentialParentForces:Map<GraphObject,number> = new Map();
+    objectBalanceCandidates: GraphNode[] = [];
+    rebalanceCandidate?: GraphNode;
+    potentialParentForces:Map<GraphNode,number> = new Map();
 
     balanceOne(graphManager: GraphManager): void {
         // find candidate to balance
@@ -153,14 +153,14 @@ export class GravityGraphBalancer {
     }
 
     updateObjectBalanceCandidatesVisitor(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
-        const graphObject = thisNode as GraphObject;
+        const graphObject = thisNode as GraphNode;
         if (!this.objectBalanceCandidates.includes(graphObject)) {
             this.objectBalanceCandidates.push(graphObject);
         }
     }
 
     updatePotentialParentForcesVisitor(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
-        const potentialParent = thisNode as GraphObject;
+        const potentialParent = thisNode as GraphNode;
         if (potentialParent.mass > this.rebalanceCandidate!.mass) {
             const force = this.calculateGravityForce(potentialParent, this.rebalanceCandidate!);
             this.potentialParentForces.set(potentialParent, force);
