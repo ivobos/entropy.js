@@ -1,14 +1,20 @@
 import { NodeWithEdges } from "../../node-edges";
-import { GraphObjectProps, GraphObjectInitFunction } from "../graph-object";
 
+export interface SelectableObjectProps {
+    selectable: boolean,
+}
 
-export interface SelectableObject extends NodeWithEdges {
+export function isSelectableObjectProps(prop: any): prop is SelectableObjectProps {
+    return (<SelectableObjectProps>prop).selectable === true;
+}
+
+export interface SelectableObject extends NodeWithEdges, SelectableObjectProps {
     selected: boolean;
     setSelected(selected: boolean): void;
     isSelected(): boolean;
 }
 
-export const selectableObjectInit: GraphObjectInitFunction = function(graphNode: NodeWithEdges, options: GraphObjectProps): void {
+export function selectableObjectInit(graphNode: NodeWithEdges, options: SelectableObjectProps): void {
     const selectableObject = graphNode as SelectableObject;
     selectableObject.selected = false;
 

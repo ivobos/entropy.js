@@ -1,6 +1,6 @@
 import { NodeWithEdges } from "../../node-edges";
 import * as THREE from "three";
-import { GraphObjectProps, GraphObjectInitFunction, GraphObject, GraphObjProps } from "../graph-object";
+import { GraphObject, GraphObjProps } from "../graph-object";
 import { RenderableObj } from "./presentation";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
 import { includeMixin } from "../../../../utils/mixin-utils";
@@ -9,20 +9,23 @@ import { GraphManager } from "../../../GraphManager";
 const G = 6.67E-1;  //  (m/kg)^2 (real one is 6.67E-11)
 
 export interface PhysicalObjProps {
+    name: string
     physicsProps: boolean
     velocity?: THREE.Vector3             // delta of relativePosition
     onSurface?: boolean
+    mass: number;
+    radius: number;
+    relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
 }
 
 export function isPhysicsProps(prop: GraphObjProps): prop is PhysicalObjProps {
     return (<PhysicalObjProps>prop).physicsProps === true;
 }
 
-export interface PhysicalObject extends RenderableObj, PhysicalObjectMixin {
+export interface PhysicalObject extends RenderableObj, PhysicalObjectMixin, PhysicalObjProps {
     name: string,
     velocity: THREE.Vector3             // delta of relativePosition
     relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
-    mass: number;
     radius: number;
     force: THREE.Vector3;
 }
@@ -46,6 +49,12 @@ class PhysicalObjectMixin {
 
 export function physicsInit(simObject: NodeWithEdges, physicalObjProps: PhysicalObjProps): void {
     const physicalObject = simObject as PhysicalObject;
+    physicalObject.name = physicalObjProps.name;
+    physicalObject.relativePosition = physicalObjProps.relativePosition || new THREE.Vector3();
+    physicalObject.mass = physicalObjProps.mass;
+    physicalObject.radius = physicalObjProps.radius;
+    physicalObject.force = new THREE.Vector3();
+    includeMixin(physicalObject, PhysicalObjectMixin);
     physicalObject.velocity = physicalObjProps.velocity ? physicalObjProps.velocity : new THREE.Vector3(0,0,0);
     if (physicalObject.parent !== undefined && !physicalObjProps.onSurface) {
         const direction = physicalObject.relativePosition.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
@@ -55,16 +64,6 @@ export function physicsInit(simObject: NodeWithEdges, physicalObjProps: Physical
             Math.sqrt(G * parentPhysicalObject.mass / physicalObject.relativePosition.length()))
         );
     }
-}
-
-export const physicalObjectInit: GraphObjectInitFunction = function(simObject: NodeWithEdges, options: GraphObjectProps): void {
-    const physicalObject = simObject as PhysicalObject;
-    physicalObject.name = options.name;
-    physicalObject.relativePosition = options.initialRelativePosition || new THREE.Vector3();
-    physicalObject.mass = options.mass;
-    physicalObject.radius = options.radius;
-    physicalObject.force = new THREE.Vector3();
-    includeMixin(physicalObject, PhysicalObjectMixin);
 }
 
 export const updatePositionVisitor: GraphObjectVisitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {

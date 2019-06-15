@@ -1,5 +1,5 @@
 import { NodeWithEdges } from "../../node-edges";
-import { GraphObject } from "../graph-object";
+import { GraphObject, GraphObjProps } from "../graph-object";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
 import { Container } from "../../../../container/Container";
 
@@ -9,6 +9,10 @@ export interface ProcGenProps {
     procGen: boolean;
     seed?: number;
     procGenFunction?: ProcGenFunction;
+}
+
+export function isProcGenProps(prop: GraphObjProps): prop is ProcGenProps {
+    return (<ProcGenProps>prop).procGen !== undefined;
 }
 
 export interface ProcGenObj extends ProcGenProps {

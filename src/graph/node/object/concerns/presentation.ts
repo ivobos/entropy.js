@@ -1,6 +1,6 @@
 import { NodeWithEdges } from "../../node-edges";
 import { RenderStyle } from "../../../../rendering/RenderStyle";
-import { GraphObject } from "../graph-object";
+import { GraphObject, GraphObjProps } from "../graph-object";
 import * as THREE from "three";
 import { GraphObjectVisitFunction } from "../../../graph-operation";
 
@@ -8,6 +8,10 @@ export type PrepareForRenderFunction = (renderStyleProps: RenderStyle) => void;
 
 export interface RenderableProps {
     renderable: boolean;
+}
+
+export function isRenderableProps(prop: GraphObjProps): prop is RenderableProps {
+    return (<RenderableProps>prop).renderable !== undefined;
 }
 
 export interface RenderableObj extends NodeWithEdges, RenderableProps {

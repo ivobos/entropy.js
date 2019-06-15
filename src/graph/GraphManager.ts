@@ -3,13 +3,12 @@ import { ComponentOptions } from "../container/Component";
 import { CameraHolder } from "../rendering/CameraManager";
 import { FunctionGraphOperation, GraphObjectVisitFunction, GraphOperation } from "./graph-operation";
 import { graphNodeInit, NodeWithEdges, isEdgeProps } from "./node/node-edges";
-import { GraphObject, GraphObjProps, isGraphObjectProps, isRenderableProps, isCollisionProps, isProcGenProps } from "./node/object/graph-object";
-import { physicalObjectInit, isPhysicsProps, physicsInit } from "./node/object/concerns/physics";
-import { collisionInit } from "./node/object/concerns/collision";
-import { selectableObjectInit } from "./node/object/concerns/selection";
-import { renderableObjectInit } from "./node/object/concerns/presentation";
-import { simObjectInit } from "./node/object/concerns/simulation";
-import { procGenInit } from "./node/object/concerns/procgen";
+import { GraphObject, GraphObjProps } from "./node/object/graph-object";
+import { isPhysicsProps, physicsInit } from "./node/object/concerns/physics";
+import { collisionInit, isCollisionProps } from "./node/object/concerns/collision";
+import { selectableObjectInit, isSelectableObjectProps } from "./node/object/concerns/selection";
+import { renderableObjectInit, isRenderableProps } from "./node/object/concerns/presentation";
+import { procGenInit, isProcGenProps } from "./node/object/concerns/procgen";
 
 export interface GraphManagerOptions extends ComponentOptions {
     seed: number;
@@ -48,10 +47,8 @@ export class GraphManager extends AbstractComponent {
         for (const props of propsArgs) {
             if (isEdgeProps(props)) {
                 graphNodeInit(graphNode, props);
-            } else if (isGraphObjectProps(props)) {
-                physicalObjectInit(graphNode, props);                    
+            } else if (isSelectableObjectProps(props)) {
                 selectableObjectInit(graphNode, props);
-                simObjectInit(graphNode, props);
             } else if (isPhysicsProps(props)) {
                 physicsInit(graphNode, props);        
             } else if (isRenderableProps(props)) {
