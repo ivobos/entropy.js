@@ -1,8 +1,6 @@
 import { GraphOperation } from "../graph-operation";
-import { GraphNodeProps } from "./graph-node";
+import { GraphNodeProps, NodeAspect, GraphNode, NodeAspectCtor } from "./graph-node";
 import { includeMixin } from "../../utils/mixin-utils";
-
-
 
 export interface EdgeProps {
     edgeProps: true,
@@ -12,7 +10,6 @@ export interface EdgeProps {
 export function isEdgeProps(prop: GraphNodeProps): prop is EdgeProps {
     return (<EdgeProps>prop).edgeProps === true;
 }
-
 
 export interface NodeWithEdges extends EdgeProps { 
 
@@ -69,4 +66,20 @@ export function graphNodeInit(graphNode: NodeWithEdges, edgeProps: EdgeProps): N
     includeMixin(graphNode, EdgestMixin);
     graphNode.childObjects = [];
     return graphNode;
+}
+
+export class EdgesAspect implements NodeAspect {
+
+    isAspectProps(props: GraphNodeProps): boolean {
+        return isEdgeProps(props);
+    }
+
+    initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
+        graphNodeInit(node, props as EdgeProps);
+    }
+
+    dependencies(): NodeAspectCtor[] {
+        return [];
+    }
+
 }

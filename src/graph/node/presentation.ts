@@ -1,6 +1,6 @@
-import { NodeWithEdges } from "./node-edges";
+import { NodeWithEdges, EdgesAspect } from "./node-edges";
 import { RenderStyle } from "../../rendering/RenderStyle";
-import { GraphNode, GraphNodeProps } from "./graph-node";
+import { GraphNode, GraphNodeProps, NodeAspect, NodeAspectCtor } from "./graph-node";
 import * as THREE from "three";
 import { GraphObjectVisitFunction } from "../graph-operation";
 
@@ -52,4 +52,20 @@ export function getPrepareForRenderVisitor(globalRenderStyle: RenderStyle): Grap
             graphObject.prepareForRender(renderStyle);
         }
     }
+}
+
+export class RenderableAspect implements NodeAspect {
+
+    isAspectProps(props: GraphNodeProps): boolean {
+        return isRenderableProps(props);
+    }    
+    
+    initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
+        renderableObjectInit(node, props as RenderableProps);
+    }
+
+    dependencies(): NodeAspectCtor[] {
+        return[EdgesAspect];
+    }
+
 }

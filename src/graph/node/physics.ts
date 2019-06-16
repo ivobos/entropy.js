@@ -1,6 +1,6 @@
-import { NodeWithEdges } from "./node-edges";
+import { NodeWithEdges, EdgesAspect } from "./node-edges";
 import * as THREE from "three";
-import { GraphNode, GraphNodeProps, NodeAspect } from "./graph-node";
+import { GraphNode, GraphNodeProps, NodeAspect, NodeAspectCtor } from "./graph-node";
 import { RenderableObj } from "./presentation";
 import { GraphObjectVisitFunction } from "../graph-operation";
 import { includeMixin } from "../../utils/mixin-utils";
@@ -183,19 +183,18 @@ export class GravityGraphBalancer {
     }
 }
 
-
 export class PhysicsAspect implements NodeAspect {
 
     isAspectProps(props: GraphNodeProps): boolean {
-        throw new Error("Method not implemented.");
+        return isPhysicsProps(props);
     }
     
     initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
-        throw new Error("Method not implemented.");
+        physicsInit(node, props as PhysicalObjProps);
     }
 
-    dependencies(): Function[] {
-        throw new Error("Method not implemented.");
+    dependencies(): NodeAspectCtor[] {
+        return [EdgesAspect];
     }
     
 }

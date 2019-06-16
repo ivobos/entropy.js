@@ -19,13 +19,17 @@ export interface GraphNode extends NodeWithEdges, CollisionObject, PhysicalObjec
 
 }
 
+export interface NodeAspectCtor {
+    new (): NodeAspect;
+}
+
 export interface NodeAspect {
 
     isAspectProps(props: GraphNodeProps): boolean;
 
     initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void;    
 
-    dependencies(): Function[];
+    dependencies(): NodeAspectCtor[];
 
 }
 

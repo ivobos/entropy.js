@@ -14,6 +14,12 @@ import { GraphManager } from '../graph/GraphManager';
 import { SimulationProcessor, SimulationFunction } from '../graph/SimulationProcessor';
 import { InputProcessor, InputHandlerFunction } from '../input/InputProcessor';
 import { ProcGen } from '../graph/ProcGen';
+import { CollisionAspect } from '../graph/node/collision';
+import { EdgesAspect } from '../graph/node/node-edges';
+import { PhysicsAspect } from '../graph/node/physics';
+import { RenderableAspect } from '../graph/node/presentation';
+import { ProcGenAspect } from '../graph/node/procgen';
+import { SelectableAspect } from '../graph/node/selection';
 
 let static_init_done = false;
 
@@ -56,7 +62,10 @@ export class Builder {
         const canvas = new HtmlElements({ container: this.container, element: this.parentDiv});
         const mainLoop = new MainLoop({ container: this.container});
         new FocusManager({container: this.container});
-        new GraphManager({container: this.container, seed: 1234567});
+        new GraphManager({
+            container: this.container,
+            nodeAspects: [CollisionAspect, EdgesAspect, PhysicsAspect, RenderableAspect, ProcGenAspect, SelectableAspect]
+        });
         new CameraManager({container: this.container});
         new GraphicRenderer({container: this.container, parentDiv: canvas.getRendererDiv()}); 
         new ProcGen({container: this.container});

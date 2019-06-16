@@ -1,6 +1,6 @@
 import { NodeWithEdges } from "./node-edges";
 import { GraphObjectVisitFunction } from "../graph-operation";
-import { GraphNodeProps, NodeAspect, GraphNode } from "./graph-node";
+import { GraphNodeProps, NodeAspect, GraphNode, NodeAspectCtor } from "./graph-node";
 import { PhysicsAspect } from "./physics";
 
 export interface CollisionProps {
@@ -44,7 +44,7 @@ export class CollisionAspect implements NodeAspect {
         collisionInit(node, props as CollisionProps);
     }
 
-    dependencies(): Function[] {
+    dependencies(): NodeAspectCtor[] {
         return [PhysicsAspect];
     }
     

@@ -2,29 +2,69 @@ import { AbstractComponent } from "../container/AbstractComponent";
 import { ComponentOptions } from "../container/Component";
 import { CameraHolder } from "../rendering/CameraManager";
 import { FunctionGraphOperation, GraphObjectVisitFunction, GraphOperation } from "./graph-operation";
-import { graphNodeInit, NodeWithEdges, isEdgeProps } from "./node/node-edges";
-import { GraphNode, GraphNodeProps } from "./node/graph-node";
-import { isPhysicsProps, physicsInit } from "./node/physics";
-import { collisionInit, isCollisionProps } from "./node/collision";
-import { selectableObjectInit, isSelectableObjectProps } from "./node/selection";
-import { renderableObjectInit, isRenderableProps } from "./node/presentation";
-import { procGenInit, isProcGenProps } from "./node/procgen";
+import { GraphNode, GraphNodeProps, NodeAspectCtor, NodeAspect } from "./node/graph-node";
 
 export interface GraphManagerOptions extends ComponentOptions {
-    seed: number;
+    // seed: number;
+    nodeAspects: NodeAspectCtor[];
 }
 
 export class GraphManager extends AbstractComponent {
 
     private cameraHolder?: CameraHolder;
     private scheduledForRemoval: GraphNode[] = [];
-    private seed: number;
     private root?: GraphNode;
+    private sortedNodeAspects: NodeAspect[];
 
     constructor(options: GraphManagerOptions) {
         super({...options, key: GraphManager});
-        this.seed = options.seed;
+        this.sortedNodeAspects = this.createNodeAspectsAndSort(options.nodeAspects);
     }   
+
+    createNodeAspectsAndSort(nodeAspectsCtors: NodeAspectCtor[]): NodeAspect[] {
+        const nodeAspectByCtor: Map<NodeAspectCtor, NodeAspect> = new Map();
+        const unprocessed: NodeAspect[] = [];
+        const processed: NodeAspect[] = [];
+        const stack: NodeAspect[] = []; 
+        // create 
+        nodeAspectsCtors.forEach(nodeAspectCtor => {
+            const nodeAspect = new nodeAspectCtor();
+            nodeAspectByCtor.set(nodeAspectCtor, nodeAspect);
+            unprocessed.push(nodeAspect);
+        });
+        // sort using topological sort
+        while (unprocessed.length > 0  || stack.length > 0) {
+            // get a node
+            const node = stack.length > 0 ? stack.pop()! : unprocessed.pop()!;
+            // get dependencies that still need processing
+            const unprocessedDeps = node.dependencies()
+                .map(ctor => (nodeAspectByCtor.get(ctor)!))
+                .filter(nodeAspect => !processed.includes(nodeAspect));
+            if (unprocessedDeps.length === 0) {
+                // all dependencies of current node have been processed, add current node to processed
+                processed.push(node);
+            } else {
+                // have to process node
+                stack.push(node);
+                // and process dependencies
+                unprocessedDeps.forEach(dep => {
+                    // remove dependencies from unprocessed
+                    unprocessed.forEach((value, index) => {
+                        if (value === dep) {
+                            unprocessed.splice(index, 1);
+                        }
+                    })
+                    // if dependencies are on the stack already we have a circular dependency
+                    if (stack.includes(dep)) {
+                        throw Error("circular dependency processing node aspects at "+dep.constructor.name+" with stack of "
+                            + stack.map(value => value.constructor.name));
+                    }
+                    stack.push(dep);
+                })
+            }
+        }
+        return processed;
+    }
 
     setCameraHolder(cameraHolder: CameraHolder) {
         this.cameraHolder = cameraHolder;
@@ -43,26 +83,15 @@ export class GraphManager extends AbstractComponent {
     }
 
     createEntity(...propsArgs: Array<GraphNodeProps>): GraphNode {
-        let graphNode = {} as any as NodeWithEdges;
-        for (const props of propsArgs) {
-            if (isEdgeProps(props)) {
-                graphNodeInit(graphNode, props);
-            } else if (isSelectableObjectProps(props)) {
-                selectableObjectInit(graphNode, props);
-            } else if (isPhysicsProps(props)) {
-                physicsInit(graphNode, props);        
-            } else if (isRenderableProps(props)) {
-                renderableObjectInit(graphNode, props);
-            } else if (isCollisionProps(props)) {
-                collisionInit(graphNode, props); 
-            } else if (isProcGenProps(props)) {
-                procGenInit(graphNode, 
-                    Object.assign({}, 
-                        { seed: this.seed }, // defaults
-                        props));
+        const graphNode: GraphNode = {} as GraphNode;
+        for (const nodeAspect of this.sortedNodeAspects) {
+            for (const props of propsArgs) {
+                if (nodeAspect.isAspectProps(props)) {
+                    nodeAspect.initGraphNodeAspect(graphNode, props);
+                }
             }
-        }    
-        return graphNode as GraphNode;
+        }
+        return graphNode;
     }
 
     removeEntity(graphObject: GraphNode): void {
