@@ -7,10 +7,6 @@ export interface EdgeProps {
     parent?: NodeWithEdges, // root entity doesn't have a parent
 }
 
-export function isEdgeProps(prop: GraphNodeProps): prop is EdgeProps {
-    return (<EdgeProps>prop).edgeProps === true;
-}
-
 export interface NodeWithEdges extends EdgeProps { 
 
     childObjects: NodeWithEdges[];
@@ -60,22 +56,18 @@ export class EdgestMixin {
     }
 }
 
-export function graphNodeInit(graphNode: NodeWithEdges, edgeProps: EdgeProps): NodeWithEdges {
-    Object.assign(graphNode, edgeProps);
-    if (edgeProps.parent) edgeProps.parent.addChildObject(graphNode);
-    includeMixin(graphNode, EdgestMixin);
-    graphNode.childObjects = [];
-    return graphNode;
-}
-
 export class EdgesAspect implements NodeAspect {
 
     isAspectProps(props: GraphNodeProps): boolean {
-        return isEdgeProps(props);
+        return (<EdgeProps>props).edgeProps === true;
     }
-
-    initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
-        graphNodeInit(node, props as EdgeProps);
+    
+    initGraphNodeAspect(graphNode: GraphNode, graphNodeProps: GraphNodeProps): void {
+        const edgeProps = graphNodeProps as EdgeProps;
+        Object.assign(graphNode, edgeProps);
+        if (edgeProps.parent) edgeProps.parent.addChildObject(graphNode);
+        includeMixin(graphNode, EdgestMixin);
+        graphNode.childObjects = [];
     }
 
     dependencies(): NodeAspectCtor[] {

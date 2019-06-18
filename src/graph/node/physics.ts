@@ -18,10 +18,6 @@ export interface PhysicalObjProps {
     relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
 }
 
-export function isPhysicsProps(prop: GraphNodeProps): prop is PhysicalObjProps {
-    return (<PhysicalObjProps>prop).physics === true;
-}
-
 export interface PhysicalObject extends RenderableObj, PhysicalObjectMixin, PhysicalObjProps {
     name: string,
     velocity: THREE.Vector3             // delta of relativePosition
@@ -45,25 +41,6 @@ class PhysicalObjectMixin {
 
     }
 
-}
-
-export function physicsInit(simObject: NodeWithEdges, physicalObjProps: PhysicalObjProps): void {
-    const physicalObject = simObject as PhysicalObject;
-    physicalObject.name = physicalObjProps.name;
-    physicalObject.relativePosition = physicalObjProps.relativePosition || new THREE.Vector3();
-    physicalObject.mass = physicalObjProps.mass;
-    physicalObject.radius = physicalObjProps.radius;
-    physicalObject.force = new THREE.Vector3();
-    includeMixin(physicalObject, PhysicalObjectMixin);
-    physicalObject.velocity = physicalObjProps.velocity ? physicalObjProps.velocity : new THREE.Vector3(0,0,0);
-    if (physicalObject.parent !== undefined && !physicalObjProps.onSurface) {
-        const direction = physicalObject.relativePosition.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
-        if (direction.length() === 0) direction.set(-1,0,0);
-        const parentPhysicalObject = physicalObject.parent as PhysicalObject;
-        physicalObject.velocity.copy(direction.clone().multiplyScalar(
-            Math.sqrt(G * parentPhysicalObject.mass / physicalObject.relativePosition.length()))
-        );
-    }
 }
 
 export const updatePositionVisitor: GraphObjectVisitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
@@ -186,13 +163,30 @@ export class GravityGraphBalancer {
 export class PhysicsAspect implements NodeAspect {
 
     isAspectProps(props: GraphNodeProps): boolean {
-        return isPhysicsProps(props);
+        return (<PhysicalObjProps>props).physics === true;
     }
-    
+        
     initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
-        physicsInit(node, props as PhysicalObjProps);
+        const simObject = node as NodeWithEdges;
+        const physicalObjProps = props as PhysicalObjProps;
+        const physicalObject = simObject as PhysicalObject;
+        physicalObject.name = physicalObjProps.name;
+        physicalObject.relativePosition = physicalObjProps.relativePosition || new THREE.Vector3();
+        physicalObject.mass = physicalObjProps.mass;
+        physicalObject.radius = physicalObjProps.radius;
+        physicalObject.force = new THREE.Vector3();
+        includeMixin(physicalObject, PhysicalObjectMixin);
+        physicalObject.velocity = physicalObjProps.velocity ? physicalObjProps.velocity : new THREE.Vector3(0,0,0);
+        if (physicalObject.parent !== undefined && !physicalObjProps.onSurface) {
+            const direction = physicalObject.relativePosition.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
+            if (direction.length() === 0) direction.set(-1,0,0);
+            const parentPhysicalObject = physicalObject.parent as PhysicalObject;
+            physicalObject.velocity.copy(direction.clone().multiplyScalar(
+                Math.sqrt(G * parentPhysicalObject.mass / physicalObject.relativePosition.length()))
+            );
+        }
     }
-
+        
     dependencies(): NodeAspectCtor[] {
         return [EdgesAspect];
     }

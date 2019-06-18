@@ -11,18 +11,8 @@ export interface ProcGenProps {
     procGenFunction?: ProcGenFunction;
 }
 
-export function isProcGenProps(prop: GraphNodeProps): prop is ProcGenProps {
-    return (<ProcGenProps>prop).procGen === true;
-}
-
 export interface ProcGenObj extends ProcGenProps {
     generated: boolean;
-}
-
-export function procGenInit(node: NodeWithEdges, props: ProcGenProps): void {
-    const obj = node as any as ProcGenObj;
-    Object.assign(obj, props);
-    obj.generated = false;
 }
 
 export function createProcGenVisitor(container: Container): GraphObjectVisitFunction {
@@ -38,11 +28,14 @@ export function createProcGenVisitor(container: Container): GraphObjectVisitFunc
 export class ProcGenAspect implements NodeAspect {
 
     isAspectProps(props: GraphNodeProps): boolean {
-        return isProcGenProps(props);
+        return (<ProcGenProps>props).procGen === true;
     }
     
-    initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
-        procGenInit(node, props as ProcGenProps);
+    initGraphNodeAspect(graphNode: GraphNode, props: GraphNodeProps): void {
+        const node = graphNode as NodeWithEdges;
+        const obj = node as any as ProcGenObj;
+        Object.assign(obj, props);
+        obj.generated = false;
     }
 
     dependencies(): NodeAspectCtor[] {

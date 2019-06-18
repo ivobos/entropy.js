@@ -10,37 +10,9 @@ export interface RenderableProps {
     renderable: true;
 }
 
-export function isRenderableProps(prop: GraphNodeProps): prop is RenderableProps {
-    return (<RenderableProps>prop).renderable === true;
-}
-
 export interface RenderableObj extends NodeWithEdges, RenderableProps {
     object3d: THREE.Group;
     prepareForRender: PrepareForRenderFunction;
-}
-
-export function renderableObjectInit(simObject: NodeWithEdges, options: RenderableProps): void {
-    Object.assign(simObject, options);
-    const renderableObject = simObject as RenderableObj;
-
-    // object is a THREE.GROUP
-    renderableObject.object3d = new THREE.Group();
-
-    // intersection with object3d.children are reported as intersection with the group object
-    renderableObject.object3d.raycast = function(raycaster: THREE.Raycaster, intersects: THREE.Intersection[]) {
-        const childIntersects: THREE.Intersection[] = []; 
-        if (this.children.length > 0) {
-            this.children[0].raycast(raycaster, childIntersects);
-            for ( var i = 0; i < childIntersects.length; i++ ) {
-                childIntersects[ i ].object = this;    
-                intersects.push(childIntersects[i]);
-            }
-        }      
-    }
-
-    // keep a link from object3d to graph object for use during intersection checks
-    renderableObject.object3d.userData.graphNode = renderableObject;
-    
 }
 
 export function getPrepareForRenderVisitor(globalRenderStyle: RenderStyle): GraphObjectVisitFunction {
@@ -57,11 +29,31 @@ export function getPrepareForRenderVisitor(globalRenderStyle: RenderStyle): Grap
 export class RenderableAspect implements NodeAspect {
 
     isAspectProps(props: GraphNodeProps): boolean {
-        return isRenderableProps(props);
+        return (<RenderableProps>props).renderable === true;
     }    
-    
+        
     initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
-        renderableObjectInit(node, props as RenderableProps);
+        const simObject = node as NodeWithEdges;
+        const options = props as RenderableProps;
+        Object.assign(simObject, options);
+        const renderableObject = simObject as RenderableObj;
+    
+        // object is a THREE.GROUP
+        renderableObject.object3d = new THREE.Group();
+    
+        // intersection with object3d.children are reported as intersection with the group object
+        renderableObject.object3d.raycast = function(raycaster: THREE.Raycaster, intersects: THREE.Intersection[]) {
+            const childIntersects: THREE.Intersection[] = []; 
+            if (this.children.length > 0) {
+                this.children[0].raycast(raycaster, childIntersects);
+                for ( var i = 0; i < childIntersects.length; i++ ) {
+                    childIntersects[ i ].object = this;    
+                    intersects.push(childIntersects[i]);
+                }
+            }      
+        }    
+        // keep a link from object3d to graph object for use during intersection checks
+        renderableObject.object3d.userData.graphNode = renderableObject;
     }
 
     dependencies(): NodeAspectCtor[] {

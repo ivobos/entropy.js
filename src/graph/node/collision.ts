@@ -7,20 +7,10 @@ export interface CollisionProps {
     collision: true
 }
 
-export function isCollisionProps(prop: GraphNodeProps): prop is CollisionProps {
-    return (<CollisionProps>prop).collision === true;
-}
-
 export interface CollisionObject extends CollisionProps {
     boundingRadius: number;
     object3d: THREE.Group;
     radius: number;
-}
-
-export const collisionInit = function(obj: NodeWithEdges, props: CollisionProps): void {
-    const collisionObj: CollisionObject = obj as any as CollisionObject;
-    Object.assign(collisionObj, props);
-    collisionObj.boundingRadius = 0;
 }
 
 export const updateBoundingRadius: GraphObjectVisitFunction = function(currentNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
@@ -37,11 +27,15 @@ export const updateBoundingRadius: GraphObjectVisitFunction = function(currentNo
 export class CollisionAspect implements NodeAspect {
 
     isAspectProps(props: GraphNodeProps): boolean {
-        return isCollisionProps(props);
+        return (<CollisionProps>props).collision === true;
     }
-
+    
     initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
-        collisionInit(node, props as CollisionProps);
+        if (props !== undefined) {
+            const collisionObj: CollisionObject = node as any as CollisionObject;
+            collisionObj.collision = true;
+            collisionObj.boundingRadius = 0;
+        }
     }
 
     dependencies(): NodeAspectCtor[] {

@@ -20,6 +20,7 @@ import { PhysicsAspect } from '../graph/node/physics';
 import { RenderableAspect } from '../graph/node/presentation';
 import { ProcGenAspect } from '../graph/node/procgen';
 import { SelectableAspect } from '../graph/node/selection';
+import { MovementAspect } from '../graph/node/movement';
 
 let static_init_done = false;
 
@@ -64,7 +65,7 @@ export class Builder {
         new FocusManager({container: this.container});
         new GraphManager({
             container: this.container,
-            nodeAspects: [CollisionAspect, EdgesAspect, PhysicsAspect, RenderableAspect, ProcGenAspect, SelectableAspect]
+            nodeAspects: [CollisionAspect, EdgesAspect, PhysicsAspect, RenderableAspect, ProcGenAspect, SelectableAspect, MovementAspect]
         });
         new CameraManager({container: this.container});
         new GraphicRenderer({container: this.container, parentDiv: canvas.getRendererDiv()}); 

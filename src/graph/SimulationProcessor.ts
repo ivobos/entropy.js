@@ -3,13 +3,11 @@ import { AbstractComponent } from "../container/AbstractComponent";
 import { GraphManager } from "./GraphManager";
 import { ComponentOptions } from "../container/Component";
 import { FunctionGraphOperation } from "./graph-operation";
-import { updateBoundingRadius } from "./node/collision";
 import { updatePositionVisitor, resetForceVector, addGravityForce, getUpdateVelocityAndPositionVisitor, addCollisionForces, GravityGraphBalancer } from "./node/physics";
 import { getUpdSimStepVisitor } from "./node/simulation";
 import { Monitor } from "../observability/Monitor";
 
 export type SimulationFunction = (simulationTimestepMsec: number) => void;
-
 
 export class SimulationProcessor extends AbstractComponent {
 
@@ -47,9 +45,6 @@ export class SimulationProcessor extends AbstractComponent {
         for (const simulationFunction of this.simulationFunctions) {
             simulationFunction(simulationTimestepMsec);
         }
-        // TODO: traversin this way will not update bounding radius correcly, we have to update it for all'
-        // children first and then parents
-        this.resolve(GraphManager).accept(new FunctionGraphOperation(updateBoundingRadius));
 
         graphManager.removeScheduledEntities();
     }

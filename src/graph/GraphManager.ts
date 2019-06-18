@@ -82,14 +82,12 @@ export class GraphManager extends AbstractComponent {
         return this.root;
     }
 
-    createEntity(...propsArgs: Array<GraphNodeProps>): GraphNode {
+    createEntity(...anyProps: Array<any>): GraphNode {
+        const graphNodeProps = anyProps.filter(this.isGraphNodeProps.bind(this));
         const graphNode: GraphNode = {} as GraphNode;
         for (const nodeAspect of this.sortedNodeAspects) {
-            for (const props of propsArgs) {
-                if (nodeAspect.isAspectProps(props)) {
-                    nodeAspect.initGraphNodeAspect(graphNode, props);
-                }
-            }
+            const props = graphNodeProps.find(nodeAspect.isAspectProps)
+            nodeAspect.initGraphNodeAspect(graphNode, props);
         }
         return graphNode;
     }
@@ -139,4 +137,13 @@ export class GraphManager extends AbstractComponent {
         return operation;
     }
 
+    isGraphNodeProps(props: any): props is GraphNodeProps {
+        for (const nodeAspect of this.sortedNodeAspects) {
+            if (nodeAspect.isAspectProps(props)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
 }
