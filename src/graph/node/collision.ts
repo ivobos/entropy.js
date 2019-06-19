@@ -24,13 +24,14 @@ export const updateBoundingRadius: GraphObjectVisitFunction = function(currentNo
 }
 
 
+
 export class CollisionAspect implements NodeAspect {
 
     isAspectProps(props: GraphNodeProps): boolean {
         return (<CollisionProps>props).collision === true;
     }
     
-    initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
+    initGraphNode(node: GraphNode, props: GraphNodeProps): void {
         if (props !== undefined) {
             const collisionObj: CollisionObject = node as any as CollisionObject;
             collisionObj.collision = true;
@@ -38,7 +39,7 @@ export class CollisionAspect implements NodeAspect {
         }
     }
 
-    dependencies(): NodeAspectCtor[] {
+    initDeps(): NodeAspectCtor[] {
         return [PhysicsAspect];
     }
     

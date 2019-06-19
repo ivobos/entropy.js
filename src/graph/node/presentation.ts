@@ -32,7 +32,7 @@ export class RenderableAspect implements NodeAspect {
         return (<RenderableProps>props).renderable === true;
     }    
         
-    initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
+    initGraphNode(node: GraphNode, props: GraphNodeProps): void {
         const simObject = node as NodeWithEdges;
         const options = props as RenderableProps;
         Object.assign(simObject, options);
@@ -56,7 +56,7 @@ export class RenderableAspect implements NodeAspect {
         renderableObject.object3d.userData.graphNode = renderableObject;
     }
 
-    dependencies(): NodeAspectCtor[] {
+    initDeps(): NodeAspectCtor[] {
         return[EdgesAspect];
     }
 

@@ -1,5 +1,5 @@
 import { NodeWithEdges } from "./node-edges";
-import { GraphNode, GraphNodeProps, NodeAspect, NodeAspectCtor } from "./graph-node";
+import { GraphNode, GraphNodeProps, NodeAspect } from "./graph-node";
 import { GraphObjectVisitFunction } from "../graph-operation";
 import { Container } from "../../container/Container";
 
@@ -31,16 +31,11 @@ export class ProcGenAspect implements NodeAspect {
         return (<ProcGenProps>props).procGen === true;
     }
     
-    initGraphNodeAspect(graphNode: GraphNode, props: GraphNodeProps): void {
+    initGraphNode(graphNode: GraphNode, props: GraphNodeProps): void {
         const node = graphNode as NodeWithEdges;
         const obj = node as any as ProcGenObj;
         Object.assign(obj, props);
         obj.generated = false;
     }
-
-    dependencies(): NodeAspectCtor[] {
-        return [];
-    }
-
 
 }

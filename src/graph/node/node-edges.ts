@@ -1,5 +1,5 @@
 import { GraphOperation } from "../graph-operation";
-import { GraphNodeProps, NodeAspect, GraphNode, NodeAspectCtor } from "./graph-node";
+import { GraphNodeProps, NodeAspect, GraphNode } from "./graph-node";
 import { includeMixin } from "../../utils/mixin-utils";
 
 export interface EdgeProps {
@@ -62,16 +62,12 @@ export class EdgesAspect implements NodeAspect {
         return (<EdgeProps>props).edgeProps === true;
     }
     
-    initGraphNodeAspect(graphNode: GraphNode, graphNodeProps: GraphNodeProps): void {
+    initGraphNode(graphNode: GraphNode, graphNodeProps: GraphNodeProps): void {
         const edgeProps = graphNodeProps as EdgeProps;
         Object.assign(graphNode, edgeProps);
         if (edgeProps.parent) edgeProps.parent.addChildObject(graphNode);
         includeMixin(graphNode, EdgestMixin);
         graphNode.childObjects = [];
-    }
-
-    dependencies(): NodeAspectCtor[] {
-        return [];
     }
 
 }

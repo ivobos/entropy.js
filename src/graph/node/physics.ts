@@ -166,7 +166,7 @@ export class PhysicsAspect implements NodeAspect {
         return (<PhysicalObjProps>props).physics === true;
     }
         
-    initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
+    initGraphNode(node: GraphNode, props: GraphNodeProps): void {
         const simObject = node as NodeWithEdges;
         const physicalObjProps = props as PhysicalObjProps;
         const physicalObject = simObject as PhysicalObject;
@@ -187,7 +187,7 @@ export class PhysicsAspect implements NodeAspect {
         }
     }
         
-    dependencies(): NodeAspectCtor[] {
+    initDeps(): NodeAspectCtor[] {
         return [EdgesAspect];
     }
     

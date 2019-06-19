@@ -18,7 +18,7 @@ export class SelectableAspect implements NodeAspect {
         return (<SelectableObjectProps>props).selectable === true;
     }
     
-    initGraphNodeAspect(node: GraphNode, props: GraphNodeProps): void {
+    initGraphNode(node: GraphNode, props: GraphNodeProps): void {
         const graphNode = node as NodeWithEdges;
         const selectableObject = graphNode as SelectableObject;
         selectableObject.selected = false;
@@ -30,7 +30,7 @@ export class SelectableAspect implements NodeAspect {
         }            
     }
 
-    dependencies(): NodeAspectCtor[] {
+    initDeps(): NodeAspectCtor[] {
         return [RenderableAspect];
     }
 

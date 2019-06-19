@@ -29,17 +29,19 @@ export class GraphManager extends AbstractComponent {
         // create 
         nodeAspectsCtors.forEach(nodeAspectCtor => {
             const nodeAspect = new nodeAspectCtor();
-            nodeAspectByCtor.set(nodeAspectCtor, nodeAspect);
-            unprocessed.push(nodeAspect);
+            if (nodeAspect.initGraphNode !== undefined) {
+                nodeAspectByCtor.set(nodeAspectCtor, nodeAspect);
+                unprocessed.push(nodeAspect);
+            }
         });
         // sort using topological sort
         while (unprocessed.length > 0  || stack.length > 0) {
             // get a node
             const node = stack.length > 0 ? stack.pop()! : unprocessed.pop()!;
             // get dependencies that still need processing
-            const unprocessedDeps = node.dependencies()
-                .map(ctor => (nodeAspectByCtor.get(ctor)!))
-                .filter(nodeAspect => !processed.includes(nodeAspect));
+            const unprocessedDeps = node.initDeps ? 
+                node.initDeps().map(ctor => (nodeAspectByCtor.get(ctor)!)).filter(nodeAspect => !processed.includes(nodeAspect)) 
+                : []; 
             if (unprocessedDeps.length === 0) {
                 // all dependencies of current node have been processed, add current node to processed
                 processed.push(node);
@@ -86,8 +88,11 @@ export class GraphManager extends AbstractComponent {
         const graphNodeProps = anyProps.filter(this.isGraphNodeProps.bind(this));
         const graphNode: GraphNode = {} as GraphNode;
         for (const nodeAspect of this.sortedNodeAspects) {
-            const props = graphNodeProps.find(nodeAspect.isAspectProps)
-            nodeAspect.initGraphNodeAspect(graphNode, props);
+            if (nodeAspect.isAspectProps) {
+                nodeAspect.initGraphNode!(graphNode, graphNodeProps.find(nodeAspect.isAspectProps));
+            } else {
+                nodeAspect.initGraphNode!(graphNode, undefined);
+            }
         }
         return graphNode;
     }
@@ -139,7 +144,7 @@ export class GraphManager extends AbstractComponent {
 
     isGraphNodeProps(props: any): props is GraphNodeProps {
         for (const nodeAspect of this.sortedNodeAspects) {
-            if (nodeAspect.isAspectProps(props)) {
+            if (nodeAspect.isAspectProps && nodeAspect.isAspectProps(props)) {
                 return true;
             }
         }
