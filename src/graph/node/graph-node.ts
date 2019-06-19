@@ -1,6 +1,6 @@
 import { NodeWithEdges, EdgeProps } from "./node-edges";
 import { RenderableObj, RenderableProps } from "./presentation";
-import { SimObject } from "./simulation";
+import { SimObject, SimulationProps } from "./simulation";
 import { CollisionObject, CollisionProps } from "./collision";
 import { PhysicalObject, PhysicalObjProps } from "./physics";
 import { SelectableObject, SelectableObjectProps } from "./selection";
@@ -10,7 +10,8 @@ import { RenderStyle } from "../../rendering/RenderStyle";
 import { Container } from "../../container/Container";
 
 // graph nodes have props that are used during graph node initialisation
-export type GraphNodeProps = ProcGenProps | CollisionProps | SelectableObjectProps | RenderableProps | EdgeProps | PhysicalObjProps;
+export type GraphNodeProps = ProcGenProps | CollisionProps | SelectableObjectProps | RenderableProps | EdgeProps | PhysicalObjProps
+    | SimulationProps;
 
 // graph nodes have data associated with different aspects
 export interface GraphNode extends NodeWithEdges, CollisionObject, PhysicalObject, 

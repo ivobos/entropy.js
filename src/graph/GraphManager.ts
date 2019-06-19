@@ -3,6 +3,7 @@ import { ComponentOptions } from "../container/Component";
 import { CameraHolder } from "../rendering/CameraManager";
 import { FunctionGraphOperation, GraphObjectVisitFunction, GraphOperation } from "./graph-operation";
 import { GraphNode, GraphNodeProps, NodeAspectCtor, NodeAspect } from "./node/graph-node";
+import { NodeWithEdges } from "./node/node-edges";
 
 export interface GraphManagerOptions extends ComponentOptions {
     // seed: number;
@@ -14,23 +15,26 @@ export class GraphManager extends AbstractComponent {
     private cameraHolder?: CameraHolder;
     private scheduledForRemoval: GraphNode[] = [];
     private root?: GraphNode;
-    private sortedNodeAspects: NodeAspect[];
+    private createEntityNodeAspects: NodeAspect[];
+    private simulationNodeAspects: NodeAspect[];
 
     constructor(options: GraphManagerOptions) {
         super({...options, key: GraphManager});
-        this.sortedNodeAspects = this.createNodeAspectsAndSort(options.nodeAspects);
+        const nodeAspectByCtor: Map<NodeAspectCtor, NodeAspect> = new Map();
+        options.nodeAspects.forEach(nodeAspectCtor => {
+            nodeAspectByCtor.set(nodeAspectCtor, new nodeAspectCtor());
+        });
+        this.createEntityNodeAspects = this.generateCreateEntityNodeAspects(nodeAspectByCtor);
+        this.simulationNodeAspects = this.generateSimulationNodeAspects(nodeAspectByCtor);
     }   
 
-    createNodeAspectsAndSort(nodeAspectsCtors: NodeAspectCtor[]): NodeAspect[] {
-        const nodeAspectByCtor: Map<NodeAspectCtor, NodeAspect> = new Map();
+    generateCreateEntityNodeAspects(nodeAspectByCtor: Map<NodeAspectCtor, NodeAspect>): NodeAspect[] {
         const unprocessed: NodeAspect[] = [];
         const processed: NodeAspect[] = [];
         const stack: NodeAspect[] = []; 
-        // create 
-        nodeAspectsCtors.forEach(nodeAspectCtor => {
-            const nodeAspect = new nodeAspectCtor();
+        // add to unprocessed 
+        nodeAspectByCtor.forEach(nodeAspect => {
             if (nodeAspect.initGraphNode !== undefined) {
-                nodeAspectByCtor.set(nodeAspectCtor, nodeAspect);
                 unprocessed.push(nodeAspect);
             }
         });
@@ -68,6 +72,51 @@ export class GraphManager extends AbstractComponent {
         return processed;
     }
 
+    generateSimulationNodeAspects(nodeAspectByCtor: Map<NodeAspectCtor, NodeAspect>): NodeAspect[] {
+        const unprocessed: NodeAspect[] = [];
+        const processed: NodeAspect[] = [];
+        const stack: NodeAspect[] = []; 
+        // add to unprocessed 
+        nodeAspectByCtor.forEach(nodeAspect => {
+            if (nodeAspect.simProcessing !== undefined) {
+                unprocessed.push(nodeAspect);
+            }
+        });
+        // sort using topological sort
+        while (unprocessed.length > 0  || stack.length > 0) {
+            // get a node
+            const node = stack.length > 0 ? stack.pop()! : unprocessed.pop()!;
+            // get dependencies that still need processing
+            const unprocessedDeps = node.simExecuteAfter ? 
+                node.simExecuteAfter().map(ctor => (nodeAspectByCtor.get(ctor)!)).filter(nodeAspect => !processed.includes(nodeAspect)) 
+                : []; 
+            if (unprocessedDeps.length === 0) {
+                // all dependencies of current node have been processed, add current node to processed
+                processed.push(node);
+            } else {
+                // have to process node
+                stack.push(node);
+                // and process dependencies
+                unprocessedDeps.forEach(dep => {
+                    // remove dependencies from unprocessed
+                    unprocessed.forEach((value, index) => {
+                        if (value === dep) {
+                            unprocessed.splice(index, 1);
+                        }
+                    })
+                    // if dependencies are on the stack already we have a circular dependency
+                    if (stack.includes(dep)) {
+                        throw Error("circular dependency in generateSimulationNodeAspects at "+dep.constructor.name+" with stack of "
+                            + stack.map(value => value.constructor.name));
+                    }
+                    stack.push(dep);
+                })
+            }
+        }
+        return processed;
+    }
+
+
     setCameraHolder(cameraHolder: CameraHolder) {
         this.cameraHolder = cameraHolder;
     }
@@ -84,10 +133,9 @@ export class GraphManager extends AbstractComponent {
         return this.root;
     }
 
-    createEntity(...anyProps: Array<any>): GraphNode {
-        const graphNodeProps = anyProps.filter(this.isGraphNodeProps.bind(this));
+    createEntity(...graphNodeProps: Array<GraphNodeProps>): GraphNode {
         const graphNode: GraphNode = {} as GraphNode;
-        for (const nodeAspect of this.sortedNodeAspects) {
+        for (const nodeAspect of this.createEntityNodeAspects) {
             if (nodeAspect.isAspectProps) {
                 nodeAspect.initGraphNode!(graphNode, graphNodeProps.find(nodeAspect.isAspectProps));
             } else {
@@ -142,13 +190,25 @@ export class GraphManager extends AbstractComponent {
         return operation;
     }
 
-    isGraphNodeProps(props: any): props is GraphNodeProps {
-        for (const nodeAspect of this.sortedNodeAspects) {
-            if (nodeAspect.isAspectProps && nodeAspect.isAspectProps(props)) {
-                return true;
+    filterGraphNodeProps(...anyProps: Array<any>): Array<GraphNodeProps> {
+        return anyProps.filter(props => {
+            for (const nodeAspect of this.createEntityNodeAspects) {
+                if (nodeAspect.isAspectProps && nodeAspect.isAspectProps(props)) {
+                    return true;
+                }
             }
-        }
-        return false;
+            return false;
+        });
     }
     
+    executeSimulationStep(simulationTimestepMsec: number): void {
+        const simulationNodeAspects = this.simulationNodeAspects;
+        const visitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+            for (const nodeAspect of simulationNodeAspects) {
+                nodeAspect.simProcessing!(thisNode as GraphNode, simulationTimestepMsec);
+            }
+        }
+        this.visit(visitFunction);
+    }
+
 }
