@@ -203,12 +203,12 @@ export class GraphManager extends AbstractComponent {
     
     executeSimulationStep(simulationTimestepMsec: number): void {
         const simulationNodeAspects = this.simulationNodeAspects;
-        const visitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
-            for (const nodeAspect of simulationNodeAspects) {
-                nodeAspect.simProcessing!(thisNode as GraphNode, simulationTimestepMsec);
+        for (const nodeAspect of simulationNodeAspects) {
+            const visitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+                nodeAspect.simProcessing!(simulationTimestepMsec, thisNode as GraphNode, prevNode as GraphNode);
             }
+            this.visit(visitFunction);
         }
-        this.visit(visitFunction);
     }
 
 }

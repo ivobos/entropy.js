@@ -37,7 +37,7 @@ export interface NodeAspect {
     inputProcessing?(node: GraphNode, timestamp: number, frameDelta: number): void;
 
     // simulation phase
-    simProcessing?(node: GraphNode, simulationTimestepMsec: number): void;
+    simProcessing?(simulationTimestepMsec: number, node: GraphNode, prevNode?: GraphNode): void;
     simExecuteAfter?(): NodeAspectCtor[];
     simExecuteBefore?(): NodeAspectCtor[];
 

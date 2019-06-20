@@ -25,7 +25,7 @@ export class SimulationAspect implements NodeAspect {
         simObject.simulationStep = simProps.simulationStep;
     }    
 
-    simProcessing(node: GraphNode, simulationTimestepMsec: number): void {
+    simProcessing(simulationTimestepMsec: number, node: GraphNode, prevNode?: GraphNode): void {
         const simObject = node as SimObject;
         if (!simObject.simulation) return;
         simObject.simulationStep(simulationTimestepMsec);

@@ -3,7 +3,7 @@ import { AbstractComponent } from "../container/AbstractComponent";
 import { GraphManager } from "./GraphManager";
 import { ComponentOptions } from "../container/Component";
 import { FunctionGraphOperation } from "./graph-operation";
-import { updatePositionVisitor, resetForceVector, addGravityForce, getUpdateVelocityAndPositionVisitor, addCollisionForces, GravityGraphBalancer } from "./node/physics";
+import { resetForceVector, addGravityForce, getUpdateVelocityAndPositionVisitor, addCollisionForces, GravityGraphBalancer } from "./node/physics";
 import { Monitor } from "../observability/Monitor";
 
 export type SimulationFunction = (simulationTimestepMsec: number) => void;
@@ -34,7 +34,7 @@ export class SimulationProcessor extends AbstractComponent {
 
         graphManager.executeSimulationStep(simulationTimestepMsec);
 
-        graphManager.accept(new FunctionGraphOperation(updatePositionVisitor));
+        // graphManager.accept(new FunctionGraphOperation(updatePositionVisitor));
         graphManager.accept(new FunctionGraphOperation(resetForceVector));
         graphManager.accept(new FunctionGraphOperation(addGravityForce));
         graphManager.accept(new FunctionGraphOperation(addCollisionForces));

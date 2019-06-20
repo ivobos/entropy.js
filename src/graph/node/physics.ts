@@ -43,23 +43,6 @@ class PhysicalObjectMixin {
 
 }
 
-export const updatePositionVisitor: GraphObjectVisitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
-    const graphObject = thisNode as GraphNode;
-    if (!prevNode) {
-        graphObject.object3d.position.set(0,0,0);
-    } else if (thisNode.parent === prevNode) { // TODO: not clear if this is correct
-        const prevObject3d = (prevNode as PhysicalObject).object3d;
-        graphObject.object3d.position.copy(prevObject3d.position)
-            .add(graphObject.relativePosition);
-    } else {
-        const prevGraphObject = prevNode as GraphNode;
-        graphObject.object3d.position
-            .copy(prevGraphObject.relativePosition)
-            .negate()
-            .add(prevGraphObject.object3d.position);
-    }
-}
-
 export const resetForceVector: GraphObjectVisitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
     const graphObject = thisNode as PhysicalObject;
     graphObject.force.set(0,0,0);
@@ -119,7 +102,7 @@ export class GravityGraphBalancer {
         if (this.rebalanceCandidate === undefined) return;
         // calculate gravity forces
         this.potentialParentForces.clear();
-        graphManager.visit(updatePositionVisitor);
+        // graphManager.visit(updatePositionVisitor);
         graphManager.visit(this.updatePotentialParentForcesVisitor.bind(this));
         // find the most appropriate parent
         const entries = Array.from(this.potentialParentForces.entries());
@@ -190,5 +173,23 @@ export class PhysicsAspect implements NodeAspect {
     initDeps(): NodeAspectCtor[] {
         return [EdgesAspect];
     }
+
+    simProcessing?(simulationTimestepMsec: number, thisNode: GraphNode, prevNode?: GraphNode): void {
+        const graphObject = thisNode as GraphNode;
+        if (!prevNode) {
+            graphObject.object3d.position.set(0,0,0);
+        } else if (thisNode.parent === prevNode) {
+            const prevObject3d = (prevNode as PhysicalObject).object3d;
+            graphObject.object3d.position.copy(prevObject3d.position)
+                .add(graphObject.relativePosition);
+        } else {
+            const prevGraphObject = prevNode as GraphNode;
+            graphObject.object3d.position
+                .copy(prevGraphObject.relativePosition)
+                .negate()
+                .add(prevGraphObject.object3d.position);
+        }
+    }
     
+
 }

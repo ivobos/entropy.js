@@ -9,7 +9,6 @@ import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { FocusManager } from '../input/FocusManager';
 import { NodeWithEdges } from '../graph/node/node-edges';
 import { FunctionGraphOperation, AbstractGraphOperation } from '../graph/graph-operation';
-import { updatePositionVisitor } from '../graph/node/physics';
 import { getPrepareForRenderVisitor } from '../graph/node/presentation';
 import { GraphNode } from '../graph/node/graph-node';
 
@@ -106,7 +105,7 @@ export class GraphicRenderer extends AbstractComponent {
     doRender(interpolationPercentage: number): void {
         const graphManager = this.resolve(GraphManager);
         // prepare graph objects for rendering
-        graphManager.accept(new FunctionGraphOperation(updatePositionVisitor));
+        // graphManager.accept(new FunctionGraphOperation(updatePositionVisitor));
         graphManager.accept(new FunctionGraphOperation(getPrepareForRenderVisitor(this.renderStyle)));
         graphManager.exec(new UpdateSceneObjects(this.scene));
         this.scene.children.sort(function(a: THREE.Object3D,b: THREE.Object3D) {
