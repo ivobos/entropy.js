@@ -34,7 +34,6 @@ export class SimulationProcessor extends AbstractComponent {
 
         graphManager.executeSimulationStep(simulationTimestepMsec);
 
-        // graphManager.accept(new FunctionGraphOperation(updatePositionVisitor));
         graphManager.accept(new FunctionGraphOperation(resetForceVector));
         graphManager.accept(new FunctionGraphOperation(addGravityForce));
         graphManager.accept(new FunctionGraphOperation(addCollisionForces));

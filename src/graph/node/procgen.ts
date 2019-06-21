@@ -1,4 +1,4 @@
-import { NodeWithEdges } from "./node-edges";
+import { SpacialObject } from "./space";
 import { GraphNode, GraphNodeProps, NodeAspect } from "./graph-node";
 import { GraphObjectVisitFunction } from "../graph-operation";
 import { Container } from "../../container/Container";
@@ -16,7 +16,7 @@ export interface ProcGenObj extends ProcGenProps {
 }
 
 export function createProcGenVisitor(container: Container): GraphObjectVisitFunction {
-    return function(currentNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+    return function(currentNode: SpacialObject, prevNode?: SpacialObject): void {
         const obj = currentNode as any as ProcGenObj;
         if (!obj.generated && obj.procGenFunction !== undefined) {
             obj.procGenFunction(container, obj as GraphNode);
@@ -32,7 +32,7 @@ export class ProcGenAspect implements NodeAspect {
     }
     
     initGraphNode(graphNode: GraphNode, props: GraphNodeProps): void {
-        const node = graphNode as NodeWithEdges;
+        const node = graphNode as SpacialObject;
         const obj = node as any as ProcGenObj;
         Object.assign(obj, props);
         obj.generated = false;

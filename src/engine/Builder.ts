@@ -15,7 +15,7 @@ import { SimulationProcessor, SimulationFunction } from '../graph/SimulationProc
 import { InputProcessor, InputHandlerFunction } from '../input/InputProcessor';
 import { ProcGen } from '../graph/ProcGen';
 import { CollisionAspect } from '../graph/node/collision';
-import { EdgesAspect } from '../graph/node/node-edges';
+import { SpecialAspect } from '../graph/node/space';
 import { PhysicsAspect } from '../graph/node/physics';
 import { RenderableAspect } from '../graph/node/presentation';
 import { ProcGenAspect } from '../graph/node/procgen';
@@ -66,7 +66,7 @@ export class Builder {
         new FocusManager({container: this.container});
         new GraphManager({
             container: this.container,
-            nodeAspects: [CollisionAspect, EdgesAspect, PhysicsAspect, RenderableAspect, ProcGenAspect, SelectableAspect, 
+            nodeAspects: [CollisionAspect, SpecialAspect, PhysicsAspect, RenderableAspect, ProcGenAspect, SelectableAspect, 
                 MovementAspect, SimulationAspect]
         });
         new CameraManager({container: this.container});

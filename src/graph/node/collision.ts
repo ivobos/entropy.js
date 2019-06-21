@@ -1,4 +1,4 @@
-import { NodeWithEdges } from "./node-edges";
+import { SpacialObject } from "./space";
 import { GraphObjectVisitFunction } from "../graph-operation";
 import { GraphNodeProps, NodeAspect, GraphNode, NodeAspectCtor } from "./graph-node";
 import { PhysicsAspect } from "./physics";
@@ -13,7 +13,7 @@ export interface CollisionObject extends CollisionProps {
     radius: number;
 }
 
-export const updateBoundingRadius: GraphObjectVisitFunction = function(currentNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+export const updateBoundingRadius: GraphObjectVisitFunction = function(currentNode: SpacialObject, prevNode?: SpacialObject): void {
     const thisObject = currentNode as unknown as CollisionObject;
     thisObject.boundingRadius = thisObject.radius;
     for (const childNode of currentNode.childObjects) {

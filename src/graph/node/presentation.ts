@@ -1,4 +1,4 @@
-import { NodeWithEdges, EdgesAspect } from "./node-edges";
+import { SpacialObject, SpecialAspect } from "./space";
 import { RenderStyle } from "../../rendering/RenderStyle";
 import { GraphNode, GraphNodeProps, NodeAspect, NodeAspectCtor } from "./graph-node";
 import * as THREE from "three";
@@ -10,13 +10,12 @@ export interface RenderableProps {
     renderable: true;
 }
 
-export interface RenderableObj extends NodeWithEdges, RenderableProps {
-    object3d: THREE.Group;
+export interface RenderableObj extends SpacialObject, RenderableProps {
     prepareForRender: PrepareForRenderFunction;
 }
 
 export function getPrepareForRenderVisitor(globalRenderStyle: RenderStyle): GraphObjectVisitFunction {
-    return function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+    return function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
         const graphObject = (thisNode as GraphNode);
         if (graphObject.prepareForRender) {
             const renderStyle = globalRenderStyle.clone();
@@ -33,14 +32,11 @@ export class RenderableAspect implements NodeAspect {
     }    
         
     initGraphNode(node: GraphNode, props: GraphNodeProps): void {
-        const simObject = node as NodeWithEdges;
+        const simObject = node as SpacialObject;
         const options = props as RenderableProps;
         Object.assign(simObject, options);
         const renderableObject = simObject as RenderableObj;
-    
-        // object is a THREE.GROUP
-        renderableObject.object3d = new THREE.Group();
-    
+        
         // intersection with object3d.children are reported as intersection with the group object
         renderableObject.object3d.raycast = function(raycaster: THREE.Raycaster, intersects: THREE.Intersection[]) {
             const childIntersects: THREE.Intersection[] = []; 
@@ -57,7 +53,7 @@ export class RenderableAspect implements NodeAspect {
     }
 
     initDeps(): NodeAspectCtor[] {
-        return[EdgesAspect];
+        return[SpecialAspect];
     }
 
 }

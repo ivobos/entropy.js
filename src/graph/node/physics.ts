@@ -1,4 +1,4 @@
-import { NodeWithEdges, EdgesAspect } from "./node-edges";
+import { SpacialObject, SpecialAspect } from "./space";
 import * as THREE from "three";
 import { GraphNode, GraphNodeProps, NodeAspect, NodeAspectCtor } from "./graph-node";
 import { RenderableObj } from "./presentation";
@@ -15,13 +15,11 @@ export interface PhysicalObjProps {
     onSurface?: boolean
     mass: number;
     radius: number;
-    relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
 }
 
 export interface PhysicalObject extends RenderableObj, PhysicalObjectMixin, PhysicalObjProps {
     name: string,
     velocity: THREE.Vector3             // delta of relativePosition
-    relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
     radius: number;
     force: THREE.Vector3;
 }
@@ -43,12 +41,12 @@ class PhysicalObjectMixin {
 
 }
 
-export const resetForceVector: GraphObjectVisitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+export const resetForceVector: GraphObjectVisitFunction = function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
     const graphObject = thisNode as PhysicalObject;
     graphObject.force.set(0,0,0);
 }
 
-export const addGravityForce: GraphObjectVisitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+export const addGravityForce: GraphObjectVisitFunction = function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
     const graphObject = thisNode as PhysicalObject;
     if (thisNode.parent === undefined) return;    // nothing to do for root graph object
     const physicalObject = thisNode as PhysicalObject;
@@ -60,14 +58,14 @@ export const addGravityForce: GraphObjectVisitFunction = function(thisNode: Node
 
 export function getUpdateVelocityAndPositionVisitor(simulationTimestepMsec: number): GraphObjectVisitFunction {
     const timeDeltaSec = simulationTimestepMsec / 1000;
-    return function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+    return function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
         const physicalObject = thisNode as PhysicalObject;
         physicalObject.velocity.add(physicalObject.force.clone().multiplyScalar(timeDeltaSec / physicalObject.mass)); 
         physicalObject.relativePosition.add(physicalObject.velocity.clone().multiplyScalar(timeDeltaSec));
     }
 }
 
-export const addCollisionForces: GraphObjectVisitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+export const addCollisionForces: GraphObjectVisitFunction = function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
     if (thisNode.parent === undefined) return;    // nothing to do for root parent object?
     const physicalObject = thisNode as PhysicalObject;
     const parentPhysicalObject = thisNode.parent as PhysicalObject;
@@ -112,14 +110,14 @@ export class GravityGraphBalancer {
         }
     }
 
-    updateObjectBalanceCandidatesVisitor(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+    updateObjectBalanceCandidatesVisitor(thisNode: SpacialObject, prevNode?: SpacialObject): void {
         const graphObject = thisNode as GraphNode;
         if (!this.objectBalanceCandidates.includes(graphObject)) {
             this.objectBalanceCandidates.push(graphObject);
         }
     }
 
-    updatePotentialParentForcesVisitor(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+    updatePotentialParentForcesVisitor(thisNode: SpacialObject, prevNode?: SpacialObject): void {
         const potentialParent = thisNode as GraphNode;
         if (potentialParent.mass > this.rebalanceCandidate!.mass) {
             const force = this.calculateGravityForce(potentialParent, this.rebalanceCandidate!);
@@ -150,11 +148,10 @@ export class PhysicsAspect implements NodeAspect {
     }
         
     initGraphNode(node: GraphNode, props: GraphNodeProps): void {
-        const simObject = node as NodeWithEdges;
+        const simObject = node as SpacialObject;
         const physicalObjProps = props as PhysicalObjProps;
         const physicalObject = simObject as PhysicalObject;
         physicalObject.name = physicalObjProps.name;
-        physicalObject.relativePosition = physicalObjProps.relativePosition || new THREE.Vector3();
         physicalObject.mass = physicalObjProps.mass;
         physicalObject.radius = physicalObjProps.radius;
         physicalObject.force = new THREE.Vector3();
@@ -171,25 +168,7 @@ export class PhysicsAspect implements NodeAspect {
     }
         
     initDeps(): NodeAspectCtor[] {
-        return [EdgesAspect];
+        return [SpecialAspect];
     }
-
-    simProcessing?(simulationTimestepMsec: number, thisNode: GraphNode, prevNode?: GraphNode): void {
-        const graphObject = thisNode as GraphNode;
-        if (!prevNode) {
-            graphObject.object3d.position.set(0,0,0);
-        } else if (thisNode.parent === prevNode) {
-            const prevObject3d = (prevNode as PhysicalObject).object3d;
-            graphObject.object3d.position.copy(prevObject3d.position)
-                .add(graphObject.relativePosition);
-        } else {
-            const prevGraphObject = prevNode as GraphNode;
-            graphObject.object3d.position
-                .copy(prevGraphObject.relativePosition)
-                .negate()
-                .add(prevGraphObject.object3d.position);
-        }
-    }
-    
 
 }

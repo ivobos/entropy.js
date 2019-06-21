@@ -1,16 +1,16 @@
-import { NodeWithEdges } from "./node/node-edges";
+import { SpacialObject } from "./node/space";
 
-export type GraphObjectVisitFunction = (currentNode: NodeWithEdges, prevNode?: NodeWithEdges) => void;
+export type GraphObjectVisitFunction = (currentNode: SpacialObject, prevNode?: SpacialObject) => void;
 export type GraphWalkEndFunction = () => void;
 
 export interface GraphOperation {
-    visit(currentNode: NodeWithEdges, prevNode?: NodeWithEdges): void;
+    visit(currentNode: SpacialObject, prevNode?: SpacialObject): void;
     end(): void;
 }
 
 export abstract class AbstractGraphOperation implements GraphOperation {
 
-    abstract visit(currentNode: NodeWithEdges, prevNode?: NodeWithEdges): void;
+    abstract visit(currentNode: SpacialObject, prevNode?: SpacialObject): void;
 
     abstract end(): void;
 
@@ -28,7 +28,7 @@ export class FunctionGraphOperation extends AbstractGraphOperation {
     }
 
     // GraphNode calls this method when visited
-    visit(currentNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+    visit(currentNode: SpacialObject, prevNode?: SpacialObject): void {
         if (this.visitFunction) this.visitFunction(currentNode, prevNode);
     }
     

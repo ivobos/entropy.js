@@ -7,7 +7,7 @@ import { GraphManager } from '../graph/GraphManager';
 import { RenderStyle } from './RenderStyle';
 import { GlobalKeyboardHandler } from '../input/GlobalKeyboardHandler';
 import { FocusManager } from '../input/FocusManager';
-import { NodeWithEdges } from '../graph/node/node-edges';
+import { SpacialObject } from '../graph/node/space';
 import { FunctionGraphOperation, AbstractGraphOperation } from '../graph/graph-operation';
 import { getPrepareForRenderVisitor } from '../graph/node/presentation';
 import { GraphNode } from '../graph/node/graph-node';
@@ -36,7 +36,7 @@ class UpdateSceneObjects extends AbstractGraphOperation {
         this.maybeRemove = [...this.scene.children];
     }
 
-    visit(currentNode: NodeWithEdges, prevNode?: NodeWithEdges | undefined): void {
+    visit(currentNode: SpacialObject, prevNode?: SpacialObject | undefined): void {
         const graphObject = currentNode as GraphNode;
         if (this.maybeRemove.includes(graphObject.object3d)) {
             this.maybeRemove.splice(this.maybeRemove.indexOf(graphObject.object3d), 1);
@@ -118,11 +118,11 @@ export class GraphicRenderer extends AbstractComponent {
         }
         // raycast from center of screen to update focus
         if (camera) {
-            let newFocusedObject: NodeWithEdges | undefined = undefined;
+            let newFocusedObject: SpacialObject | undefined = undefined;
             this.raycaster.setFromCamera( new THREE.Vector2(), camera);
             const intersects = this.raycaster.intersectObjects( this.scene.children, false );
             for ( var i = 0; i < intersects.length; i++ ) {
-                newFocusedObject = intersects[i].object.userData.graphNode as NodeWithEdges;
+                newFocusedObject = intersects[i].object.userData.graphNode as SpacialObject;
                 break;
             }
             this.resolve(FocusManager).setFocusOn(newFocusedObject);

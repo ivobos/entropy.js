@@ -3,7 +3,7 @@ import { ComponentOptions } from "../container/Component";
 import { CameraHolder } from "../rendering/CameraManager";
 import { FunctionGraphOperation, GraphObjectVisitFunction, GraphOperation } from "./graph-operation";
 import { GraphNode, GraphNodeProps, NodeAspectCtor, NodeAspect } from "./node/graph-node";
-import { NodeWithEdges } from "./node/node-edges";
+import { SpacialObject } from "./node/space";
 
 export interface GraphManagerOptions extends ComponentOptions {
     // seed: number;
@@ -25,6 +25,7 @@ export class GraphManager extends AbstractComponent {
             nodeAspectByCtor.set(nodeAspectCtor, new nodeAspectCtor());
         });
         this.createEntityNodeAspects = this.generateCreateEntityNodeAspects(nodeAspectByCtor);
+        console.log(this.createEntityNodeAspects);
         this.simulationNodeAspects = this.generateSimulationNodeAspects(nodeAspectByCtor);
     }   
 
@@ -204,7 +205,7 @@ export class GraphManager extends AbstractComponent {
     executeSimulationStep(simulationTimestepMsec: number): void {
         const simulationNodeAspects = this.simulationNodeAspects;
         for (const nodeAspect of simulationNodeAspects) {
-            const visitFunction = function(thisNode: NodeWithEdges, prevNode?: NodeWithEdges): void {
+            const visitFunction = function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
                 nodeAspect.simProcessing!(simulationTimestepMsec, thisNode as GraphNode, prevNode as GraphNode);
             }
             this.visit(visitFunction);

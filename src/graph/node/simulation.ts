@@ -1,4 +1,4 @@
-import { NodeWithEdges } from "./node-edges";
+import { SpacialObject } from "./space";
 import { NodeAspect, GraphNodeProps, GraphNode } from "./graph-node";
 
 export type SimulationStepFunction = (simulationTimestep: number) => void;
@@ -8,7 +8,7 @@ export interface SimulationProps {
     simulationStep: SimulationStepFunction;
 }
 
-export interface SimObject extends NodeWithEdges, SimulationProps{
+export interface SimObject extends SpacialObject, SimulationProps{
 }
 
 export class SimulationAspect implements NodeAspect {
