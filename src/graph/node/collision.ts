@@ -23,8 +23,6 @@ export const updateBoundingRadius: GraphObjectVisitFunction = function(currentNo
     }
 }
 
-
-
 export class CollisionAspect implements NodeAspect {
 
     isAspectProps(props: GraphNodeProps): boolean {

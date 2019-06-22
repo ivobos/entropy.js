@@ -1,25 +1,21 @@
-import { SpacialObject, SpecialAspect } from "./space";
 import * as THREE from "three";
+import { SpacialObject, SpecialAspect } from "./space";
 import { GraphNode, GraphNodeProps, NodeAspect, NodeAspectCtor } from "./graph-node";
 import { RenderableObj } from "./presentation";
 import { GraphObjectVisitFunction } from "../graph-operation";
 import { includeMixin } from "../../utils/mixin-utils";
-import { GraphManager } from "../GraphManager";
-
-const G = 6.67E-1;  //  (m/kg)^2 (real one is 6.67E-11)
+import { GRAVITATIONAL_CONSTANT } from "./gravity";
 
 export interface PhysicalObjProps {
     physics: true
-    velocity?: THREE.Vector3             // delta of relativePosition
-    onSurface?: boolean
-    mass: number;
-    radius: number;
+    mass: number
+    radius: number
+    velocity?: THREE.Vector3            // delta of relativePosition
 }
 
 export interface PhysicalObject extends RenderableObj, PhysicalObjectMixin, PhysicalObjProps {
     velocity: THREE.Vector3             // delta of relativePosition
-    radius: number;
-    force: THREE.Vector3;
+    force: THREE.Vector3
 }
 
 class PhysicalObjectMixin {
@@ -37,16 +33,6 @@ class PhysicalObjectMixin {
 
     }
 
-}
-
-export const addGravityForce: GraphObjectVisitFunction = function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
-    const graphObject = thisNode as PhysicalObject;
-    if (thisNode.parent === undefined) return;    // nothing to do for root graph object
-    const physicalObject = thisNode as PhysicalObject;
-    const parentPhysicalObject = thisNode.parent as PhysicalObject;
-    // gravitational force
-    const force = - G * parentPhysicalObject.mass * physicalObject.mass / physicalObject.relativePosition.lengthSq();
-    graphObject.force.add(physicalObject.relativePosition.clone().normalize().multiplyScalar(force));
 }
 
 export function getUpdateVelocityAndPositionVisitor(simulationTimestepMsec: number): GraphObjectVisitFunction {
@@ -71,70 +57,6 @@ export const addCollisionForces: GraphObjectVisitFunction = function(thisNode: S
     }        
 }
 
-/** 
- * The purpose of this class is to re-balance the graph in such a way that it eventually conforms to the following rules:
- * - all parents should have higher mass than their children
- * - gravitational force exerted on a node by its parent is higher then any other potential parent that node could have
- * 
- * It operates in 3 phases
- * 1. identify an object to balance
- * 2. calculate forces on that object by its potential parents
- * 3. move the object to a new parent as needed
- */
-export class GravityGraphBalancer {
-
-    objectBalanceCandidates: GraphNode[] = [];
-    rebalanceCandidate?: GraphNode;
-    potentialParentForces:Map<GraphNode,number> = new Map();
-
-    balanceOne(graphManager: GraphManager): void {
-        // find candidate to balance
-        graphManager.visit(this.updateObjectBalanceCandidatesVisitor.bind(this));
-        this.rebalanceCandidate = this.objectBalanceCandidates.shift();
-        if (this.rebalanceCandidate === undefined) return;
-        // calculate gravity forces
-        this.potentialParentForces.clear();
-        // graphManager.visit(updatePositionVisitor);
-        graphManager.visit(this.updatePotentialParentForcesVisitor.bind(this));
-        // find the most appropriate parent
-        const entries = Array.from(this.potentialParentForces.entries());
-        if (entries.length > 0) {
-            const bestParent = entries.reduce((bestParentEntry, currentParentEntry) => bestParentEntry[1] > currentParentEntry[1] ? bestParentEntry : currentParentEntry)[0];
-            this.moveObjectToParent(this.rebalanceCandidate, bestParent);
-        }
-    }
-
-    updateObjectBalanceCandidatesVisitor(thisNode: SpacialObject, prevNode?: SpacialObject): void {
-        const graphObject = thisNode as GraphNode;
-        if (!this.objectBalanceCandidates.includes(graphObject)) {
-            this.objectBalanceCandidates.push(graphObject);
-        }
-    }
-
-    updatePotentialParentForcesVisitor(thisNode: SpacialObject, prevNode?: SpacialObject): void {
-        const potentialParent = thisNode as GraphNode;
-        if (potentialParent.mass > this.rebalanceCandidate!.mass) {
-            const force = this.calculateGravityForce(potentialParent, this.rebalanceCandidate!);
-            this.potentialParentForces.set(potentialParent, force);
-        }
-    }
-
-    calculateGravityForce(a: PhysicalObject, b: PhysicalObject): number {
-        const delta = a.object3d.position.clone().sub(b.object3d.position);
-        return G * a.mass * b.mass / delta.lengthSq();
-    }
-
-    moveObjectToParent(childObject: PhysicalObject, newParent: PhysicalObject) {
-        if (childObject.parent !== newParent) {
-//            console.log("reparenting "+childObject.name+" to "+newParent.name);
-            if (childObject.parent !== undefined) childObject.parent.removeChildObject(childObject);
-            newParent.addChildObject(childObject);
-            childObject.parent = newParent;
-            childObject.relativePosition = childObject.object3d.position.clone().sub(newParent.object3d.position);
-        }
-    }
-}
-
 export class PhysicsAspect implements NodeAspect {
 
     isAspectProps(props: GraphNodeProps): boolean {
@@ -145,17 +67,20 @@ export class PhysicsAspect implements NodeAspect {
         const simObject = node as SpacialObject;
         const physicalObjProps = props as PhysicalObjProps;
         const physicalObject = simObject as PhysicalObject;
+        physicalObject.physics = true;
         physicalObject.mass = physicalObjProps.mass;
         physicalObject.radius = physicalObjProps.radius;
         physicalObject.force = new THREE.Vector3();
         includeMixin(physicalObject, PhysicalObjectMixin);
-        physicalObject.velocity = physicalObjProps.velocity ? physicalObjProps.velocity : new THREE.Vector3(0,0,0);
-        if (physicalObject.parent !== undefined && !physicalObjProps.onSurface) {
+        if (physicalObjProps.velocity) {
+            physicalObject.velocity = physicalObjProps.velocity;
+        } else {
             const direction = physicalObject.relativePosition.clone().cross(new THREE.Vector3(0, 1, 0)).normalize();
             if (direction.length() === 0) direction.set(-1,0,0);
             const parentPhysicalObject = physicalObject.parent as PhysicalObject;
+            physicalObject.velocity = new THREE.Vector3();
             physicalObject.velocity.copy(direction.clone().multiplyScalar(
-                Math.sqrt(G * parentPhysicalObject.mass / physicalObject.relativePosition.length()))
+                Math.sqrt(GRAVITATIONAL_CONSTANT * parentPhysicalObject.mass / physicalObject.relativePosition.length()))
             );
         }
     }

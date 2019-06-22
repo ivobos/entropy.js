@@ -22,6 +22,7 @@ import { ProcGenAspect } from '../graph/node/procgen';
 import { SelectableAspect } from '../graph/node/selection';
 import { SimulationAspect } from '../graph/node/simulation';
 import { InputHandlingAspect } from '../graph/node/input-handling';
+import { GravityAspect } from '../graph/node/gravity';
 
 let static_init_done = false;
 
@@ -68,7 +69,7 @@ export class Builder {
             container: this.container,
             nodeAspects: [InputHandlingAspect,
                 CollisionAspect, SpecialAspect, PhysicsAspect, ProcGenAspect, SelectableAspect, 
-                SimulationAspect, 
+                SimulationAspect, GravityAspect,
                 RenderableAspect]
         });
         new CameraManager({container: this.container});
