@@ -2,7 +2,6 @@ import * as THREE from "three";
 import { SpacialObject, SpecialAspect } from "./space";
 import { GraphNode, GraphNodeProps, NodeAspect, NodeAspectCtor } from "./graph-node";
 import { RenderableObj } from "./presentation";
-import { GraphObjectVisitFunction } from "../graph-operation";
 import { includeMixin } from "../../utils/mixin-utils";
 import { GRAVITATIONAL_CONSTANT } from "./gravity";
 
@@ -35,28 +34,6 @@ class PhysicalObjectMixin {
 
 }
 
-export function getUpdateVelocityAndPositionVisitor(simulationTimestepMsec: number): GraphObjectVisitFunction {
-    const timeDeltaSec = simulationTimestepMsec / 1000;
-    return function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
-        const physicalObject = thisNode as PhysicalObject;
-        physicalObject.velocity.add(physicalObject.force.clone().multiplyScalar(timeDeltaSec / physicalObject.mass)); 
-        physicalObject.relativePosition.add(physicalObject.velocity.clone().multiplyScalar(timeDeltaSec));
-        physicalObject.force.set(0,0,0);
-    }
-}
-
-export const addCollisionForces: GraphObjectVisitFunction = function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
-    if (thisNode.parent === undefined) return;    // nothing to do for root parent object?
-    const physicalObject = thisNode as PhysicalObject;
-    const parentPhysicalObject = thisNode.parent as PhysicalObject;
-    const overlap = parentPhysicalObject.radius + physicalObject.radius - physicalObject.relativePosition.length();
-    if (overlap > 0) {
-        const force = physicalObject.relativePosition.clone().normalize().multiplyScalar(1000 * overlap * overlap);
-        physicalObject.force.add(force);
-        // console.log("overlap of "+overlap);
-    }        
-}
-
 export class PhysicsAspect implements NodeAspect {
 
     isAspectProps(props: GraphNodeProps): boolean {
@@ -87,6 +64,14 @@ export class PhysicsAspect implements NodeAspect {
         
     initDeps(): NodeAspectCtor[] {
         return [SpecialAspect];
+    }
+
+    simProcessing?(simulationTimestepMsec: number, node: GraphNode, prevNode?: GraphNode): void {
+        const timeDeltaSec = simulationTimestepMsec / 1000;
+        const physicalObject = node as PhysicalObject;
+        physicalObject.velocity.add(physicalObject.force.clone().multiplyScalar(timeDeltaSec / physicalObject.mass)); 
+        physicalObject.relativePosition.add(physicalObject.velocity.clone().multiplyScalar(timeDeltaSec));
+        physicalObject.force.set(0,0,0);    
     }
 
 }
