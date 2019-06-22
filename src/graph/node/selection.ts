@@ -4,6 +4,7 @@ import { RenderableAspect } from "./presentation";
 
 export interface SelectableObjectProps {
     selectable: true,
+    name: string
 }
 
 export interface SelectableObject extends SpacialObject, SelectableObjectProps {
@@ -21,6 +22,8 @@ export class SelectableAspect implements NodeAspect {
     initGraphNode(node: GraphNode, props: GraphNodeProps): void {
         const graphNode = node as SpacialObject;
         const selectableObject = graphNode as SelectableObject;
+        const selectableProps = props as SelectableObjectProps
+        selectableObject.name = selectableProps.name;
         selectableObject.selected = false;
         selectableObject.setSelected = function(selected: boolean) {
             this.selected = selected;

@@ -10,7 +10,6 @@ const G = 6.67E-1;  //  (m/kg)^2 (real one is 6.67E-11)
 
 export interface PhysicalObjProps {
     physics: true
-    name: string
     velocity?: THREE.Vector3             // delta of relativePosition
     onSurface?: boolean
     mass: number;
@@ -18,7 +17,6 @@ export interface PhysicalObjProps {
 }
 
 export interface PhysicalObject extends RenderableObj, PhysicalObjectMixin, PhysicalObjProps {
-    name: string,
     velocity: THREE.Vector3             // delta of relativePosition
     radius: number;
     force: THREE.Vector3;
@@ -151,7 +149,6 @@ export class PhysicsAspect implements NodeAspect {
         const simObject = node as SpacialObject;
         const physicalObjProps = props as PhysicalObjProps;
         const physicalObject = simObject as PhysicalObject;
-        physicalObject.name = physicalObjProps.name;
         physicalObject.mass = physicalObjProps.mass;
         physicalObject.radius = physicalObjProps.radius;
         physicalObject.force = new THREE.Vector3();
