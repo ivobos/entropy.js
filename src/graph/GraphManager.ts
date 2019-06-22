@@ -16,6 +16,7 @@ export class GraphManager extends AbstractComponent {
     private scheduledForRemoval: GraphNode[] = [];
     private root?: GraphNode;
     private createEntityNodeAspects: NodeAspect[];
+    private inputNodeAspects: NodeAspect[];
     private simulationNodeAspects: NodeAspect[];
 
     constructor(options: GraphManagerOptions) {
@@ -25,9 +26,9 @@ export class GraphManager extends AbstractComponent {
             nodeAspectByCtor.set(nodeAspectCtor, new nodeAspectCtor());
         });
         this.createEntityNodeAspects = this.generateCreateEntityNodeAspects(nodeAspectByCtor);
-        console.log(this.createEntityNodeAspects);
+        this.inputNodeAspects = this.generateInputNodeAspects(nodeAspectByCtor);
         this.simulationNodeAspects = this.generateSimulationNodeAspects(nodeAspectByCtor);
-    }   
+    }
 
     generateCreateEntityNodeAspects(nodeAspectByCtor: Map<NodeAspectCtor, NodeAspect>): NodeAspect[] {
         const unprocessed: NodeAspect[] = [];
@@ -71,6 +72,16 @@ export class GraphManager extends AbstractComponent {
             }
         }
         return processed;
+    }
+
+    generateInputNodeAspects(nodeAspectByCtor: Map<NodeAspectCtor, NodeAspect>): NodeAspect[] {
+        const inputNodeAspects: NodeAspect[] = [];
+        nodeAspectByCtor.forEach(nodeAspect => {
+            if (nodeAspect.inputProcessingVisitor !== undefined) {
+                inputNodeAspects.push(nodeAspect);
+            }
+        });
+        return inputNodeAspects;
     }
 
     generateSimulationNodeAspects(nodeAspectByCtor: Map<NodeAspectCtor, NodeAspect>): NodeAspect[] {
@@ -207,6 +218,15 @@ export class GraphManager extends AbstractComponent {
         for (const nodeAspect of simulationNodeAspects) {
             const visitFunction = function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
                 nodeAspect.simProcessing!(simulationTimestepMsec, thisNode as GraphNode, prevNode as GraphNode);
+            }
+            this.visit(visitFunction);
+        }
+    }
+
+    executeProcessInput(timestamp: number, frameDelta: number): void {
+        for (const nodeAspect of this.inputNodeAspects) {
+            const visitFunction = function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
+                nodeAspect.inputProcessingVisitor!(thisNode as GraphNode, timestamp, frameDelta);
             }
             this.visit(visitFunction);
         }

@@ -8,14 +8,15 @@ import { CameraHolder } from "../../rendering/CameraManager";
 import { ProcGenProps, ProcGenObj } from "./procgen";
 import { RenderStyle } from "../../rendering/RenderStyle";
 import { Container } from "../../container/Container";
+import { InputHandlingProps, InputHandlingObject } from "./input-handling";
 
 // graph nodes have props that are used during graph node initialisation
 export type GraphNodeProps = ProcGenProps | CollisionProps | SelectableObjectProps | RenderableProps | SpacialProps | PhysicalObjProps
-    | SimulationProps;
+    | SimulationProps | InputHandlingProps;
 
 // graph nodes have data associated with different aspects
 export interface GraphNode extends SpacialObject, CollisionObject, PhysicalObject, 
-    RenderableObj, SelectableObject, SimObject, CameraHolder, ProcGenObj {
+    RenderableObj, SelectableObject, SimObject, CameraHolder, ProcGenObj, InputHandlingObject {
 
 }
 
@@ -34,7 +35,7 @@ export interface NodeAspect {
     initDeps?(): NodeAspectCtor[];
 
     // input processing phase
-    inputProcessing?(node: GraphNode, timestamp: number, frameDelta: number): void;
+    inputProcessingVisitor?(node: GraphNode, timestamp: number, frameDelta: number): void;
 
     // simulation phase
     simProcessing?(simulationTimestepMsec: number, node: GraphNode, prevNode?: GraphNode): void;

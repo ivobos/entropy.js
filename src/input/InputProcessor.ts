@@ -1,5 +1,6 @@
 import { AbstractComponent } from "../container/AbstractComponent";
 import { ComponentOptions } from "../container/Component";
+import { GraphManager } from "../graph/GraphManager";
 
 
 export type InputHandlerFunction = (timestamp: number, frameDelta: number) => void;
@@ -20,6 +21,8 @@ export class InputProcessor extends AbstractComponent {
         for (const inputHandler of this.inputHandlers) {
             inputHandler(timestamp, frameDelta);
         }
+        const graphManager = this.resolve(GraphManager);
+        graphManager.executeProcessInput(timestamp, frameDelta);
     }
     
 }

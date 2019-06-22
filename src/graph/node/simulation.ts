@@ -8,7 +8,7 @@ export interface SimulationProps {
     simulationStep: SimulationStepFunction;
 }
 
-export interface SimObject extends SpacialObject, SimulationProps{
+export interface SimObject extends SpacialObject, SimulationProps {
 }
 
 export class SimulationAspect implements NodeAspect {
