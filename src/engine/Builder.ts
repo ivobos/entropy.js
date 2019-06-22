@@ -20,7 +20,6 @@ import { PhysicsAspect } from '../graph/node/physics';
 import { RenderableAspect } from '../graph/node/presentation';
 import { ProcGenAspect } from '../graph/node/procgen';
 import { SelectableAspect } from '../graph/node/selection';
-import { MovementAspect } from '../graph/node/movement';
 import { SimulationAspect } from '../graph/node/simulation';
 import { InputHandlingAspect } from '../graph/node/input-handling';
 
@@ -69,7 +68,7 @@ export class Builder {
             container: this.container,
             nodeAspects: [InputHandlingAspect,
                 CollisionAspect, SpecialAspect, PhysicsAspect, ProcGenAspect, SelectableAspect, 
-                MovementAspect, SimulationAspect, 
+                SimulationAspect, 
                 RenderableAspect]
         });
         new CameraManager({container: this.container});

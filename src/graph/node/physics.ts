@@ -39,11 +39,6 @@ class PhysicalObjectMixin {
 
 }
 
-export const resetForceVector: GraphObjectVisitFunction = function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
-    const graphObject = thisNode as PhysicalObject;
-    graphObject.force.set(0,0,0);
-}
-
 export const addGravityForce: GraphObjectVisitFunction = function(thisNode: SpacialObject, prevNode?: SpacialObject): void {
     const graphObject = thisNode as PhysicalObject;
     if (thisNode.parent === undefined) return;    // nothing to do for root graph object
@@ -60,6 +55,7 @@ export function getUpdateVelocityAndPositionVisitor(simulationTimestepMsec: numb
         const physicalObject = thisNode as PhysicalObject;
         physicalObject.velocity.add(physicalObject.force.clone().multiplyScalar(timeDeltaSec / physicalObject.mass)); 
         physicalObject.relativePosition.add(physicalObject.velocity.clone().multiplyScalar(timeDeltaSec));
+        physicalObject.force.set(0,0,0);
     }
 }
 
