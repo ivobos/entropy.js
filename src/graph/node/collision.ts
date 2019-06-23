@@ -26,7 +26,7 @@ export class CollisionAspect implements NodeAspect {
         return [PhysicsAspect];
     }
     
-    simProcessing?(simulationTimestepMsec: number, node: GraphNode, prevNode?: GraphNode): void {
+    simProcessing(simulationTimestepMsec: number, node: GraphNode, prevNode?: GraphNode): void {
         if (node.parent === undefined) return;    // nothing to do for root parent object?
         const physicalObject = node as PhysicalObject;
         const parentPhysicalObject = node.parent as PhysicalObject;

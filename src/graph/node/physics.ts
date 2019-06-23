@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { SpacialObject, SpecialAspect } from "./space";
+import { SpacialObject, SpacialAspect } from "./space";
 import { GraphNode, GraphNodeProps, NodeAspect, NodeAspectCtor } from "./graph-node";
 import { RenderableObj } from "./presentation";
 import { includeMixin } from "../../utils/mixin-utils";
@@ -19,17 +19,22 @@ export interface PhysicalObject extends RenderableObj, PhysicalObjectMixin, Phys
 
 class PhysicalObjectMixin {
 
-    move(this: PhysicalObject, deltav: THREE.Vector3, deltar: THREE.Vector2): void {
-        if (deltav.length() !== 0 || deltar.length() !== 0) {
-            this.object3d.rotateY(deltar.x);
-            this.object3d.rotateX(deltar.y);
-            this.velocity.add(deltav.clone().applyQuaternion(this.object3d.quaternion));
-            this.velocity.multiplyScalar(0.95);
-        }
+    lookAt(this: PhysicalObject, target: THREE.Vector3, up: THREE.Vector3) {
+        const m4 = new THREE.Matrix4();
+        m4.lookAt(this.object3d.position, target, up);
+        this.object3d.quaternion.setFromRotationMatrix(m4);
     }
 
-    rotate(this: PhysicalObject, deltar: THREE.Vector2): void {
+    moveWorldDeltaV(this: PhysicalObject, deltav: THREE.Vector3) {
+        this.velocity.add(deltav);
+    }
 
+    moveDeltaV(this: PhysicalObject, deltav: THREE.Vector3) {
+        this.velocity.add(deltav.clone().applyQuaternion(this.object3d.quaternion));
+    }
+
+    dampVelocity(this: PhysicalObject) {
+        this.velocity.multiplyScalar(0.99);
     }
 
 }
@@ -63,10 +68,10 @@ export class PhysicsAspect implements NodeAspect {
     }
         
     initDeps(): NodeAspectCtor[] {
-        return [SpecialAspect];
+        return [SpacialAspect];
     }
 
-    simProcessing?(simulationTimestepMsec: number, node: GraphNode, prevNode?: GraphNode): void {
+    simProcessing(simulationTimestepMsec: number, node: GraphNode, prevNode?: GraphNode): void {
         const timeDeltaSec = simulationTimestepMsec / 1000;
         const physicalObject = node as PhysicalObject;
         physicalObject.velocity.add(physicalObject.force.clone().multiplyScalar(timeDeltaSec / physicalObject.mass)); 
@@ -74,4 +79,7 @@ export class PhysicsAspect implements NodeAspect {
         physicalObject.force.set(0,0,0);    
     }
 
+    simExecuteAfter(): NodeAspectCtor[] {
+        return [SpacialAspect]
+    }
 }

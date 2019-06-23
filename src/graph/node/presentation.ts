@@ -1,4 +1,4 @@
-import { SpacialObject, SpecialAspect } from "./space";
+import { SpacialObject, SpacialAspect } from "./space";
 import { RenderStyle } from "../../rendering/RenderStyle";
 import { GraphNode, GraphNodeProps, NodeAspect, NodeAspectCtor } from "./graph-node";
 import * as THREE from "three";
@@ -53,7 +53,7 @@ export class RenderableAspect implements NodeAspect {
     }
 
     initDeps(): NodeAspectCtor[] {
-        return[SpecialAspect];
+        return[SpacialAspect];
     }
 
 }

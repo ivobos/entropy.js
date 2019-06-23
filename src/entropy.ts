@@ -2,6 +2,7 @@ export  { VERSION } from './version';
 export const NAME = "entropy-engine";
 export { CameraHolder } from './rendering/CameraManager';
 export { Container } from './container/Container';
+export { Monitor } from './observability/Monitor';
 export { GraphNodeProps, GraphNode } from './graph/node/graph-node';
 export * from './utils/random';
 export * from './utils/time';

@@ -56,7 +56,7 @@ export class SpacialObjectMixin {
     }
 }
 
-export class SpecialAspect implements NodeAspect {
+export class SpacialAspect implements NodeAspect {
 
     isAspectProps(props: GraphNodeProps): boolean {
         return (<SpacialProps>props).space === true;

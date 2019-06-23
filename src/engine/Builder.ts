@@ -15,7 +15,7 @@ import { SimulationProcessor, SimulationFunction } from '../graph/SimulationProc
 import { InputProcessor, InputHandlerFunction } from '../input/InputProcessor';
 import { ProcGen } from '../graph/ProcGen';
 import { CollisionAspect } from '../graph/node/collision';
-import { SpecialAspect } from '../graph/node/space';
+import { SpacialAspect } from '../graph/node/space';
 import { PhysicsAspect } from '../graph/node/physics';
 import { RenderableAspect } from '../graph/node/presentation';
 import { ProcGenAspect } from '../graph/node/procgen';
@@ -23,6 +23,7 @@ import { SelectableAspect } from '../graph/node/selection';
 import { SimulationAspect } from '../graph/node/simulation';
 import { InputHandlingAspect } from '../graph/node/input-handling';
 import { GravityAspect } from '../graph/node/gravity';
+import { AutonomyAspect } from '../graph/node/autonomy';
 
 let static_init_done = false;
 
@@ -68,8 +69,8 @@ export class Builder {
         new GraphManager({
             container: this.container,
             nodeAspects: [InputHandlingAspect,
-                CollisionAspect, SpecialAspect, PhysicsAspect, ProcGenAspect, SelectableAspect, 
-                SimulationAspect, GravityAspect,
+                CollisionAspect, SpacialAspect, PhysicsAspect, ProcGenAspect, SelectableAspect, 
+                SimulationAspect, GravityAspect, AutonomyAspect,
                 RenderableAspect]
         });
         new CameraManager({container: this.container});

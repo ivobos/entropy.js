@@ -9,14 +9,15 @@ import { ProcGenProps, ProcGenObj } from "./procgen";
 import { RenderStyle } from "../../rendering/RenderStyle";
 import { Container } from "../../container/Container";
 import { InputHandlingProps, InputHandlingObject } from "./input-handling";
+import { AutonomyProps, AutonomyObject } from "./autonomy";
 
 // graph nodes have props that are used during graph node initialisation
 export type GraphNodeProps = ProcGenProps | CollisionProps | SelectableObjectProps | RenderableProps | SpacialProps | PhysicalObjProps
-    | SimulationProps | InputHandlingProps;
+    | SimulationProps | InputHandlingProps | AutonomyProps;
 
 // graph nodes have data associated with different aspects
 export interface GraphNode extends SpacialObject, CollisionObject, PhysicalObject, 
-    RenderableObj, SelectableObject, SimObject, CameraHolder, ProcGenObj, InputHandlingObject {
+    RenderableObj, SelectableObject, SimObject, CameraHolder, ProcGenObj, InputHandlingObject, AutonomyObject {
 
 }
 

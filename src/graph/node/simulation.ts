@@ -1,5 +1,5 @@
-import { SpacialObject } from "./space";
-import { NodeAspect, GraphNodeProps, GraphNode } from "./graph-node";
+import { SpacialObject, SpacialAspect } from "./space";
+import { NodeAspect, GraphNodeProps, GraphNode, NodeAspectCtor } from "./graph-node";
 
 export type SimulationStepFunction = (simulationTimestep: number) => void;
 
@@ -29,6 +29,10 @@ export class SimulationAspect implements NodeAspect {
         const simObject = node as SimObject;
         if (!simObject.simulation) return;
         simObject.simulationStep(simulationTimestepMsec);
+    }
+
+    simExecuteAfter(): NodeAspectCtor[] {
+        return [SpacialAspect]
     }
 
 }

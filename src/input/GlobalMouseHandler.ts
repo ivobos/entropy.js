@@ -5,6 +5,7 @@ import { ComponentOptions } from '../container/Component';
 
 export class GlobalMouseHandler extends AbstractComponent {
     private mouseMoveVector = new THREE.Vector2();
+    private clicked = false;
 
     init(): void {
         super.init();
@@ -23,6 +24,8 @@ export class GlobalMouseHandler extends AbstractComponent {
     onClick(event: MouseEvent) {
         if (!(document as any).pointerLockElement) {
             (document.body as any).requestPointerLock();
+        } else {
+            this.clicked = true;
         }
     }
 
@@ -41,11 +44,15 @@ export class GlobalMouseHandler extends AbstractComponent {
         }
     }
 
-    getMouseMove(): THREE.Vector2 {
-        return this.mouseMoveVector.clone();
+    takeMouseMove(): THREE.Vector2 {
+        const mouseMove = this.mouseMoveVector.clone();
+        this.mouseMoveVector.set(0,0);
+        return mouseMove;
     }
 
-    resetMouseMove() {
-        this.mouseMoveVector.set(0,0);
+    takeMouseClick(): boolean {
+        const wasClicked = this.clicked;
+        this.clicked = false;
+        return wasClicked;
     }
 }
