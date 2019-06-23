@@ -7,9 +7,8 @@ import { GraphManager } from '../graph/GraphManager';
 
 // TODO move interface into concerns/camera-holder.ts
 export interface CameraHolder {
-
     getCamera() : THREE.PerspectiveCamera;
-
+    getAudioListener() : THREE.AudioListener;
 }
 
 const DEC_FOV_KEY = 'n';

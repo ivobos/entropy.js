@@ -22,7 +22,7 @@ const INCREASE_DETAIL_KEY = 'b';
 
 /**
  * Add/remove object3d to scene.
- * 1. Walk three and if new objects are detect then insert them in scene.
+ * 1. Walk tree and if new objects are detect then insert them in scene.
  * 2. Remove from scene object3d not seen during walk.
  */
 class UpdateSceneObjects extends AbstractGraphOperation {
@@ -48,7 +48,7 @@ class UpdateSceneObjects extends AbstractGraphOperation {
     end(): void {
         this.maybeRemove.forEach(object => {
             if (object.type !== 'AmbientLight') {
-                this.scene.remove(object)
+                this.scene.remove(object);
             }
         }); 
     }
