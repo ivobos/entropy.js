@@ -35,7 +35,7 @@ export class AutonomyAspect implements NodeAspect {
         object.lookAt(object.target.object3d.position, idealUp);
 
         // move toward target
-        const deltaV = object.target.object3d.position.clone().sub(object.object3d.position).multiplyScalar(.001).add(new THREE.Vector3());
+        const deltaV = object.target.object3d.position.clone().sub(object.object3d.position).multiplyScalar(.0005).add(new THREE.Vector3());
         object.moveWorldDeltaV(deltaV);
 
         object.dampVelocity();
