@@ -60,7 +60,8 @@ export class GravityGraphBalancer {
         // find candidate to balance
         graphManager.visit(this.updateObjectBalanceCandidatesVisitor.bind(this));
         this.rebalanceCandidate = this.objectBalanceCandidates.shift();
-        if (this.rebalanceCandidate === undefined) return;
+        // ignore rebalance candidates that were removed from graph or are root
+        if (this.rebalanceCandidate === undefined || this.rebalanceCandidate.parent === undefined) return;
         // calculate gravity forces
         this.potentialParentForces.clear();
         // graphManager.visit(updatePositionVisitor);
@@ -93,11 +94,13 @@ export class GravityGraphBalancer {
         return GRAVITATIONAL_CONSTANT * a.mass * b.mass / delta.lengthSq();
     }
 
-    moveObjectToParent(childObject: PhysicalObject, newParent: PhysicalObject) {
+    moveObjectToParent(childObject: GraphNode, newParent: GraphNode) {
         if (childObject.parent !== newParent) {
-//            console.log("reparenting "+childObject.name+" to "+newParent.name);
-            if (childObject.parent !== undefined) childObject.parent.removeChildObject(childObject);
+            if (childObject.parent !== undefined) {
+                childObject.parent.removeChildObject(childObject);
+            }
             newParent.addChildObject(childObject);
+//            console.log("reparenting "+childObject.name+" from "+(childObject.parent as any).name+" to "+newParent.name);
             childObject.parent = newParent;
             childObject.relativePosition = childObject.object3d.position.clone().sub(newParent.object3d.position);
         }

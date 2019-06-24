@@ -19,7 +19,6 @@ export interface GrapicRendererOptions extends ComponentOptions {
 const DECREASE_DETAIL_KEY = 'v';
 const INCREASE_DETAIL_KEY = 'b';
 
-
 /**
  * Add/remove object3d to scene.
  * 1. Walk tree and if new objects are detect then insert them in scene.
@@ -33,7 +32,12 @@ class UpdateSceneObjects extends AbstractGraphOperation {
     constructor(scene: THREE.Scene) {
         super();
         this.scene = scene;
-        this.maybeRemove = [...this.scene.children];
+        this.maybeRemove = [];
+        this.scene.children.forEach(object3d => {
+            if (object3d.userData.graphNode) {
+                this.maybeRemove.push(object3d);
+            }
+        });
     }
 
     visit(currentNode: SpacialObject, prevNode?: SpacialObject | undefined): void {
@@ -46,13 +50,11 @@ class UpdateSceneObjects extends AbstractGraphOperation {
     }    
     
     end(): void {
-        this.maybeRemove.forEach(object => {
-            if (object.type !== 'AmbientLight') {
-                this.scene.remove(object);
-            }
+        this.maybeRemove.forEach(object3d => {
+//            console.log("removing "+object3d.userData.graphNode.name);
+            this.scene.remove(object3d);
         }); 
     }
-
 
 }
 

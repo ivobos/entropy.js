@@ -30,6 +30,9 @@ export class SpacialObjectMixin {
     }
 
     removeChildObject(this: SpacialObject, child: SpacialObject): void {
+        if (!this.childObjects.includes(child)) {
+            throw Error("requesting to remove child that is not here");
+        }
         this.childObjects.splice(this.childObjects.indexOf(child), 1);
     }
 
