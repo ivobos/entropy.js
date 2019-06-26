@@ -26,17 +26,28 @@ export class CollisionAspect implements NodeAspect {
         return [PhysicsAspect];
     }
     
-    simProcessing(simulationTimestepMsec: number, node: GraphNode, prevNode?: GraphNode): void {
-        if (node.parent === undefined) return;    // nothing to do for root parent object?
-        const physicalObject = node as PhysicalObject;
-        const parentPhysicalObject = node.parent as PhysicalObject;
-        const overlap = parentPhysicalObject.radius + physicalObject.radius - physicalObject.relativePosition.length();
+    simProcessing(simulationTimestepMsec: number, object: PhysicalObject, prevNode?: GraphNode): void {
+        if (object.parent === undefined) return;    // nothing to do for root parent object?
+        const parentPhysicalObject = object.parent as PhysicalObject;
+        this.checkCollision(object, parentPhysicalObject);
+        for (const otherObject of parentPhysicalObject.childObjects) {
+            if (object !== otherObject) this.checkCollision(object, otherObject as PhysicalObject);
+        }
+    }
+
+    checkCollision(thisObject: PhysicalObject, otherObject: PhysicalObject): void {
+        // thisObject--->otherObject vector
+        const posDelta = thisObject.object3d.position.clone().sub(otherObject.object3d.position);
+        // overlap of the two objects 
+        const overlap = otherObject.radius + thisObject.radius - posDelta.length();
         if (overlap > 0) {
-            const force = physicalObject.relativePosition.clone().normalize().multiplyScalar(1000 * overlap * overlap);
-            physicalObject.force.add(force);
-            // console.log("overlap of "+overlap);
+            // calculate plane of collision
+            const collisionPlaneNormal = posDelta.clone().normalize();
+            // if this object moving closer to other then reflect velocity perpendicular to plane of collision
+            if (collisionPlaneNormal.clone().dot(thisObject.velocity) < 0) {
+                thisObject.velocity.reflect(collisionPlaneNormal)
+            }
         }        
-    
     }
 
 }

@@ -71,7 +71,10 @@ export class SpacialAspect implements NodeAspect {
         spacialObject.parent = edgeProps.parent;
         spacialObject.relativePosition = edgeProps.relativePosition;
         spacialObject.object3d = new THREE.Group();        // object is a THREE.GROUP
-        if (edgeProps.parent) edgeProps.parent.addChildObject(graphNode);
+        if (edgeProps.parent) {
+            edgeProps.parent.addChildObject(graphNode);
+            spacialObject.object3d.position.copy(edgeProps.parent!.object3d.position.clone().add(edgeProps.relativePosition));
+        }
         includeMixin(graphNode, SpacialObjectMixin);
         graphNode.childObjects = [];
     }
