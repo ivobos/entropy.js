@@ -29,7 +29,7 @@ export class ExecutionController extends AbstractComponent {
 
     onBlur(event: FocusEvent): void {
         this.resolve(MainLoop).setMaxAllowedFPS(1);
-        this.resolve(HtmlElements).showExecutionModeText("UNFOCUSED");
+        this.resolve(HtmlElements).showExecutionModeText(""); // "UNFOCUSED");
         this.resolve(GraphManager).getCameraHolder()!.getAudioListener().setMasterVolume(0);
     }
     

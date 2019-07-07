@@ -8,7 +8,6 @@ import { GRAVITATIONAL_CONSTANT } from "./gravity";
 export interface PhysicalObjProps {
     physics: true
     mass: number
-    radius: number
     velocity?: THREE.Vector3            // delta of relativePosition
 }
 
@@ -51,7 +50,6 @@ export class PhysicsAspect implements NodeAspect {
         const physicalObject = simObject as PhysicalObject;
         physicalObject.physics = true;
         physicalObject.mass = physicalObjProps.mass;
-        physicalObject.radius = physicalObjProps.radius;
         physicalObject.force = new THREE.Vector3();
         includeMixin(physicalObject, PhysicalObjectMixin);
         if (physicalObjProps.velocity) {

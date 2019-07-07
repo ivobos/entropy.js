@@ -4,12 +4,13 @@ import { GraphNodeProps, NodeAspect, GraphNode } from "./graph-node";
 import { includeMixin } from "../../utils/mixin-utils";
 
 export interface SpacialProps {
-    space: true,
-    parent?: SpacialObject,             // root entity doesn't have a parent
-    relativePosition: THREE.Vector3;    // position relative to parent, vector from parent to this in parent's reference frame
+    space: true
+    parent?: SpacialObject              // root entity doesn't have a parent
+    relativePosition: THREE.Vector3     // position relative to parent, vector from parent to this in parent's reference frame
+    radius: number
 }
 
-export interface SpacialObject extends SpacialProps { 
+export interface SpacialObject extends SpacialProps, SpacialObjectMixin { 
 
     object3d: THREE.Group;
     childObjects: SpacialObject[];
@@ -70,6 +71,7 @@ export class SpacialAspect implements NodeAspect {
         const edgeProps = graphNodeProps as SpacialProps;
         spacialObject.parent = edgeProps.parent;
         spacialObject.relativePosition = edgeProps.relativePosition;
+        spacialObject.radius = edgeProps.radius;
         spacialObject.object3d = new THREE.Group();        // object is a THREE.GROUP
         if (edgeProps.parent) {
             edgeProps.parent.addChildObject(graphNode);
